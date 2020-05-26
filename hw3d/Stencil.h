@@ -14,7 +14,6 @@ namespace Bind
 			Write,
 			Mask,
 			SkyBox,
-			Mask,
 			DepthOff,
 			DepthReversed
 		};
@@ -24,7 +23,7 @@ namespace Bind
 		{
 			D3D11_DEPTH_STENCIL_DESC dsDesc = CD3D11_DEPTH_STENCIL_DESC{ CD3D11_DEFAULT{} };
 
-			if (mode == Mode::Write)
+			if( mode == Mode::Write )
 			{
 				dsDesc.DepthEnable = FALSE;
 				dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
@@ -33,7 +32,7 @@ namespace Bind
 				dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 				dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 			}
-			else if (mode == Mode::Mask)
+			else if( mode == Mode::Mask )
 			{
 				dsDesc.DepthEnable = FALSE;
 				dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
@@ -46,12 +45,12 @@ namespace Bind
 			{
 				dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 			}
-			else if (mode == Mode::DepthOff)
+			else if( mode == Mode::DepthOff )
 			{
 				dsDesc.DepthEnable = FALSE;
 				dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 			}
-			else if (mode == Mode::DepthReversed)
+			else if( mode == Mode::DepthReversed )
 			{
 				dsDesc.DepthFunc = D3D11_COMPARISON_GREATER;
 			}
@@ -78,6 +77,8 @@ namespace Bind
 					return "write"s;
 				case Mode::Mask:
 					return "mask"s;
+				case Mode::SkyBox:
+					return "skybox"s;
 				case Mode::DepthOff:
 					return "depth-off"s;
 				case Mode::DepthReversed:
