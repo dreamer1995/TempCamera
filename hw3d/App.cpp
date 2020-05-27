@@ -20,9 +20,9 @@ App::App( const std::string& commandLine )
 	dLight(wnd.Gfx()),
 	pointLight( wnd.Gfx(),{ 10.0f,5.0f,0.0f } )
 {
-	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -13.5f,6.0f,3.5f }, 0.0f, PI / 2.0f));
-	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f,28.8f,-6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f));
-	cameras.AddCamera(pointLight.ShareCamera());
+	cameras.AddCamera( std::make_unique<Camera>( wnd.Gfx(),"A",dx::XMFLOAT3{ -13.5f,6.0f,3.5f },0.0f,PI / 2.0f ) );
+	cameras.AddCamera( std::make_unique<Camera>( wnd.Gfx(),"B",dx::XMFLOAT3{ -13.5f,28.8f,-6.4f },PI / 180.0f * 13.0f,PI / 180.0f * 61.0f ) );
+	cameras.AddCamera( pointLight.ShareCamera() );
 
 	//D3DTestScratchPad( wnd );
 	cube.SetPos( { 10.0f,5.0f,6.0f } );
@@ -258,7 +258,7 @@ void App::DoFrame( float dt )
 	rg.BindMainCamera(cameras.GetActiveCamera());
 	cameras->Bind(wnd.Gfx());
 
-	skybox.SetPos({ cameras->pos });
+	skybox.SetPos({ cameras.GetActiveCamera().pos });
 	skybox.Submit(Chan::main);
 
 	pointLight.Bind(wnd.Gfx());
@@ -295,7 +295,7 @@ void App::DoFrame( float dt )
 	//sponzeProbe.SpawnWindow( sponza );
 	//gobberProbe.SpawnWindow( gobber );
 	//nanoProbe.SpawnWindow( nano );
-	cameras.SpawnWindow(wnd.Gfx());
+	cameras.SpawnWindow( wnd.Gfx() );
 	pointLight.SpawnControlWindow();
 	dLight.SpawnControlWindow();
 	ShowImguiDemoWindow();

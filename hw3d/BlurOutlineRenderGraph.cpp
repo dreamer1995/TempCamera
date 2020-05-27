@@ -96,12 +96,13 @@ namespace Rgph
 			AppendPass( std::move( pass ) );
 		}
 		{
-			auto pass = std::make_unique<WireframePass>(gfx, "wireframe");
-			pass->SetSinkLinkage("renderTarget", "vertical.renderTarget");
-			pass->SetSinkLinkage("depthStencil", "vertical.depthStencil");
-			AppendPass(std::move(pass));
+			auto pass = std::make_unique<WireframePass>( gfx,"wireframe" );
+			pass->SetSinkLinkage( "renderTarget","vertical.renderTarget" );
+			pass->SetSinkLinkage( "depthStencil","vertical.depthStencil" );
+			AppendPass( std::move( pass ) );
 		}
-		SetSinkTarget("backbuffer", "wireframe.renderTarget");
+		SetSinkTarget( "backbuffer","wireframe.renderTarget" );
+
 		Finalize();
 	}
 

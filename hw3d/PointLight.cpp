@@ -25,16 +25,16 @@ void PointLight::SpawnControlWindow() noexcept
 	if( ImGui::Begin( "PointLight" ) )
 	{
 		bool dirtyPos = false;
-		const auto d = [&dirtyPos](bool dirty) {dirtyPos = dirtyPos || dirty; };
+		const auto d = [&dirtyPos]( bool dirty ){dirtyPos = dirtyPos || dirty;};
 
-		ImGui::Text("Position");
-		d(ImGui::SliderFloat("X", &cbData.pos.x, -60.0f, 60.0f, "%.1f"));
-		d(ImGui::SliderFloat("Y", &cbData.pos.y, -60.0f, 60.0f, "%.1f"));
-		d(ImGui::SliderFloat("Z", &cbData.pos.z, -60.0f, 60.0f, "%.1f"));
+		ImGui::Text( "Position" );
+		d( ImGui::SliderFloat( "X",&cbData.pos.x,-60.0f,60.0f,"%.1f" ) );
+		d( ImGui::SliderFloat( "Y",&cbData.pos.y,-60.0f,60.0f,"%.1f" ) );
+		d( ImGui::SliderFloat( "Z",&cbData.pos.z,-60.0f,60.0f,"%.1f" ) );
 
-		if (dirtyPos)
+		if( dirtyPos )
 		{
-			pCamera->SetPos(cbData.pos);
+			pCamera->SetPos( cbData.pos );
 		}
 		
 		ImGui::Text( "Intensity/Color" );

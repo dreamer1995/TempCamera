@@ -107,7 +107,6 @@ namespace Rgph
 		for( auto& si : pass.GetSinks() )
 		{
 			const auto& inputSourcePassName = si->GetPassName();
-			bool bound = false;
 			if( inputSourcePassName.empty() )
 			{
 				std::ostringstream oss;
@@ -115,6 +114,7 @@ namespace Rgph
 				throw RGC_EXCEPTION( oss.str() );
 			}
 
+			bool bound = false;
 			// check check whether target source is global
 			if( inputSourcePassName == "$" )
 			{
@@ -149,7 +149,7 @@ namespace Rgph
 				if (!bound)
 				{
 					std::ostringstream oss;
-					oss << "Output named [" << si->GetOutputName() << "] not found in passes";
+					oss << "Pass named [" << inputSourcePassName << "] not found";
 					throw RGC_EXCEPTION(oss.str());
 				}
 			}
