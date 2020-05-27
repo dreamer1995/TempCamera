@@ -27,22 +27,22 @@ App::App( const std::string& commandLine )
 	//D3DTestScratchPad( wnd );
 	cube.SetPos( { 10.0f,5.0f,6.0f } );
 	cube2.SetPos( { 10.0f,5.0f,14.0f } );
-	//nano.SetRootTransform(
-	//	dx::XMMatrixRotationY( PI / 2.f ) *
-	//	dx::XMMatrixTranslation( 27.f,-0.56f,1.7f )
-	//);
-	//gobber.SetRootTransform(
-	//	dx::XMMatrixRotationY( -PI / 2.f ) *
-	//	dx::XMMatrixTranslation( -8.f,10.f,0.f )
-	//);
+	nano.SetRootTransform(
+		dx::XMMatrixRotationY( PI / 2.f ) *
+		dx::XMMatrixTranslation( 27.f,-0.56f,1.7f )
+	);
+	gobber.SetRootTransform(
+		dx::XMMatrixRotationY( -PI / 2.f ) *
+		dx::XMMatrixTranslation( -8.f,10.f,0.f )
+	);
 
 	cube.LinkTechniques( rg );
 	cube2.LinkTechniques( rg );
 	pointLight.LinkTechniques( rg );
 	dLight.LinkTechniques(rg);
-	//sponza.LinkTechniques( rg );
-	//gobber.LinkTechniques( rg );
-	//nano.LinkTechniques( rg );
+	sponza.LinkTechniques( rg );
+	gobber.LinkTechniques( rg );
+	nano.LinkTechniques( rg );
 	skybox.LinkTechniques(rg);
 	cameras.LinkTechniques(rg);
 
@@ -261,24 +261,24 @@ void App::DoFrame( float dt )
 	skybox.SetPos({ cameras.GetActiveCamera().pos });
 	skybox.Submit(Chan::main);
 
+	pointLight.Submit(Chan::main);
 	pointLight.Bind(wnd.Gfx());
 
-	pointLight.Submit(Chan::main);
 	dLight.Submit(Chan::main);
+	dLight.Bind(wnd.Gfx());
+
 	cameras.Submit(Chan::main);
 	cube.Submit(Chan::main);
 	cube2.Submit(Chan::main);
-	//sponza.Submit(Chan::main);
-	//gobber.Submit(Chan::main);
-	//nano.Submit(Chan::main);
+	sponza.Submit(Chan::main);
+	gobber.Submit(Chan::main);
+	nano.Submit(Chan::main);
 	
-
-	//sponza.Submit(Chan::shadow);
-	//cube.Submit(Chan::shadow);
-	//sponza.Submit(Chan::shadow);
-	//cube2.Submit(Chan::shadow);
-	//gobber.Submit(Chan::shadow);
-	//nano.Submit(Chan::shadow);
+	sponza.Submit(Chan::shadow);
+	gobber.Submit(Chan::shadow);
+	nano.Submit(Chan::shadow);
+	cube.Submit(Chan::shadow);
+	cube2.Submit(Chan::shadow);
 
 	rg.Execute( wnd.Gfx() );
 	
@@ -292,9 +292,9 @@ void App::DoFrame( float dt )
 	static MP sponzeProbe{ "Sponza" };
 	static MP gobberProbe{ "Gobber" };
 	static MP nanoProbe{ "Nano" };
-	//sponzeProbe.SpawnWindow( sponza );
-	//gobberProbe.SpawnWindow( gobber );
-	//nanoProbe.SpawnWindow( nano );
+	sponzeProbe.SpawnWindow( sponza );
+	gobberProbe.SpawnWindow( gobber );
+	nanoProbe.SpawnWindow( nano );
 	cameras.SpawnWindow( wnd.Gfx() );
 	pointLight.SpawnControlWindow();
 	dLight.SpawnControlWindow();
