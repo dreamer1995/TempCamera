@@ -6,6 +6,7 @@
 #include "DynamicConstant.h"
 #include "TechniqueProbe.h"
 #include "TransformCbufScaling.h"
+#include "Channels.h"
 
 SkyBox::SkyBox(Graphics& gfx, float size)
 {
@@ -21,7 +22,7 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 	auto tcb = std::make_shared<TransformCbufScaling>(gfx);
 
 	{
-		Technique shade("Shade1");
+		Technique shade("Shade1", { Chan::main });
 		{
 			Step only("environment");
 

@@ -17,7 +17,7 @@ public:
 	DirectionalLight(Graphics& gfx, float radius = 0.5f, float size = 1.0f);
 	void SpawnControlWindow() noexcept;
 	void Reset() noexcept;
-	void Submit() const noxnd;
+	void Submit(size_t channels) const noxnd;
 	void Bind(Graphics& gfx) const noexcept;
 	void LinkTechniques(Rgph::RenderGraph&);
 	DirectX::XMFLOAT3 GetPos() noexcept;

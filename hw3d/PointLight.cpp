@@ -60,10 +60,10 @@ void PointLight::Reset() noexcept
 	cbData = home;
 }
 
-void PointLight::Submit() const noxnd
+void PointLight::Submit( size_t channels ) const noxnd
 {
 	mesh.SetPos( cbData.pos );
-	mesh.Submit(channels);
+	mesh.Submit( channels );
 }
 
 void PointLight::Bind(Graphics& gfx) const noexcept

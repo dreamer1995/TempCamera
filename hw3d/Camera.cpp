@@ -21,7 +21,7 @@ Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float
 		indicator.SetPos(pos);
 		proj.SetPos(pos);
 	}
-	Reset();
+	Reset(gfx);
 }
 
 void Camera::BindToGraphics(Graphics& gfx) const

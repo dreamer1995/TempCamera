@@ -54,12 +54,12 @@ void DirectionalLight::Reset() noexcept
 	roll = 0.0f;
 }
 
-void DirectionalLight::Submit() const noxnd
+void DirectionalLight::Submit(size_t channels) const noxnd
 {
 	mesh.SetPos(pos);
-	mesh.Submit();
+	mesh.Submit(channels);
 	arrow.SetTransform(pos, pitch, yaw, roll, length);
-	arrow.Submit();
+	arrow.Submit(channels);
 }
 
 void DirectionalLight::Bind(Graphics& gfx) const noexcept

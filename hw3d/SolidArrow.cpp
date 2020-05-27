@@ -8,6 +8,7 @@
 #include "TechniqueProbe.h"
 #include "ConstantBuffersEx.h"
 #include "imgui/imgui.h"
+#include "Channels.h"
 
 SolidArrow::SolidArrow(Graphics& gfx, float size)
 {
@@ -22,7 +23,7 @@ SolidArrow::SolidArrow(Graphics& gfx, float size)
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 	{
-		Technique solid;
+		Technique solid{ Chan::main };
 		Step only("lambertian");
 
 		auto pvs = VertexShader::Resolve(gfx, "Solid_VS.cso");

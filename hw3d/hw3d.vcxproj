@@ -95,11 +95,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Temp2\hw3d-T52-End\hw3d\CameraContainer.cpp" />
     <ClCompile Include="..\..\Temp2\hw3d-T52-End\hw3d\CameraIndicator.cpp" />
-    <ClCompile Include="..\..\Temp2\hw3d-T52-End\hw3d\Projection.cpp" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="CameraContainer.cpp" />
     <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="Projection.cpp" />
+    <ClCompile Include="ShadowCameraCBuf.cpp" />
+    <ClCompile Include="ShadowSampler.cpp" />
     <ClCompile Include="SolidArrow.cpp" />
     <ClCompile Include="BindingPass.cpp" />
     <ClCompile Include="Blender.cpp" />
@@ -311,12 +313,15 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Temp2\hw3d-T52-End\hw3d\CameraContainer.h" />
     <ClInclude Include="..\..\Temp2\hw3d-T52-End\hw3d\CameraIndicator.h" />
-    <ClInclude Include="..\..\Temp2\hw3d-T52-End\hw3d\Projection.h" />
     <ClInclude Include="App.h" />
+    <ClInclude Include="CameraContainer.h" />
     <ClInclude Include="Channels.h" />
     <ClInclude Include="Frustum.h" />
+    <ClInclude Include="Projection.h" />
+    <ClInclude Include="ShadowCameraCBuf.h" />
+    <ClInclude Include="ShadowMappingPass.h" />
+    <ClInclude Include="ShadowSampler.h" />
     <ClInclude Include="SolidArrow.h" />
     <ClInclude Include="Bindable.h" />
     <ClInclude Include="BindableCodex.h" />

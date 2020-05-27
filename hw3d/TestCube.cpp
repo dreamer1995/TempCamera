@@ -6,6 +6,7 @@
 #include "DynamicConstant.h"
 #include "TechniqueProbe.h"
 #include "TransformCbufScaling.h"
+#include "Channels.h"
 
 TestCube::TestCube( Graphics& gfx,float size )
 {
@@ -23,7 +24,7 @@ TestCube::TestCube( Graphics& gfx,float size )
 	auto tcb = std::make_shared<TransformCbufScaling>(gfx);
 
 	{
-		Technique shade("Shade1");
+		Technique shade( "Shade",Chan::main );
 		{
 			Step only( "lambertian" );
 
@@ -60,9 +61,8 @@ TestCube::TestCube( Graphics& gfx,float size )
 		}
 		AddTechnique( std::move( shade ) );
 	}
-
 	{
-		Technique outline("Outline");
+		Technique outline( "Outline",Chan::main );
 		{
 			Step mask( "outlineMask" );
 
@@ -94,6 +94,23 @@ TestCube::TestCube( Graphics& gfx,float size )
 			outline.AddStep( std::move( draw ) );
 		}
 		AddTechnique( std::move( outline ) );
+	}
+	// shadow map technique
+	{
+		Technique map{ "ShadowMap",Chan::shadow,true };
+		{
+			Step draw( "shadowMap" );
+
+			// TODO: better sub-layout generation tech for future consideration maybe
+			draw.AddBindable( InputLayout::Resolve( gfx,model.vertices.GetLayout(),*VertexShader::Resolve( gfx,"Solid_VS.cso" ) ) );
+
+			draw.AddBindable( std::make_shared<TransformCbuf>( gfx ) );
+
+			// TODO: might need to specify rasterizer when doubled-sided models start being used
+
+			map.AddStep( std::move( draw ) );
+		}
+		AddTechnique( std::move( map ) );
 	}
 }
 

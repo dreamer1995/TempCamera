@@ -8,6 +8,7 @@
 #include "TechniqueProbe.h"
 #include "ConstantBuffersEx.h"
 #include "imgui/imgui.h"
+#include "Channels.h"
 
 PhongSphere::PhongSphere(Graphics& gfx, float radius)
 {
@@ -26,7 +27,7 @@ PhongSphere::PhongSphere(Graphics& gfx, float radius)
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	{
-		Technique solid;
+		Technique solid{ Chan::main };
 		Step only("lambertian");
 
 		auto pvs = VertexShader::Resolve(gfx, "PhongVSDirectional.cso");
