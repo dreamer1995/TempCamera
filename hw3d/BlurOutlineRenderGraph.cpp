@@ -32,14 +32,14 @@ namespace Rgph
 			AppendPass( std::move( pass ) );
 		}
 		{
+			auto pass = std::make_unique<ShadowMappingPass>( gfx,"shadowMap" );
+			AppendPass( std::move( pass ) );
+		}
+		{
 			auto pass = std::make_unique<EnvironmentPass>(gfx, "environment");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			pass->SetSinkLinkage("depthStencil", "clearDS.buffer");
 			AppendPass(std::move(pass));
-		}
-		{
-			auto pass = std::make_unique<ShadowMappingPass>( gfx,"shadowMap" );
-			AppendPass( std::move( pass ) );
 		}
 		{
 			auto pass = std::make_unique<LambertianPass>( gfx,"lambertian" );
@@ -198,6 +198,7 @@ namespace Rgph
 	}
 	void Rgph::BlurOutlineRenderGraph::BindMainCamera( Camera& cam )
 	{
+		dynamic_cast<EnvironmentPass&>(FindPassByName("environment")).BindMainCamera(cam);
 		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindMainCamera( cam );
 	}
 	void Rgph::BlurOutlineRenderGraph::BindShadowCamera( Camera& cam )

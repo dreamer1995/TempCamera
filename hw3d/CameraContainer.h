@@ -20,6 +20,7 @@ public:
 	void LinkTechniques( Rgph::RenderGraph& rg );
 	void Submit( size_t channels ) const;
 	Camera& GetActiveCamera();
+	void DeleteCamera(std::shared_ptr<Camera> pCam);
 private:
 	Camera& GetControlledCamera();
 

@@ -24,5 +24,18 @@ namespace Rgph
 			RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::SkyBox));
 		}
+		void BindMainCamera(const Camera& cam) noexcept
+		{
+			pMainCamera = &cam;
+		}
+		void Execute(Graphics& gfx) const noxnd override
+		{
+			assert(pMainCamera);
+			pMainCamera->BindToGraphics(gfx);
+			RenderQueuePass::Execute(gfx);
+		}
+	private:
+		std::shared_ptr<Bind::ShadowSampler> pShadowSampler;
+		const Camera* pMainCamera = nullptr;
 	};
 }

@@ -34,6 +34,7 @@ public:
 	DirectX::XMFLOAT3 pos;
 	void Bind(Graphics& gfx) const noexcept;
 	float yaw;
+	std::string name;
 
 private:
 	struct CameraCBuf
@@ -44,7 +45,6 @@ private:
 
 private:
 	bool tethered;
-	std::string name;
 	DirectX::XMFLOAT3 homePos;
 	float homePitch;
 	float homeYaw;

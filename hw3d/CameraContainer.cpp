@@ -85,3 +85,14 @@ Camera& CameraContainer::GetControlledCamera()
 {
 	return *cameras[controlled];
 }
+
+void CameraContainer::DeleteCamera(std::shared_ptr<Camera> pCam)
+{
+	for (std::vector<std::shared_ptr<Camera>>::iterator itr = cameras.begin(); itr != cameras.end(); itr++)
+	{
+		if (*itr == pCam)
+		{
+			cameras.erase(itr);
+		}
+	}
+}

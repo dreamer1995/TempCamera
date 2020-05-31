@@ -14,7 +14,7 @@ namespace Bind
 			DirectX::XMMATRIX ViewProj;
 		};
 	public:
-		ShadowCameraCBuf( Graphics& gfx,UINT slot = 7u );
+		ShadowCameraCBuf( Graphics& gfx,UINT slot = 0u );
 		void Bind( Graphics& gfx ) noxnd override;
 		void Update( Graphics& gfx );
 		void SetCamera( const Camera* pCamera ) noexcept;
