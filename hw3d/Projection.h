@@ -19,6 +19,7 @@ public:
 	void Submit( size_t channel ) const;
 	void LinkTechniques( Rgph::RenderGraph& rg );
 	void Reset( Graphics& gfx );
+	void SetProjection(float _width, float _height, float _nearZ, float _farZ);
 private:
 	float width;
 	float height;

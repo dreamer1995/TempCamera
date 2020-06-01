@@ -20,8 +20,22 @@ App::App( const std::string& commandLine )
 	dLight(wnd.Gfx()),
 	pointLight( wnd.Gfx(),{ 10.0f,5.0f,0.0f } )
 {
+	{
+		dx::XMMATRIX viewmatrix[6] =
+		{
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }),
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { -1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }),
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }, { 0.0f,0.0f,-1.0f }),
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,-1.0f,0.0f }, { 0.0f,0.0f,1.0f }),
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,1.0f }, { 0.0f,1.0f,0.0f }),
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-1.0f }, { 0.0f,1.0f,0.0f })
+		};
+		wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 400.0f));
+	}
+
 	cameras.AddCamera( std::make_unique<Camera>( wnd.Gfx(),"A",dx::XMFLOAT3{ -13.5f,6.0f,3.5f },0.0f,PI / 2.0f ) );
-	cameras.AddCamera( std::make_unique<Camera>( wnd.Gfx(),"B",dx::XMFLOAT3{ -13.5f,28.8f,-6.4f },PI / 180.0f * 13.0f,PI / 180.0f * 61.0f ) );
+	pCam = std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f,28.8f,-6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f);
+	cameras.AddCamera(pCam);
 	cameras.AddCamera( pointLight.ShareCamera() );
 
 	//D3DTestScratchPad( wnd );
@@ -304,6 +318,15 @@ void App::DoFrame( float dt )
 	skybox.SpawnControlWindow(wnd.Gfx(), "SkyBox");
 
 	rg.RenderWidgets( wnd.Gfx() );
+
+	if (ImGui::Begin("Delete"))
+	{
+		if (ImGui::Button("deletecam"))
+		{
+			cameras.DeleteCamera(pCam);
+		}
+	}
+	ImGui::End();
 
 	// present
 	wnd.Gfx().EndFrame();

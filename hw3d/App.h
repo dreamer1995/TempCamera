@@ -42,4 +42,5 @@ private:
 	SkyBox skybox{ wnd.Gfx(),4.0f };
 	DirectionalLight dLight;
 	bool savingDepth = false;
+	std::shared_ptr<Camera> pCam;
 };

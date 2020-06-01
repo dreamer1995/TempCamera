@@ -62,3 +62,11 @@ void Projection::Reset( Graphics& gfx )
 	farZ = homeFarZ;
 	frust.SetVertices( gfx,width,height,nearZ,farZ );	
 }
+
+void Projection::SetProjection(float _width, float _height, float _nearZ, float _farZ)
+{
+	width = _width;
+	height = _height;
+	nearZ = _nearZ;
+	farZ = _farZ;
+}

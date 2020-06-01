@@ -93,6 +93,7 @@ void CameraContainer::DeleteCamera(std::shared_ptr<Camera> pCam)
 		if (*itr == pCam)
 		{
 			cameras.erase(itr);
+			break;
 		}
 	}
 }
