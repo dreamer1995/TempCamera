@@ -315,6 +315,9 @@
     <ClCompile Include="CameraIndicator.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="PreCalculateRenderGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -664,6 +667,9 @@
     </ClInclude>
     <ClInclude Include="CameraIndicator.h">
       <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="PreCalculateRenderGraph.h">
+      <Filter>Header Files\Jobber\Graphlib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

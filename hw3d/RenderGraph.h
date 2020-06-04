@@ -22,7 +22,7 @@ namespace Rgph
 	class RenderGraph
 	{
 	public:
-		RenderGraph( Graphics& gfx );
+		RenderGraph(Graphics& gfx, bool automaticInitialize = true);
 		~RenderGraph();
 		void Execute( Graphics& gfx ) noxnd;
 		void Reset() noexcept;

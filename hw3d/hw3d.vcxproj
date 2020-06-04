@@ -99,6 +99,7 @@
     <ClCompile Include="CameraContainer.cpp" />
     <ClCompile Include="CameraIndicator.cpp" />
     <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="PreCalculateRenderGraph.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="ShadowCameraCBuf.cpp" />
     <ClCompile Include="ShadowSampler.cpp" />
@@ -332,6 +333,7 @@
     <ClInclude Include="CameraIndicator.h" />
     <ClInclude Include="Channels.h" />
     <ClInclude Include="Frustum.h" />
+    <ClInclude Include="PreCalculateRenderGraph.h" />
     <ClInclude Include="Projection.h" />
     <ClInclude Include="ShadowCameraCBuf.h" />
     <ClInclude Include="ShadowMappingPass.h" />
