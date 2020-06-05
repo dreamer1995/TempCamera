@@ -6,9 +6,8 @@ namespace Rgph
 {
 	PreCalculateRenderGraph::PreCalculateRenderGraph(Graphics& gfx)
 		:
-		RenderGraph(gfx,false)
+		RenderGraph(gfx, RenderGraph::Type::PreCal)
 	{
-
 		{
 			auto pass = std::make_unique<BufferClearPass>("clearRT");
 			pass->SetSinkLinkage("buffer", "$.backbuffer");

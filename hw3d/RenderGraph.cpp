@@ -11,17 +11,21 @@
 
 namespace Rgph
 {
-	RenderGraph::RenderGraph(Graphics& gfx, bool automaticInitialize)
+	RenderGraph::RenderGraph(Graphics& gfx, Type type)
 		:
 		backBufferTarget( gfx.GetTarget() ),
 		masterDepth( std::make_shared<Bind::OutputOnlyDepthStencil>( gfx ) )
 	{
-		if (automaticInitialize)
+		switch(type)
 		{
-			// setup global sinks and sources
-			AddGlobalSource(DirectBufferSource<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
-			AddGlobalSource(DirectBufferSource<Bind::DepthStencil>::Make("masterDepth", masterDepth));
-			AddGlobalSink(DirectBufferSink<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
+			case Type::Default:// setup global sinks and sources
+				AddGlobalSource(DirectBufferSource<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
+				AddGlobalSource(DirectBufferSource<Bind::DepthStencil>::Make("masterDepth", masterDepth));
+				AddGlobalSink(DirectBufferSink<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
+				break;
+			case Type::PreCal:
+				break;
+
 		}
 	}
 

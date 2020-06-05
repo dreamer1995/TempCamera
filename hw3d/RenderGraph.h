@@ -22,7 +22,13 @@ namespace Rgph
 	class RenderGraph
 	{
 	public:
-		RenderGraph(Graphics& gfx, bool automaticInitialize = true);
+		enum class Type
+		{
+			Default,
+			PreCal,
+		};
+	public:
+		RenderGraph(Graphics& gfx, Type type = Type::Default);
 		~RenderGraph();
 		void Execute( Graphics& gfx ) noxnd;
 		void Reset() noexcept;
