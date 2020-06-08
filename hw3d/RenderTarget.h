@@ -12,6 +12,13 @@ namespace Bind
 	class RenderTarget : public Bindable, public BufferResource
 	{
 	public:
+		enum class Type
+		{
+			Default,
+			PreCalSimpleCube,
+			PreCalMipCube
+		};
+	public:
 		void BindAsBuffer( Graphics& gfx ) noxnd override;
 		void BindAsBuffer( Graphics& gfx,BufferResource* depthStencil ) noxnd override;
 		void BindAsBuffer( Graphics& gfx,DepthStencil* depthStencil ) noxnd;
@@ -23,16 +30,19 @@ namespace Bind
 		void BindAsBuffer( Graphics& gfx,ID3D11DepthStencilView* pDepthStencilView ) noxnd;
 	protected:
 		RenderTarget( Graphics& gfx,ID3D11Texture2D* pTexture );
-		RenderTarget( Graphics& gfx,UINT width,UINT height );
+		RenderTarget(Graphics& gfx, UINT width, UINT height, Type type = Type::Default, UINT targetIndex = 0);
 		UINT width;
 		UINT height;
+		Type type;
+		UINT targetIndex;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetView;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetCubeView[6];
 	};
 
 	class ShaderInputRenderTarget : public RenderTarget
 	{
 	public:
-		ShaderInputRenderTarget( Graphics& gfx,UINT width,UINT height,UINT slot );
+		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type = Type::Default, UINT targetIndex = 0);
 		void Bind( Graphics& gfx ) noxnd override;
 		Surface ToSurface( Graphics& gfx ) const;
 	private:

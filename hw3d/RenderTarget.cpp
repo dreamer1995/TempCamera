@@ -8,10 +8,12 @@ namespace wrl = Microsoft::WRL;
 
 namespace Bind
 {
-	RenderTarget::RenderTarget( Graphics& gfx,UINT width,UINT height )
+	RenderTarget::RenderTarget(Graphics& gfx, UINT width, UINT height, Type type, UINT targetIndex)
 		:
 		width( width ),
-		height( height )
+		height( height ),
+		type(type),
+		targetIndex(targetIndex)
 	{
 		INFOMAN( gfx );
 
@@ -27,7 +29,25 @@ namespace Bind
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE; // never do we not want to bind offscreen RTs as inputs
 		textureDesc.CPUAccessFlags = 0;
-		textureDesc.MiscFlags = 0;
+
+		switch (type)
+		{
+		case Type::PreCalSimpleCube:
+			textureDesc.ArraySize = 6;
+			textureDesc.MipLevels = 1;
+			textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS | D3D11_RESOURCE_MISC_TEXTURECUBE;
+			break;
+		case Type::PreCalMipCube:
+			textureDesc.ArraySize = 6;
+			textureDesc.MipLevels = 5;
+			textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS | D3D11_RESOURCE_MISC_TEXTURECUBE;
+			break;
+		default:
+			textureDesc.ArraySize = 1;
+			textureDesc.MipLevels = 1;
+			textureDesc.MiscFlags = 0;
+		}
+
 		wrl::ComPtr<ID3D11Texture2D> pTexture;
 		GFX_THROW_INFO( GetDevice( gfx )->CreateTexture2D(
 			&textureDesc,nullptr,&pTexture
@@ -38,9 +58,27 @@ namespace Bind
 		rtvDesc.Format = textureDesc.Format;
 		rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
-		GFX_THROW_INFO( GetDevice( gfx )->CreateRenderTargetView(
-			pTexture.Get(),&rtvDesc,&pTargetView
-		) );
+
+		switch (type)
+		{
+		case Type::PreCalSimpleCube:
+		case Type::PreCalMipCube:
+		{
+			rtvDesc.Texture2DArray.ArraySize = 1;
+			for (short int i = 0; i < 6; ++i)
+			{
+				// Create a render target view to the ith element.
+				rtvDesc.Texture2DArray.FirstArraySlice = i;
+				GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
+					pTexture.Get(), &rtvDesc, &pTargetCubeView[i]));
+			}
+			break;
+		}
+		default:
+			GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
+				pTexture.Get(), &rtvDesc, &pTargetView
+			));
+		}
 	}
 
 	RenderTarget::RenderTarget( Graphics& gfx,ID3D11Texture2D* pTexture )
@@ -83,7 +121,15 @@ namespace Bind
 	void RenderTarget::BindAsBuffer( Graphics& gfx,ID3D11DepthStencilView* pDepthStencilView ) noxnd
 	{
 		INFOMAN_NOHR( gfx );
-		GFX_THROW_INFO_ONLY( GetContext( gfx )->OMSetRenderTargets( 1,pTargetView.GetAddressOf(),pDepthStencilView ) );
+		switch (type)
+		{
+		case Type::PreCalSimpleCube:
+		case Type::PreCalMipCube:
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->OMSetRenderTargets(1, pTargetCubeView[targetIndex].GetAddressOf(), pDepthStencilView));
+			break;
+		default:
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->OMSetRenderTargets(1, pTargetView.GetAddressOf(), pDepthStencilView));
+		}
 
 		// configure viewport
 		D3D11_VIEWPORT vp;
@@ -104,8 +150,7 @@ namespace Bind
 
 	void RenderTarget::Clear( Graphics& gfx ) noxnd
 	{
-		//Clear( gfx,{ 0.0f,0.0f,0.0f,0.0f } );
-		Clear(gfx, { 0.1f,0.1f,0.1f,0.0f });
+		Clear( gfx,{ 0.0f,0.0f,0.0f,0.0f } );
 	}
 
 	UINT RenderTarget::GetWidth() const noexcept
@@ -119,25 +164,52 @@ namespace Bind
 	}
 
 
-	ShaderInputRenderTarget::ShaderInputRenderTarget( Graphics& gfx,UINT width,UINT height,UINT slot )
+	ShaderInputRenderTarget::ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type, UINT targetIndex)
 		:
-		RenderTarget( gfx,width,height ),
+		RenderTarget(gfx, width, height, type, targetIndex),
 		slot( slot )
 	{
 		INFOMAN( gfx );
 
-		wrl::ComPtr<ID3D11Resource> pRes;
-		pTargetView->GetResource( &pRes );
-
 		// create the resource view on the texture
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
-		srvDesc.Texture2D.MipLevels = 1;
-		GFX_THROW_INFO( GetDevice( gfx )->CreateShaderResourceView(
-			pRes.Get(),&srvDesc,&pShaderResourceView
-		) );
+
+		switch (type)
+		{
+		case Type::PreCalSimpleCube:
+			srvDesc.Texture2D.MipLevels = 1;
+		case Type::PreCalMipCube:
+			srvDesc.TextureCube.MipLevels = 5;
+			break;
+		default:
+			srvDesc.TextureCube.MipLevels = 1;
+		}
+
+		wrl::ComPtr<ID3D11Resource> pRes;
+
+		switch (type)
+		{
+		case Type::PreCalSimpleCube:
+		case Type::PreCalMipCube:
+		{
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+			pTargetCubeView[0]->GetResource(&pRes);
+			GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
+				pRes.Get(), &srvDesc, &pShaderResourceView
+			));
+			break;
+		}
+		default:
+		{
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			pTargetView->GetResource(&pRes);
+			GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
+				pRes.Get(), &srvDesc, &pShaderResourceView
+			));
+		}
+		}
 	}
 
 	Surface Bind::ShaderInputRenderTarget::ToSurface( Graphics& gfx ) const
@@ -186,7 +258,7 @@ namespace Bind
 	void ShaderInputRenderTarget::Bind( Graphics& gfx ) noxnd
 	{
 		INFOMAN_NOHR( gfx );
-		GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetShaderResources( slot,1,pShaderResourceView.GetAddressOf() ) );
+		GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetShaderResources( slot,1,pShaderResourceView.GetAddressOf() ) );	
 	}
 	
 

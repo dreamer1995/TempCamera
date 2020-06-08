@@ -18,14 +18,12 @@ namespace Rgph
 	{
 		switch(type)
 		{
-			case Type::Default:// setup global sinks and sources
-				AddGlobalSource(DirectBufferSource<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
-				AddGlobalSource(DirectBufferSource<Bind::DepthStencil>::Make("masterDepth", masterDepth));
-				AddGlobalSink(DirectBufferSink<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
-				break;
-			case Type::PreCal:
-				break;
-
+		case Type::PreCal:
+			break;
+		default:
+			AddGlobalSource(DirectBufferSource<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
+			AddGlobalSource(DirectBufferSource<Bind::DepthStencil>::Make("masterDepth", masterDepth));
+			AddGlobalSink(DirectBufferSink<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
 		}
 	}
 
