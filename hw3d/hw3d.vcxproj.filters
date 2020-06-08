@@ -318,6 +318,18 @@
     <ClCompile Include="PreCalculateRenderGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PreCubeCalculatePass.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
+    <ClCompile Include="PreCalMipCube.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
+    <ClCompile Include="PreCalSimpleCube.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
+    <ClCompile Include="PreCalBlurCube.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -670,6 +682,18 @@
     </ClInclude>
     <ClInclude Include="PreCalculateRenderGraph.h">
       <Filter>Header Files\Jobber\Graphlib</Filter>
+    </ClInclude>
+    <ClInclude Include="PreCubeCalculatePass.h">
+      <Filter>Header Files\Jobber\Passlib\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="PreCalSimpleCube.h">
+      <Filter>Header Files\Jobber\Passlib</Filter>
+    </ClInclude>
+    <ClInclude Include="PreCalMipCube.h">
+      <Filter>Header Files\Jobber\Passlib</Filter>
+    </ClInclude>
+    <ClInclude Include="PreCalBlurCube.h">
+      <Filter>Header Files\Jobber\Passlib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
