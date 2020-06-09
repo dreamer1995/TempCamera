@@ -9,23 +9,20 @@ using namespace Bind;
 
 namespace Rgph
 {
-	VerticalBlurPass::VerticalBlurPass(std::string name, Graphics& gfx)
+	PreCalSimpleCube::PreCalSimpleCube(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight)
 		:
 		PreCubeCalculatePass(std::move(name), gfx)
 	{
 		AddBind(PixelShader::Resolve(gfx, "BlurOutline_PS.cso"));
-		AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));
+		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear, true));
 
-		RegisterSink(DirectBufferSink<RenderTarget>::Make("renderTarget", renderTarget));
-		RegisterSink(DirectBufferSink<DepthStencil>::Make("depthStencil", depthStencil));
-
-		RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));
-		RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
+		renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u);
+		RegisterSource(DirectBindableSource<RenderTarget>::Make("HDOut", renderTarget));
 	}
 
 	// see the note on HorizontalBlurPass::Execute
-	void VerticalBlurPass::Execute(Graphics& gfx) const noxnd
+	void PreCalSimpleCube::Execute(Graphics& gfx) const noxnd
 	{
 		PreCubeCalculatePass::Execute(gfx);
 	}
