@@ -4,6 +4,7 @@
 #include "PixelShader.h"
 #include "Stencil.h"
 #include "Sampler.h"
+#include "Texture.h"
 
 using namespace Bind;
 
@@ -13,11 +14,12 @@ namespace Rgph
 		:
 		PreCubeCalculatePass(std::move(name), gfx)
 	{
-		AddBind(PixelShader::Resolve(gfx, "BlurOutline_PS.cso"));
+		AddBind(Texture::Resolve(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg"));
+		AddBind(PixelShader::Resolve(gfx, "SphereToCubePS.cso"));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear, true));
 
-		pPreCalSimpleCube = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullHeight, fullHeight, 0u);
+		pPreCalSimpleCube = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullHeight, fullHeight, 0u, ShaderInputRenderTarget::Type::PreCalSimpleCube);
 		renderTarget = pPreCalSimpleCube;
 		RegisterSource(DirectBindableSource<RenderTarget>::Make("HDOut", renderTarget));
 	}
@@ -25,6 +27,11 @@ namespace Rgph
 	// see the note on HorizontalBlurPass::Execute
 	void PreCalSimpleCube::Execute(Graphics& gfx) const noxnd
 	{
-		PreCubeCalculatePass::Execute(gfx);
+		for (short int i = 0; i < 6; i++)
+		{
+			gfx.SetCamera(viewmatrix[i]);
+			pPreCalSimpleCube->targetIndex = i;
+			PreCubeCalculatePass::Execute(gfx);
+		}
 	}
 }

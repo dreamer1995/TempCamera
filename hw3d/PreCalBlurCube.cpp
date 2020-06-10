@@ -13,7 +13,7 @@ namespace Rgph
 		:
 		PreCubeCalculatePass(std::move(name), gfx)
 	{
-		AddBind(PixelShader::Resolve(gfx, "BlurOutline_PS.cso"));
+		AddBind(PixelShader::Resolve(gfx, "Solid_PS.cso"));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear, true));
 

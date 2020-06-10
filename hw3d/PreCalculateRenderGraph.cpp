@@ -1,13 +1,13 @@
 #include "PreCalculateRenderGraph.h"
 //#include "BufferClearPass.h"
 
-
 namespace Rgph
 {
 	PreCalculateRenderGraph::PreCalculateRenderGraph(Graphics& gfx)
 		:
 		RenderGraph(gfx, RenderGraph::Type::PreCal)
 	{
+		gfx.SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 400.0f));
 		{
 			pPreCalSimpleCube = std::make_unique<PreCalSimpleCube>("preCalSimpleCube", gfx, gfx.GetWidth(), gfx.GetHeight());
 			AppendPass(std::move(pPreCalSimpleCube));
@@ -18,7 +18,7 @@ namespace Rgph
 			AppendPass(std::move(pPreCalBlurCube));
 		}
 		{
-			pPreCalMipCube = std::make_unique<PreCalMipCube>("preCalBlurCube", gfx, 256u, 256u);
+			pPreCalMipCube = std::make_unique<PreCalMipCube>("preCalMipCube", gfx, 256u, 256u);
 			pPreCalMipCube->SetSinkLinkage("HDIn", "preCalSimpleCube.HDOut");
 			AppendPass(std::move(pPreCalMipCube));
 		}

@@ -30,11 +30,12 @@ namespace Bind
 		void BindAsBuffer( Graphics& gfx,ID3D11DepthStencilView* pDepthStencilView ) noxnd;
 	protected:
 		RenderTarget( Graphics& gfx,ID3D11Texture2D* pTexture );
-		RenderTarget(Graphics& gfx, UINT width, UINT height, Type type = Type::Default, UINT targetIndex = 0);
+		RenderTarget(Graphics& gfx, UINT width, UINT height, Type type = Type::Default);
 		UINT width;
 		UINT height;
 		Type type;
-		UINT targetIndex;
+	public:
+		UINT targetIndex = 0;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetView;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetCubeView[6];
 	};
@@ -42,7 +43,7 @@ namespace Bind
 	class ShaderInputRenderTarget : public RenderTarget
 	{
 	public:
-		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type = Type::Default, UINT targetIndex = 0);
+		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type = Type::Default);
 		void Bind( Graphics& gfx ) noxnd override;
 		Surface ToSurface( Graphics& gfx ) const;
 	private:

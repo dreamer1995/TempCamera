@@ -20,7 +20,6 @@ namespace Rgph
 	{
 	public:
 		PreCalculateRenderGraph(Graphics& gfx);
-		void BindMainCamera(Camera& cam);
 	public:
 		std::unique_ptr<PreCalSimpleCube> pPreCalSimpleCube;
 		std::unique_ptr<PreCalBlurCube> pPreCalBlurCube;

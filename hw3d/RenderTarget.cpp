@@ -8,12 +8,11 @@ namespace wrl = Microsoft::WRL;
 
 namespace Bind
 {
-	RenderTarget::RenderTarget(Graphics& gfx, UINT width, UINT height, Type type, UINT targetIndex)
+	RenderTarget::RenderTarget(Graphics& gfx, UINT width, UINT height, Type type)
 		:
 		width( width ),
 		height( height ),
-		type(type),
-		targetIndex(targetIndex)
+		type(type)
 	{
 		INFOMAN( gfx );
 
@@ -21,8 +20,6 @@ namespace Bind
 		D3D11_TEXTURE2D_DESC textureDesc = {};
 		textureDesc.Width = width;
 		textureDesc.Height = height;
-		textureDesc.MipLevels = 1;
-		textureDesc.ArraySize = 1;
 		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
@@ -164,9 +161,9 @@ namespace Bind
 	}
 
 
-	ShaderInputRenderTarget::ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type, UINT targetIndex)
+	ShaderInputRenderTarget::ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type)
 		:
-		RenderTarget(gfx, width, height, type, targetIndex),
+		RenderTarget(gfx, width, height, type),
 		slot( slot )
 	{
 		INFOMAN( gfx );
@@ -180,6 +177,7 @@ namespace Bind
 		{
 		case Type::PreCalSimpleCube:
 			srvDesc.Texture2D.MipLevels = 1;
+			break;
 		case Type::PreCalMipCube:
 			srvDesc.TextureCube.MipLevels = 5;
 			break;
