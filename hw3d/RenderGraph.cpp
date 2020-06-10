@@ -19,11 +19,17 @@ namespace Rgph
 		switch(type)
 		{
 		case Type::PreCal:
+		{
+			/*std::shared_ptr<Bind::RenderTarget> renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, gfx.GetWidth(), gfx.GetHeight(), 0u);
+			AddGlobalSource(DirectBufferSource<Bind::RenderTarget>::Make("cubeMap", renderTarget));*/
 			break;
+		}
 		default:
+		{
 			AddGlobalSource(DirectBufferSource<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
 			AddGlobalSource(DirectBufferSource<Bind::DepthStencil>::Make("masterDepth", masterDepth));
 			AddGlobalSink(DirectBufferSink<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
+		}
 		}
 	}
 

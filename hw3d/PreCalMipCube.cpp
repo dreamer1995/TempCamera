@@ -20,7 +20,6 @@ namespace Rgph
 		AddBindSink<Bind::RenderTarget>("HDIn");
 
 		renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 6u);
-		RegisterSource(DirectBindableSource<RenderTarget>::Make("HDOut", renderTarget));
 	}
 
 	// see the note on HorizontalBlurPass::Execute

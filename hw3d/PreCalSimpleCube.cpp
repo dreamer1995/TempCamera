@@ -17,7 +17,8 @@ namespace Rgph
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear, true));
 
-		renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u);
+		pPreCalSimpleCube = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullHeight, fullHeight, 0u);
+		renderTarget = pPreCalSimpleCube;
 		RegisterSource(DirectBindableSource<RenderTarget>::Make("HDOut", renderTarget));
 	}
 
