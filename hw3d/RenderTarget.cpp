@@ -53,7 +53,6 @@ namespace Bind
 		// create the target view on the texture
 		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 		rtvDesc.Format = textureDesc.Format;
-		rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
 
 		switch (type)
@@ -62,6 +61,7 @@ namespace Bind
 		case Type::PreCalMipCube:
 		{
 			rtvDesc.Texture2DArray.ArraySize = 1;
+			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
 			for (short int i = 0; i < 6; ++i)
 			{
 				// Create a render target view to the ith element.
@@ -72,9 +72,12 @@ namespace Bind
 			break;
 		}
 		default:
+		{
+			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
 				pTexture.Get(), &rtvDesc, &pTargetView
 			));
+		}
 		}
 	}
 
@@ -193,7 +196,7 @@ namespace Bind
 		case Type::PreCalMipCube:
 		{
 			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-			pTargetCubeView[0]->GetResource(&pRes);
+			pTargetCubeView[3]->GetResource(&pRes);
 			GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
 				pRes.Get(), &srvDesc, &pShaderResourceView
 			));

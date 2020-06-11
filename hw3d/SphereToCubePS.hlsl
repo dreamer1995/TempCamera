@@ -1,8 +1,3 @@
-cbuffer CBuf : register(b4)
-{
-	float4 materialColor;
-};
-
 Texture2D SkyMap;
 SamplerState splr;
 
@@ -18,7 +13,7 @@ float2 SampleSphereicalMap(float3 tc)
 float4 main(float3 tc : Texcoord) : SV_Target
 {
 	float2 uv = SampleSphereicalMap(normalize(tc));
-	return SkyMap.Sample(splr, uv) * materialColor;
+	return SkyMap.Sample(splr, uv);
 }
 
 //RasterizerState MyCull {

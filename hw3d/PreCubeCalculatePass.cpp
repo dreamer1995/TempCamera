@@ -10,6 +10,7 @@ namespace Rgph
 		:
 	BindingPass(std::move(name))
 	{
+		pVcbuf = std::make_unique<Bind::VertexConstantBuffer<Transforms>>(gfx, 0u);
 		auto model = Cube::MakeIndependentSimple();
 		AddBind(Bind::VertexBuffer::Resolve(gfx, "$preskybox", model.vertices));
 		AddBind(Bind::IndexBuffer::Resolve(gfx, "$preskybox", model.indices));
@@ -23,6 +24,8 @@ namespace Rgph
 
 	void PreCubeCalculatePass::Execute(Graphics& gfx) const noxnd
 	{
+		pVcbuf->Update(gfx, { DirectX::XMMatrixTranspose(gfx.GetProjection()) * DirectX::XMMatrixTranspose(gfx.GetCamera()) });
+		pVcbuf->Bind(gfx);
 		BindAll(gfx);
 		gfx.DrawIndexed(36u);
 	}
