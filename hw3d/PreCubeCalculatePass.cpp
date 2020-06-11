@@ -24,6 +24,6 @@ namespace Rgph
 	void PreCubeCalculatePass::Execute(Graphics& gfx) const noxnd
 	{
 		BindAll(gfx);
-		gfx.DrawIndexed(6u);
+		gfx.DrawIndexed(36u);
 	}
 }

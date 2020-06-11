@@ -9,7 +9,6 @@
 #include "BlurOutlineDrawingPass.h"
 #include "WireframePass.h"
 #include "ShadowMappingPass.h"
-#include "RenderTarget.h"
 #include "DynamicConstant.h"
 #include "imgui/imgui.h"
 #include "ChiliMath.h"
@@ -37,6 +36,7 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<EnvironmentPass>(gfx, "environment");
+			//pass->SetSinkLinkage("cubeMapIn", "$.cubeMap");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			pass->SetSinkLinkage("depthStencil", "clearDS.buffer");
 			AppendPass(std::move(pass));
@@ -102,7 +102,6 @@ namespace Rgph
 			AppendPass( std::move( pass ) );
 		}
 		SetSinkTarget( "backbuffer","wireframe.renderTarget" );
-
 		Finalize();
 	}
 
@@ -205,5 +204,9 @@ namespace Rgph
 	{
 		dynamic_cast<ShadowMappingPass&>(FindPassByName( "shadowMap" )).BindShadowCamera( cam );
 		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindShadowCamera( cam );
+	}
+	void Rgph::BlurOutlineRenderGraph::RecivePreTextures(std::shared_ptr<Bind::ShaderInputRenderTarget> pPreTex)
+	{
+		AddGlobalSource(DirectBindableSource<Bind::ShaderInputRenderTarget>::Make("cubeMap", pPreTex));
 	}
 }

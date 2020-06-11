@@ -3,7 +3,7 @@ cbuffer CBuf : register(b4)
 	float4 materialColor;
 };
 
-TextureCube SkyMap;
+TextureCube SkyMap : register(t10);
 SamplerState splr;
 
 float4 main(float3 tc : Texcoord) : SV_Target

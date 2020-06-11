@@ -48,6 +48,7 @@ namespace Bind
 		Surface ToSurface( Graphics& gfx ) const;
 	private:
 		UINT slot;
+	public:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
 	};
 

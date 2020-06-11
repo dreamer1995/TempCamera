@@ -2,6 +2,7 @@
 #include "RenderGraph.h"
 #include <memory>
 #include "ConstantBuffersEx.h"
+#include "RenderTarget.h"
 
 class Graphics;
 class Camera;
@@ -21,6 +22,7 @@ namespace Rgph
 		void DumpShadowMap( Graphics& gfx,const std::string& path );
 		void BindMainCamera( Camera& cam );
 		void BindShadowCamera( Camera& cam );
+		void RecivePreTextures(std::shared_ptr<Bind::ShaderInputRenderTarget> pPreTex);
 	private:
 		// private functions
 		void SetKernelGauss( int radius,float sigma ) noxnd;

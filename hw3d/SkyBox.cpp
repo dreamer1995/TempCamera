@@ -26,14 +26,14 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 		{
 			Step only("environment");
 
-			only.AddBindable(Texture::Resolve(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg"));
+			//only.AddBindable(Texture::Resolve(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg"));
 			only.AddBindable(Sampler::Resolve(gfx));
 
 			auto pvs = VertexShader::Resolve(gfx, "SkyBoxVS.cso");
 			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *pvs));
 			only.AddBindable(std::move(pvs));
 
-			only.AddBindable(PixelShader::Resolve(gfx, "SphereToCubePS.cso"));
+			only.AddBindable(PixelShader::Resolve(gfx, "SkyBoxPS.cso"));
 
 			Dcb::RawLayout lay;
 			lay.Add<Dcb::Float4>("color");
