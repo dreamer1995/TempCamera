@@ -20,8 +20,6 @@ App::App( const std::string& commandLine )
 	dLight(wnd.Gfx()),
 	pointLight( wnd.Gfx(),{ 10.0f,5.0f,0.0f } )
 {
-	prg.Execute(wnd.Gfx());
-	//rg.RecivePreTextures(prg.pPreCalSimpleCube->pPreCalSimpleCube);
 	cameras.AddCamera( std::make_unique<Camera>( wnd.Gfx(),"A",dx::XMFLOAT3{ -13.5f,6.0f,3.5f },0.0f,PI / 2.0f ) );
 	pCam = std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f,28.8f,-6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f);
 	cameras.AddCamera(pCam);

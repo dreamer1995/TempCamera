@@ -2,9 +2,6 @@
 #include "RenderGraph.h"
 #include <memory>
 #include "ConstantBuffersEx.h"
-#include "PreCalBlurCube.h"
-#include "PreCalMipCube.h"
-#include "PreCalSimpleCube.h"
 
 class Graphics;
 namespace Bind
@@ -20,8 +17,8 @@ namespace Rgph
 	public:
 		PreCalculateRenderGraph(Graphics& gfx);
 	public:
-		std::unique_ptr<PreCalSimpleCube> pPreCalSimpleCube;
-		std::unique_ptr<PreCalBlurCube> pPreCalBlurCube;
-		std::unique_ptr<PreCalMipCube> pPreCalMipCube;
+		std::shared_ptr<Bind::RenderTarget> pPreCalSimpleCube;
+		std::shared_ptr<Bind::RenderTarget> pPreCalBlurCube;
+		//std::unique_ptr<PreCalMipCube> pPreCalMipCube;
 	};
 }

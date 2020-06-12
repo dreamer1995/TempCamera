@@ -18,7 +18,7 @@ namespace Rgph
 			RenderQueuePass(std::move(name))
 		{
 			using namespace Bind;
-			//AddBindSink<ShaderInputRenderTarget>("cubeMapIn");
+			AddBindSink<ShaderInputRenderTarget>("cubeMapIn");
 			RegisterSink(DirectBufferSink<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSink(DirectBufferSink<DepthStencil>::Make("depthStencil", depthStencil));
 			RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));

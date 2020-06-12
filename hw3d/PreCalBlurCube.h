@@ -17,7 +17,7 @@ namespace Rgph
 	public:
 		PreCalBlurCube(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight);
 		void Execute(Graphics& gfx) const noxnd override;
-	private:
+	public:
 		std::shared_ptr<Bind::ShaderInputRenderTarget> pPreCalBlurCube;
 		dx::XMMATRIX viewmatrix[6] =
 		{

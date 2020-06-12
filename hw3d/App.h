@@ -43,5 +43,4 @@ private:
 	DirectionalLight dLight;
 	bool savingDepth = false;
 	std::shared_ptr<Camera> pCam;
-	Rgph::PreCalculateRenderGraph prg{ wnd.Gfx() };
 };

@@ -23,7 +23,6 @@ namespace Rgph
 		void DumpShadowMap( Graphics& gfx,const std::string& path );
 		void BindMainCamera( Camera& cam );
 		void BindShadowCamera( Camera& cam );
-		void RecivePreTextures(std::shared_ptr<Bind::ShaderInputRenderTarget> pPreTex);
 	private:
 		// private functions
 		void SetKernelGauss( int radius,float sigma ) noxnd;
@@ -39,6 +38,6 @@ namespace Rgph
 		float sigma = 2.0f;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> blurKernel;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> blurDirection;
-		//Rgph::PreCalculateRenderGraph prg;
+		Rgph::PreCalculateRenderGraph prg;
 	};
 }

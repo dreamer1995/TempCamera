@@ -1,4 +1,7 @@
 #include "PreCalculateRenderGraph.h"
+#include "PreCalBlurCube.h"
+#include "PreCalMipCube.h"
+#include "PreCalSimpleCube.h"
 
 namespace Rgph
 {
@@ -8,25 +11,22 @@ namespace Rgph
 	{
 		gfx.SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 400.0f));
 		{
-			pPreCalSimpleCube = std::make_unique<PreCalSimpleCube>("preCalSimpleCube", gfx, gfx.GetWidth(), gfx.GetHeight());
-			AppendPass(std::move(pPreCalSimpleCube));
+			auto pass = std::make_unique<PreCalSimpleCube>("preCalSimpleCube", gfx, gfx.GetWidth(), gfx.GetHeight());
+			pPreCalSimpleCube = pass->pPreCalSimpleCube;
+			AppendPass(std::move(pass));
 		}
 		{
-			pPreCalBlurCube = std::make_unique<PreCalBlurCube>("preCalBlurCube", gfx, 64u, 64u);
-			pPreCalBlurCube->SetSinkLinkage("HDIn", "preCalSimpleCube.HDOut");
-			AppendPass(std::move(pPreCalBlurCube));
+			auto pass = std::make_unique<PreCalBlurCube>("preCalBlurCube", gfx, 64u, 64u);
+			pass->SetSinkLinkage("HDIn", "preCalSimpleCube.HDOut");
+			pPreCalBlurCube = pass->pPreCalBlurCube;
+			AppendPass(std::move(pass));
 		}
 		{
-			pPreCalMipCube = std::make_unique<PreCalMipCube>("preCalMipCube", gfx, 256u, 256u);
-			pPreCalMipCube->SetSinkLinkage("HDIn", "preCalSimpleCube.HDOut");
-			AppendPass(std::move(pPreCalMipCube));
+			auto pass = std::make_unique<PreCalMipCube>("preCalMipCube", gfx, 256u, 256u);
+			pass->SetSinkLinkage("HDIn", "preCalSimpleCube.HDOut");
+			AppendPass(std::move(pass));
 		}
-		//{
-		//	auto pass = std::make_unique<BufferClearPass>("clearRT3");
-		//	pass->SetSinkLinkage("buffer", "$.backbuffer");
-		//	AppendPass(std::move(pass));
-		//}
-		//SetSinkTarget("backbuffer", "clearRT.buffer");
 		Finalize();
+		Execute(gfx);
 	}
 }

@@ -19,10 +19,11 @@ namespace Rgph
 {
 	BlurOutlineRenderGraph::BlurOutlineRenderGraph( Graphics& gfx )
 		:
-		RenderGraph( gfx )
+		RenderGraph( gfx ),
+		prg(gfx)
 	{
-		//std::shared_ptr<Bind::RenderTarget> renderTarget = prg.pPreCalSimpleCube->pPreCalSimpleCube;
-		//AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("blurKernel", prg.pPreCalSimpleCube->renderTarget));
+		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMap", prg.pPreCalSimpleCube));
+		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMapBlur", prg.pPreCalBlurCube));
 		{
 			auto pass = std::make_unique<BufferClearPass>( "clearRT" );
 			pass->SetSinkLinkage( "buffer","$.backbuffer" );
@@ -39,7 +40,7 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<EnvironmentPass>(gfx, "environment");
-			//pass->SetSinkLinkage("cubeMapIn", "$.cubeMap");
+			pass->SetSinkLinkage("cubeMapIn", "$.cubeMap");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			pass->SetSinkLinkage("depthStencil", "clearDS.buffer");
 			AppendPass(std::move(pass));
@@ -207,9 +208,5 @@ namespace Rgph
 	{
 		dynamic_cast<ShadowMappingPass&>(FindPassByName( "shadowMap" )).BindShadowCamera( cam );
 		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindShadowCamera( cam );
-	}
-	void Rgph::BlurOutlineRenderGraph::RecivePreTextures(std::shared_ptr<Bind::ShaderInputRenderTarget> pPreTex)
-	{
-		AddGlobalSource(DirectBindableSource<Bind::ShaderInputRenderTarget>::Make("cubeMap", pPreTex));
 	}
 }
