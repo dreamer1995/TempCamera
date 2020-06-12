@@ -55,6 +55,13 @@ namespace Bind
 		GetContext( gfx )->GenerateMips( pTextureView.Get() );
 	}
 
+	Texture::Texture(Graphics& gfx, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureViewIn, UINT slot)
+		:
+		pTextureView(pTextureViewIn)
+	{
+		GetContext(gfx)->GenerateMips(pTextureView.Get());
+	}
+
 	void Texture::Bind( Graphics& gfx ) noxnd
 	{
 		INFOMAN_NOHR( gfx );

@@ -19,10 +19,9 @@ namespace Rgph
 {
 	BlurOutlineRenderGraph::BlurOutlineRenderGraph( Graphics& gfx )
 		:
-		RenderGraph( gfx ),
-		prg(gfx)
+		RenderGraph( gfx )
 	{
-		std::shared_ptr<Bind::RenderTarget> renderTarget = prg.pPreCalSimpleCube->pPreCalSimpleCube;
+		//std::shared_ptr<Bind::RenderTarget> renderTarget = prg.pPreCalSimpleCube->pPreCalSimpleCube;
 		//AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("blurKernel", prg.pPreCalSimpleCube->renderTarget));
 		{
 			auto pass = std::make_unique<BufferClearPass>( "clearRT" );

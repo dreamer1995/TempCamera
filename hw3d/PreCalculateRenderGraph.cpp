@@ -28,6 +28,5 @@ namespace Rgph
 		//}
 		//SetSinkTarget("backbuffer", "clearRT.buffer");
 		Finalize();
-		Execute(gfx);
 	}
 }
