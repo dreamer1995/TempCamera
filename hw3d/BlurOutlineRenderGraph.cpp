@@ -13,13 +13,17 @@
 #include "imgui/imgui.h"
 #include "ChiliMath.h"
 #include "EnvironmentPass.h"
+#include "PreCalSimpleCube.h"
 
 namespace Rgph
 {
 	BlurOutlineRenderGraph::BlurOutlineRenderGraph( Graphics& gfx )
 		:
-		RenderGraph( gfx )
+		RenderGraph( gfx ),
+		prg(gfx)
 	{
+		std::shared_ptr<Bind::RenderTarget> renderTarget = prg.pPreCalSimpleCube->pPreCalSimpleCube;
+		//AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("blurKernel", prg.pPreCalSimpleCube->renderTarget));
 		{
 			auto pass = std::make_unique<BufferClearPass>( "clearRT" );
 			pass->SetSinkLinkage( "buffer","$.backbuffer" );

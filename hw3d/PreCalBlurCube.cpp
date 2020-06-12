@@ -13,18 +13,24 @@ namespace Rgph
 		:
 		PreCubeCalculatePass(std::move(name), gfx)
 	{
-		AddBind(PixelShader::Resolve(gfx, "Solid_PS.cso"));
+		AddBind(PixelShader::Resolve(gfx, "SkyboxConvolutionPS.cso"));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear, true));
 
 		AddBindSink<Bind::RenderTarget>("HDIn");
 
-		renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 5u);
+		pPreCalBlurCube = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 5u, ShaderInputRenderTarget::Type::PreCalSimpleCube);
+		renderTarget = pPreCalBlurCube;
 	}
 
 	// see the note on HorizontalBlurPass::Execute
 	void PreCalBlurCube::Execute(Graphics& gfx) const noxnd
 	{
-		PreCubeCalculatePass::Execute(gfx);
+		for (short int i = 0; i < 6; i++)
+		{
+			gfx.SetCamera(viewmatrix[i]);
+			pPreCalBlurCube->targetIndex = i;
+			PreCubeCalculatePass::Execute(gfx);
+		}
 	}
 }

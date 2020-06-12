@@ -1,5 +1,4 @@
 #include "PreCalculateRenderGraph.h"
-//#include "BufferClearPass.h"
 
 namespace Rgph
 {
@@ -29,5 +28,6 @@ namespace Rgph
 		//}
 		//SetSinkTarget("backbuffer", "clearRT.buffer");
 		Finalize();
+		Execute(gfx);
 	}
 }

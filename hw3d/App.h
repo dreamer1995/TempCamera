@@ -11,7 +11,6 @@
 #include "ChiliMath.h"
 #include "SkyBox.h"
 #include "DirectionalLight.h"
-#include "PreCalculateRenderGraph.h"
 
 class App
 {
@@ -44,5 +43,4 @@ private:
 	DirectionalLight dLight;
 	bool savingDepth = false;
 	std::shared_ptr<Camera> pCam;
-	Rgph::PreCalculateRenderGraph prg{ wnd.Gfx() };
 };

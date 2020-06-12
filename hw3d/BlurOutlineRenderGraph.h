@@ -3,6 +3,7 @@
 #include <memory>
 #include "ConstantBuffersEx.h"
 #include "RenderTarget.h"
+#include "PreCalculateRenderGraph.h"
 
 class Graphics;
 class Camera;
@@ -38,5 +39,6 @@ namespace Rgph
 		float sigma = 2.0f;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> blurKernel;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> blurDirection;
+		Rgph::PreCalculateRenderGraph prg;
 	};
 }

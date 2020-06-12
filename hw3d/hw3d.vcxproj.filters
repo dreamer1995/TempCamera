@@ -811,5 +811,8 @@
     <FxCompile Include="PhongVSDirectional.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="SkyboxConvolutionPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

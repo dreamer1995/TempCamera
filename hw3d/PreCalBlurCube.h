@@ -1,6 +1,7 @@
 #pragma once
 #include "PreCubeCalculatePass.h"
-#include "ConstantBuffersEx.h"
+
+namespace dx = DirectX;
 
 class Graphics;
 namespace Bind
@@ -17,6 +18,15 @@ namespace Rgph
 		PreCalBlurCube(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight);
 		void Execute(Graphics& gfx) const noxnd override;
 	private:
-		//std::shared_ptr<Bind::CachingPixelConstantBufferEx> direction;
+		std::shared_ptr<Bind::ShaderInputRenderTarget> pPreCalBlurCube;
+		dx::XMMATRIX viewmatrix[6] =
+		{
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }),
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { -1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }),
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }, { 0.0f,0.0f,-1.0f }),
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,-1.0f,0.0f }, { 0.0f,0.0f,1.0f }),
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,1.0f }, { 0.0f,1.0f,0.0f }),
+			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-1.0f }, { 0.0f,1.0f,0.0f })
+		};
 	};
 }

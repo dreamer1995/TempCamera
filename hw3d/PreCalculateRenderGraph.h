@@ -7,7 +7,6 @@
 #include "PreCalSimpleCube.h"
 
 class Graphics;
-class Camera;
 namespace Bind
 {
 	class Bindable;
