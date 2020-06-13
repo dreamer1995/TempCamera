@@ -1,7 +1,7 @@
-#include "Constants.hlsl"
+#include "Constants.hlsli"
 
-#include "LightVectorData.hlsl"
-#include "Algorithms.hlsl"
+#include "LightVectorData.hlsli"
+#include "Algorithms.hlsli"
 
 cbuffer ObjectCBuf : register(b4)
 {

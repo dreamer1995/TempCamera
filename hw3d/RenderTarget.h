@@ -16,7 +16,8 @@ namespace Bind
 		{
 			Default,
 			PreCalSimpleCube,
-			PreCalMipCube
+			PreCalMipCube,
+			PreBRDFPlane
 		};
 	public:
 		void BindAsBuffer( Graphics& gfx ) noxnd override;
@@ -26,6 +27,7 @@ namespace Bind
 		void Clear( Graphics& gfx,const std::array<float,4>& color ) noxnd;
 		UINT GetWidth() const noexcept;
 		UINT GetHeight() const noexcept;
+		void ChangeMipSlice(Graphics& gfx, UINT i) noxnd;
 	private:
 		void BindAsBuffer( Graphics& gfx,ID3D11DepthStencilView* pDepthStencilView ) noxnd;
 	protected:
@@ -38,6 +40,8 @@ namespace Bind
 		UINT targetIndex = 0;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetView;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetCubeView[6];
+		float _width = 256.0f;
+		float _height = 256.0f;
 	};
 
 	class ShaderInputRenderTarget : public RenderTarget

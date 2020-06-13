@@ -4,10 +4,11 @@
 
 namespace Bind
 {
-	Sampler::Sampler( Graphics& gfx,Type type,bool reflect )
+	Sampler::Sampler(Graphics& gfx, Type type, UINT slot, bool reflect)
 		:
 		type( type ),
-		reflect( reflect )
+		reflect( reflect ),
+		slot(slot)
 	{
 		INFOMAN( gfx );
 
@@ -21,10 +22,23 @@ namespace Bind
 			case Type::Bilinear: return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 			}
 		}();
-		samplerDesc.AddressU = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressV = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressW = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
+		switch (type)
+		{
+		case Type::Clamp:
+		{
+			samplerDesc.AddressU = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_CLAMP;
+			samplerDesc.AddressV = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_CLAMP;
+			samplerDesc.AddressW = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_CLAMP;
+			break;
+		}
+		default:
+		{
+			samplerDesc.AddressU = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_WRAP;
+			samplerDesc.AddressV = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_WRAP;
+			samplerDesc.AddressW = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_WRAP;
+			samplerDesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
+		}
+		}
 
 		GFX_THROW_INFO( GetDevice( gfx )->CreateSamplerState( &samplerDesc,&pSampler ) );
 	}
@@ -32,19 +46,19 @@ namespace Bind
 	void Sampler::Bind( Graphics& gfx ) noxnd
 	{
 		INFOMAN_NOHR( gfx );
-		GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetSamplers( 0,1,pSampler.GetAddressOf() ) );
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetSamplers(slot, 1, pSampler.GetAddressOf()));
 	}
-	std::shared_ptr<Sampler> Sampler::Resolve( Graphics& gfx,Type type,bool reflect )
+	std::shared_ptr<Sampler> Sampler::Resolve(Graphics& gfx, Type type, UINT slot, bool reflect)
 	{
-		return Codex::Resolve<Sampler>( gfx,type,reflect );
+		return Codex::Resolve<Sampler>(gfx, type, slot, reflect);
 	}
-	std::string Sampler::GenerateUID( Type type,bool reflect )
+	std::string Sampler::GenerateUID(Type type, UINT slot, bool reflect)
 	{
 		using namespace std::string_literals;
-		return typeid(Sampler).name() + "#"s + std::to_string( (int)type ) + (reflect ? "R"s : "W"s);
+		return typeid(Sampler).name() + "#"s + std::to_string( (int)type ) + std::to_string((int)slot) + (reflect ? "R"s : "W"s);
 	}
 	std::string Sampler::GetUID() const noexcept
 	{
-		return GenerateUID( type,reflect );
+		return GenerateUID(type, slot, reflect);
 	}
 }

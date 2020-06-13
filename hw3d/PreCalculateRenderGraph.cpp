@@ -2,6 +2,7 @@
 #include "PreCalBlurCube.h"
 #include "PreCalMipCube.h"
 #include "PreCalSimpleCube.h"
+#include "PreCalLUTPlane.h"
 
 namespace Rgph
 {
@@ -24,6 +25,12 @@ namespace Rgph
 		{
 			auto pass = std::make_unique<PreCalMipCube>("preCalMipCube", gfx, 256u, 256u);
 			pass->SetSinkLinkage("HDIn", "preCalSimpleCube.HDOut");
+			pPreCalMipCube = pass->pPreCalMipCube;
+			AppendPass(std::move(pass));
+		}
+		{
+			auto pass = std::make_unique<PreCalLUTPlane>("preCalLUTPlane", gfx, gfx.GetWidth(), gfx.GetHeight());
+			pPreCalLUTPlane = pass->pPreCalLUTPlane;
 			AppendPass(std::move(pass));
 		}
 		Finalize();

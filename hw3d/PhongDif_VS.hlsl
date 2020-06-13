@@ -1,4 +1,4 @@
-#include "Constants.hlsl"
+#include "Constants.hlsli"
 
 struct VSIn
 {

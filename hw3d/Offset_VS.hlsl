@@ -1,4 +1,4 @@
-#include "Constants.hlsl"
+#include "Constants.hlsli"
 
 cbuffer Offset : register(b7)
 {

@@ -24,6 +24,8 @@ namespace Rgph
 	{
 		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMap", prg.pPreCalSimpleCube));
 		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMapBlur", prg.pPreCalBlurCube));
+		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMapMip", prg.pPreCalMipCube));
+		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("planeBRDFLUT", prg.pPreCalLUTPlane));
 		{
 			auto pass = std::make_unique<BufferClearPass>( "clearRT" );
 			pass->SetSinkLinkage( "buffer","$.backbuffer" );
@@ -48,6 +50,9 @@ namespace Rgph
 		{
 			auto pass = std::make_unique<LambertianPass>( gfx,"lambertian" );
 			pass->SetSinkLinkage( "shadowMap","shadowMap.map" );
+			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
+			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
+			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
 			pass->SetSinkLinkage( "renderTarget","environment.renderTarget" );
 			pass->SetSinkLinkage( "depthStencil","environment.depthStencil" );
 			AppendPass( std::move( pass ) );

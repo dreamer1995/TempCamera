@@ -11,16 +11,19 @@ namespace Bind
 			Anisotropic,
 			Bilinear,
 			Point,
+			Clamp
 		};
 	public:
-		Sampler( Graphics& gfx,Type type,bool reflect );
+		Sampler(Graphics& gfx, Type type, UINT slot, bool reflect);
 		void Bind( Graphics& gfx ) noxnd override;
-		static std::shared_ptr<Sampler> Resolve( Graphics& gfx,Type type = Type::Anisotropic,bool reflect = false );
-		static std::string GenerateUID( Type type,bool reflect );
+		static std::shared_ptr<Sampler> Resolve(Graphics& gfx, Type type = Type::Anisotropic, UINT slot = 0u, bool reflect = false);
+		static std::string GenerateUID( Type type, UINT slot, bool reflect );
 		std::string GetUID() const noexcept override;
 	protected:
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> pSampler;
 		Type type;
 		bool reflect;
+	private:
+		UINT slot;
 	};
 }

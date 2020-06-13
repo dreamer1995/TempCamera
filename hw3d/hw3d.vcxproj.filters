@@ -330,6 +330,12 @@
     <ClCompile Include="PreCalBlurCube.cpp">
       <Filter>Source Files\Jobber\Passlib</Filter>
     </ClCompile>
+    <ClCompile Include="PreCalLUTPlane.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSphere.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -641,9 +647,6 @@
     <ClInclude Include="DirectionalLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Constants.hlsl">
-      <Filter>Shader\Common</Filter>
-    </ClInclude>
     <ClInclude Include="PhongSphere.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
@@ -695,6 +698,15 @@
     <ClInclude Include="PreCalBlurCube.h">
       <Filter>Header Files\Jobber\Passlib</Filter>
     </ClInclude>
+    <ClInclude Include="Constants.hlsli">
+      <Filter>Shader\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PreCalLUTPlane.h">
+      <Filter>Header Files\Jobber\Passlib</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSphere.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -719,11 +731,14 @@
     <None Include="process.json">
       <Filter>Other</Filter>
     </None>
+    <None Include="Algorithms.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
+    <None Include="PBRHeader.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="LightVectorData.hlsl">
-      <Filter>Shader\Common</Filter>
-    </FxCompile>
     <FxCompile Include="PhongDifMskSpcNrm_PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
@@ -802,9 +817,6 @@
     <FxCompile Include="SphereToCubePS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Algorithms.hlsl">
-      <Filter>Shader\Common</Filter>
-    </FxCompile>
     <FxCompile Include="PhongPSDirectional.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
@@ -812,6 +824,24 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="SkyboxConvolutionPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PrefilterMapPixelShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="LightVectorData.hlsli">
+      <Filter>Shader\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="IntegrateBRDFPixelShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PBRVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PBRTexPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PBRPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

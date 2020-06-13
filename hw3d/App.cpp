@@ -46,6 +46,7 @@ App::App( const std::string& commandLine )
 	nano.LinkTechniques( rg );
 	skybox.LinkTechniques(rg);
 	cameras.LinkTechniques(rg);
+	sphere.LinkTechniques(rg);
 
 	//wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,400.0f ) );
 	rg.BindShadowCamera(*pointLight.ShareCamera());
@@ -274,12 +275,14 @@ void App::DoFrame( float dt )
 	sponza.Submit(Chan::main);
 	gobber.Submit(Chan::main);
 	nano.Submit(Chan::main);
-	
+	sphere.Submit(Chan::main);
+
 	sponza.Submit(Chan::shadow);
 	gobber.Submit(Chan::shadow);
 	nano.Submit(Chan::shadow);
 	cube.Submit(Chan::shadow);
 	cube2.Submit(Chan::shadow);
+	sphere.Submit(Chan::shadow);
 
 	rg.Execute( wnd.Gfx() );
 	
@@ -303,6 +306,7 @@ void App::DoFrame( float dt )
 	cube.SpawnControlWindow( wnd.Gfx(),"Cube 1" );
 	cube2.SpawnControlWindow( wnd.Gfx(),"Cube 2" );
 	skybox.SpawnControlWindow(wnd.Gfx(), "SkyBox");
+	sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
 
 	rg.RenderWidgets( wnd.Gfx() );
 

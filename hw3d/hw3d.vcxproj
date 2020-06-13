@@ -101,6 +101,7 @@
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="PreCalBlurCube.cpp" />
     <ClCompile Include="PreCalculateRenderGraph.cpp" />
+    <ClCompile Include="PreCalLUTPlane.cpp" />
     <ClCompile Include="PreCalMipCube.cpp" />
     <ClCompile Include="PreCalSimpleCube.cpp" />
     <ClCompile Include="PreCubeCalculatePass.cpp" />
@@ -168,7 +169,15 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="LightVectorData.hlsl">
+    <FxCompile Include="IntegrateBRDFPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="LightVectorData.hlsli">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
@@ -180,6 +189,28 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="PBRPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="PBRTexPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="PBRVS.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
@@ -233,6 +264,14 @@
     <FxCompile Include="PhongVSDirectional.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="PrefilterMapPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
@@ -315,6 +354,7 @@
     <ClCompile Include="Testing.cpp" />
     <ClCompile Include="TestPlane.cpp" />
     <ClCompile Include="ScaleOutlineRenderGraph.cpp" />
+    <ClCompile Include="TestSphere.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TexturePreprocessor.cpp" />
     <ClCompile Include="Topology.cpp" />
@@ -352,6 +392,7 @@
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="PreCalBlurCube.h" />
     <ClInclude Include="PreCalculateRenderGraph.h" />
+    <ClInclude Include="PreCalLUTPlane.h" />
     <ClInclude Include="PreCalMipCube.h" />
     <ClInclude Include="PreCalSimpleCube.h" />
     <ClInclude Include="PreCubeCalculatePass.h" />
@@ -422,6 +463,7 @@
     <ClInclude Include="Testing.h" />
     <ClInclude Include="TestModelProbe.h" />
     <ClInclude Include="ScaleOutlineRenderGraph.h" />
+    <ClInclude Include="TestSphere.h" />
     <ClInclude Include="TexturePreprocessor.h" />
     <ClInclude Include="TestCube.h" />
     <ClInclude Include="Drawable.h" />
@@ -473,9 +515,15 @@
     <Image Include="chili.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Algorithms.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="DXGetErrorDescription.inl" />
     <None Include="DXGetErrorString.inl" />
     <None Include="DXTrace.inl" />
+    <None Include="PBRHeader.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="process.json" />
   </ItemGroup>
   <ItemGroup>
@@ -519,7 +567,7 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\ShaderBins\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
-    <ClInclude Include="Constants.hlsl">
+    <ClInclude Include="Constants.hlsli">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
@@ -528,12 +576,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <FileType>Document</FileType>
     </ClInclude>
-    <FxCompile Include="Algorithms.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
     <FxCompile Include="Solid_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>

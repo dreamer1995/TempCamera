@@ -15,11 +15,11 @@ namespace Rgph
 	{
 		AddBind(PixelShader::Resolve(gfx, "SkyboxConvolutionPS.cso"));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
-		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear, true));
+		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear));
 
 		AddBindSink<Bind::RenderTarget>("HDIn");
 
-		pPreCalBlurCube = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 5u, ShaderInputRenderTarget::Type::PreCalSimpleCube);
+		pPreCalBlurCube = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 11u, ShaderInputRenderTarget::Type::PreCalSimpleCube);
 		renderTarget = pPreCalBlurCube;
 	}
 

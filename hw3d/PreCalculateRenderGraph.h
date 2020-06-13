@@ -19,6 +19,7 @@ namespace Rgph
 	public:
 		std::shared_ptr<Bind::RenderTarget> pPreCalSimpleCube;
 		std::shared_ptr<Bind::RenderTarget> pPreCalBlurCube;
-		//std::unique_ptr<PreCalMipCube> pPreCalMipCube;
+		std::shared_ptr<Bind::RenderTarget> pPreCalMipCube;
+		std::shared_ptr<Bind::RenderTarget> pPreCalLUTPlane;
 	};
 }

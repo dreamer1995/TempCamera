@@ -11,6 +11,7 @@
 #include "ChiliMath.h"
 #include "SkyBox.h"
 #include "DirectionalLight.h"
+#include "TestSphere.h"
 
 class App
 {
@@ -43,4 +44,5 @@ private:
 	DirectionalLight dLight;
 	bool savingDepth = false;
 	std::shared_ptr<Camera> pCam;
+	TestSphere sphere{ wnd.Gfx(),4.0f };
 };

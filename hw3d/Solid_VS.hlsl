@@ -1,4 +1,4 @@
-#include "Constants.hlsl"
+#include "Constants.hlsli"
 
 float4 main(float3 pos : Position) : SV_Position
 {

@@ -29,6 +29,9 @@ namespace Rgph
 			RegisterSink( DirectBufferSink<RenderTarget>::Make( "renderTarget",renderTarget ) );
 			RegisterSink( DirectBufferSink<DepthStencil>::Make( "depthStencil",depthStencil ) );
 			AddBindSink<Bind::Bindable>( "shadowMap" );
+			AddBindSink<ShaderInputRenderTarget>("cubeMapBlurIn");
+			AddBindSink<ShaderInputRenderTarget>("cubeMapMipIn");
+			AddBindSink<ShaderInputRenderTarget>("planeBRDFLUTIn");
 			RegisterSource( DirectBufferSource<RenderTarget>::Make( "renderTarget",renderTarget ) );
 			RegisterSource( DirectBufferSource<DepthStencil>::Make( "depthStencil",depthStencil ) );
 			AddBind( Stencil::Resolve( gfx,Stencil::Mode::Off ) );
