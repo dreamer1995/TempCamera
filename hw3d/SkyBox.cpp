@@ -65,7 +65,7 @@ void SkyBox::SetRotation(float roll, float pitch, float yaw) noexcept
 
 DirectX::XMMATRIX SkyBox::GetTransformXM() const noexcept
 {
-	return DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) *
+	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
 		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 

@@ -13,6 +13,7 @@ public:
 	void SpawnControlWindow(Graphics& gfx, const char* name) noexcept;
 private:
 	DirectX::XMFLOAT3 pos = { 1.0f,1.0f,1.0f };
+public:
 	float roll = 0.0f;
 	float pitch = 0.0f;
 	float yaw = 0.0f;

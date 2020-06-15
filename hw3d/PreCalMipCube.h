@@ -29,6 +29,7 @@ namespace Rgph
 			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,1.0f }, { 0.0f,1.0f,0.0f }),
 			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-1.0f }, { 0.0f,1.0f,0.0f })
 		};
+	private:
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> roughness;
 	};
 }

@@ -1,7 +1,6 @@
 #include "TestSphere.h"
 #include "Sphere.h"
 #include "BindableCommon.h"
-#include "ConstantBuffersEx.h"
 #include "imgui/imgui.h"
 #include "DynamicConstant.h"
 #include "TechniqueProbe.h"
@@ -51,13 +50,16 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 			lay.Add<Dcb::Float>("metallic");
 			lay.Add<Dcb::Bool>("useNormalMap");
 			lay.Add<Dcb::Float>("normalMapWeight");
+			lay.Add<Dcb::Matrix>("EVRotation");
 			auto buf = Dcb::Buffer(std::move(lay));
 			buf["baseColor"] = dx::XMFLOAT3{ 1.0f,1.0f,1.0f };
 			buf["roughness"] = 0.0f;
 			buf["metallic"] = 0.0f;
 			buf["useNormalMap"] = false;
 			buf["normalMapWeight"] = 1.0f;
-			only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 4u));
+			dx::XMStoreFloat4x4(&buf["EVRotation"], dx::XMMatrixIdentity());
+			cBuf = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 4u);
+			only.AddBindable(cBuf);
 
 			only.AddBindable(Rasterizer::Resolve(gfx, false));
 
@@ -209,4 +211,11 @@ void TestSphere::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 		Accept(probe);
 	}
 	ImGui::End();
+}
+
+void TestSphere::UpdateENV(float pitch, float yaw, float roll) noexcept
+{
+	auto k = cBuf->GetBuffer();
+	DirectX::XMStoreFloat4x4(&k["EVRotation"], DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll));
+	cBuf->SetBuffer(k);
 }

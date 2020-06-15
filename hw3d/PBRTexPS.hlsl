@@ -15,6 +15,7 @@ cbuffer ObjectCBuf : register(b4)
 	float metallic;
 	bool useNormalMap;
 	float normalMapWeight;
+	matrix EVRotation;
 };
 
 struct PSIn {
@@ -46,8 +47,8 @@ float4 main(PSIn i) : SV_Target
 	const float NdotL = max(dot(normal, direction), 0.0f);
 	const float3 halfDir = normalize(direction + viewDir);
 	float NdotH = max(dot(normal, halfDir), 0.0f);
-	//float3 rotatedNormal = normalize(mul(i.normal, (float3x3)EVRotation));
-	float3 R = reflect(-viewDir, normal);
+	float3 rotatedNormal = normalize(mul(i.normal, (float3x3)EVRotation));
+	float3 R = reflect(normalize(mul(-viewDir, (float3x3)EVRotation)), rotatedNormal);
 	//float3 albedo = tex.Sample(splr, i.uv).rgb * color;
 	//float3(1.0f, 0.0f, 0.0f)
 	
@@ -81,7 +82,7 @@ float4 main(PSIn i) : SV_Target
 	float3 iKS = FresnelSchlickRoughness(NdotV, F0, fRoughness);
 	float3 iKD = 1.0 - iKS;
 	iKD *= 1.0 - fMetallic;
-	float3 irradiance = pow(SkyMap.Sample(splr, normal).rgb, 2.2f);
+	float3 irradiance = pow(SkyMap.Sample(splr, rotatedNormal).rgb, 2.2f);
 	float3 iDiffuse = irradiance * albedo;
 
 	const float MAX_REF_LOD = 4.0f;

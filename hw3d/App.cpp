@@ -275,6 +275,7 @@ void App::DoFrame( float dt )
 	sponza.Submit(Chan::main);
 	gobber.Submit(Chan::main);
 	nano.Submit(Chan::main);
+	sphere.UpdateENV(skybox.pitch, skybox.yaw, skybox.roll);
 	sphere.Submit(Chan::main);
 
 	sponza.Submit(Chan::shadow);
