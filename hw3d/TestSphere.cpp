@@ -136,7 +136,7 @@ void TestSphere::SetRotation(float roll, float pitch, float yaw) noexcept
 
 DirectX::XMMATRIX TestSphere::GetTransformXM() const noexcept
 {
-	return DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) *
+	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
 		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
@@ -149,9 +149,9 @@ void TestSphere::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 		ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f, "%.1f");
 		ImGui::SliderFloat("Z", &pos.z, -80.0f, 80.0f, "%.1f");
 		ImGui::Text("Orientation");
-		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
 		ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
+		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 
 		class Probe : public TechniqueProbe
 		{

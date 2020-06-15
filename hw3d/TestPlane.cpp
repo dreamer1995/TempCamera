@@ -49,8 +49,8 @@ void TestPlane::SetRotation( float roll,float pitch,float yaw ) noexcept
 
 DirectX::XMMATRIX TestPlane::GetTransformXM() const noexcept
 {
-	return DirectX::XMMatrixRotationRollPitchYaw( roll,pitch,yaw ) *
-		DirectX::XMMatrixTranslation( pos.x,pos.y,pos.z );
+	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
+		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
 void TestPlane::SpawnControlWindow( Graphics& gfx,const std::string& name ) noexcept
