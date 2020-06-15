@@ -42,10 +42,10 @@ float4 main(PSIn i) : SV_Target
 
 	const float3 viewDir = normalize(cameraPos - i.worldPos);
 	//PBR Start
-	const float NdotV = max(dot(i.normal, viewDir), 0.0f);
-	const float NdotL = max(dot(i.normal, direction), 0.0f);
+	const float NdotV = max(dot(normal, viewDir), 0.0f);
+	const float NdotL = max(dot(normal, direction), 0.0f);
 	const float3 halfDir = normalize(direction + viewDir);
-	float NdotH = max(dot(i.normal, halfDir), 0.0f);
+	float NdotH = max(dot(normal, halfDir), 0.0f);
 	//float3 rotatedNormal = normalize(mul(i.normal, (float3x3)EVRotation));
 	float3 R = reflect(-viewDir, normal);
 	//float3 albedo = tex.Sample(splr, i.uv).rgb * color;

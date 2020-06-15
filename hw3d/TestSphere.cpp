@@ -188,11 +188,11 @@ void TestSphere::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 				}
 				if (auto v = buf["roughness"]; v.Exists())
 				{
-					dcheck(ImGui::SliderFloat(tag("Roughness"), &v, 0.0f, 1.0f, "%.1f", 1.0f));
+					dcheck(ImGui::SliderFloat(tag("Roughness"), &v, 0.0f, 1.0f, "%.3f", 1.0f));
 				}
 				if (auto v = buf["metallic"]; v.Exists())
 				{
-					dcheck(ImGui::SliderFloat(tag("Metallic"), &v, 0.0f, 1.0f, "%.1f", 1.0f));
+					dcheck(ImGui::SliderFloat(tag("Metallic"), &v, 0.0f, 1.0f, "%.3f", 1.0f));
 				}
 				if (auto v = buf["useNormalMap"]; v.Exists())
 				{
