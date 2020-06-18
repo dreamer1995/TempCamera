@@ -45,7 +45,7 @@ Frustum::Frustum( Graphics& gfx,float width,float height,float nearZ,float farZ 
 	pTopology = Topology::Resolve( gfx,D3D11_PRIMITIVE_TOPOLOGY_LINELIST );
 
 	{
-		Technique line{ Chan::main };
+		Technique line{ "Shade",Chan::main,false };
 		{
 			Step unoccluded( "lambertian" );
 

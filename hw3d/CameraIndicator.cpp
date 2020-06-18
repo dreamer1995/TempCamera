@@ -62,7 +62,7 @@ CameraIndicator::CameraIndicator( Graphics& gfx )
 	pTopology = Topology::Resolve( gfx,D3D11_PRIMITIVE_TOPOLOGY_LINELIST );
 
 	{
-		Technique line{ Chan::main };
+		Technique line{ "Shade",Chan::main,false };
 		Step only( "lambertian" );
 
 		auto pvs = VertexShader::Resolve( gfx,"Solid_VS.cso" );
