@@ -18,6 +18,7 @@ namespace Bind
 
 	void Rasterizer::Bind( Graphics& gfx ) noxnd
 	{
+		ChangeFillMode(gfx);
 		INFOMAN_NOHR( gfx );
 		GFX_THROW_INFO_ONLY( GetContext( gfx )->RSSetState( pRasterizer.Get() ) );
 	}
@@ -34,5 +35,22 @@ namespace Bind
 	std::string Rasterizer::GetUID() const noexcept
 	{
 		return GenerateUID( twoSided );
+	}
+
+	void Rasterizer::ChangeFillMode(Graphics& gfx) noxnd
+	{
+		INFOMAN(gfx);
+		D3D11_RASTERIZER_DESC rasterDesc = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT{});
+		if (gfx.isWireFrame)
+		{
+			rasterDesc.CullMode = D3D11_CULL_NONE;
+			rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+		}
+		else
+		{
+			rasterDesc.CullMode = twoSided ? D3D11_CULL_NONE : D3D11_CULL_BACK;
+			rasterDesc.FillMode = D3D11_FILL_SOLID;
+		}
+		GFX_THROW_INFO(GetDevice(gfx)->CreateRasterizerState(&rasterDesc, &pRasterizer));
 	}
 }

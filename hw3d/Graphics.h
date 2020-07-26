@@ -88,4 +88,6 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 	std::shared_ptr<Bind::RenderTarget> pTarget;
+public:
+	bool isWireFrame = false;
 };

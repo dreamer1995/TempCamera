@@ -54,8 +54,6 @@ App::App( const std::string& commandLine )
 
 void App::HandleInput( float dt )
 {
-	static bool isWireframe = false;
-
 	static bool isRotate = true;
 
 	while( const auto e = wnd.kbd.ReadKey() )
@@ -82,11 +80,11 @@ void App::HandleInput( float dt )
 		case VK_F1:
 			showDemoWindow = true;
 			break;
-		case VK_F3:
-			isWireframe = true;
-			break;
+		//case VK_F3:
+		//	isWireframe = true;
+		//	break;
 		case VK_F4:
-			isWireframe = false;
+			wnd.Gfx().isWireFrame = !wnd.Gfx().isWireFrame;
 			break;
 		//case VK_F5:
 		//	if (uvPannel->showUV)
