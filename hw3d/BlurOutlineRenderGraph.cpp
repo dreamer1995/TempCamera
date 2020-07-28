@@ -41,25 +41,25 @@ namespace Rgph
 			AppendPass( std::move( pass ) );
 		}
 		{
-			auto pass = std::make_unique<EnvironmentPass>(gfx, "environment");
-			pass->SetSinkLinkage("cubeMapIn", "$.cubeMap");
-			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
-			pass->SetSinkLinkage("depthStencil", "clearDS.buffer");
-			AppendPass(std::move(pass));
-		}
-		{
 			auto pass = std::make_unique<LambertianPass>( gfx,"lambertian" );
 			pass->SetSinkLinkage( "shadowMap","shadowMap.map" );
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
-			pass->SetSinkLinkage( "renderTarget","environment.renderTarget" );
-			pass->SetSinkLinkage( "depthStencil","environment.depthStencil" );
+			pass->SetSinkLinkage( "renderTarget","clearRT.buffer" );
+			pass->SetSinkLinkage( "depthStencil","clearDS.buffer" );
 			AppendPass( std::move( pass ) );
 		}
 		{
+			auto pass = std::make_unique<EnvironmentPass>(gfx, "environment");
+			pass->SetSinkLinkage("cubeMapIn", "$.cubeMap");
+			pass->SetSinkLinkage("renderTarget", "lambertian.renderTarget");
+			pass->SetSinkLinkage("depthStencil", "lambertian.depthStencil");
+			AppendPass(std::move(pass));
+		}
+		{
 			auto pass = std::make_unique<OutlineMaskGenerationPass>( gfx,"outlineMask" );
-			pass->SetSinkLinkage( "depthStencil","lambertian.depthStencil" );
+			pass->SetSinkLinkage( "depthStencil","environment.depthStencil" );
 			AppendPass( std::move( pass ) );
 		}
 
@@ -97,7 +97,7 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<VerticalBlurPass>( "vertical",gfx );
-			pass->SetSinkLinkage( "renderTarget","lambertian.renderTarget" );
+			pass->SetSinkLinkage( "renderTarget","environment.renderTarget" );
 			pass->SetSinkLinkage( "depthStencil","outlineMask.depthStencil" );
 			pass->SetSinkLinkage( "scratchIn","horizontal.scratchOut" );
 			pass->SetSinkLinkage( "kernel","$.blurKernel" );
