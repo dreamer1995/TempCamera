@@ -336,6 +336,9 @@
     <ClCompile Include="TestSphere.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="WaterPlane.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -705,6 +708,9 @@
       <Filter>Header Files\Jobber\Passlib</Filter>
     </ClInclude>
     <ClInclude Include="TestSphere.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterPlane.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
   </ItemGroup>
