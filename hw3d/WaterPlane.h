@@ -9,8 +9,7 @@ public:
 	void SetRotation(float roll, float pitch, float yaw) noexcept;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 	void SpawnControlWindow(Graphics& gfx) noexcept;
-	void ChangeSphereMaterialState(Graphics& gfx, float pitch, float yaw, float roll) noexcept;
-	void Bind(Graphics& gfx, float deltaTime) noexcept;
+	void UpdateENV(float pitch, float yaw, float roll) noexcept;
 public:
 	struct VSMaterialConstant
 	{
@@ -28,27 +27,10 @@ public:
 		float depth = 1.0f;
 		float padding[2];
 	} vmc;
-	struct PSMaterialConstant
-	{
-		/*float specularIntensity = 0.18f;
-		float specularPower = 18.0f;
-		BOOL normalMappingEnabled = TRUE;
-		float padding[1];*/
-		float metallic = 0.572f;
-		float roughness = 0.321f;
-		BOOL normalMappingEnabled = TRUE;
-		DirectX::XMMATRIX EVRotation = DirectX::XMMatrixIdentity();
-		float time = 0.0f;
-		float speed = 0.25f;
-		float depth = 2.471;
-		float tilling = 1.0f;
-		float flatten1 = 0.182f;
-		float flatten2 = 0.0f;
-		float padding[3];
-	} pmc;
 private:
 	DirectX::XMFLOAT3 pos = { 0.0f,0.0f,0.0f };
 	float roll = 0.0f;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
+	std::shared_ptr<Bind::CachingPixelConstantBufferEx> cBuf;
 };

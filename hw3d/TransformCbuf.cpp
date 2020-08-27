@@ -35,7 +35,6 @@ namespace Bind
 		assert( pParent != nullptr );
 		pVcbuf->Update( gfx,tf );
 		pVcbuf->Bind( gfx );
-		assert(pParent != nullptr);
 		pPcbuf->Update(gfx, tf);
 		pPcbuf->Bind(gfx);
 	}

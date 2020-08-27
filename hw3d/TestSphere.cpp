@@ -186,7 +186,7 @@ void TestSphere::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 				}
 				if (auto v = buf["baseColor"]; v.Exists())
 				{
-					dcheck(ImGui::ColorPicker4(tag("OutLineColor"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
+					dcheck(ImGui::ColorPicker4(tag("BaseColor"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
 				}
 				if (auto v = buf["roughness"]; v.Exists())
 				{
