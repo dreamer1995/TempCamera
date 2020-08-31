@@ -391,6 +391,7 @@
     <ClInclude Include="CameraIndicator.h" />
     <ClInclude Include="Channels.h" />
     <ClInclude Include="Frustum.h" />
+    <ClInclude Include="LambertianPass_Water.h" />
     <ClInclude Include="PreCalBlurCube.h" />
     <ClInclude Include="PreCalculateRenderGraph.h" />
     <ClInclude Include="PreCalLUTPlane.h" />
@@ -505,6 +506,7 @@
     <ClInclude Include="VertexShader.h" />
     <ClInclude Include="VerticalBlurPass.h" />
     <ClInclude Include="WaterPlane.h" />
+    <ClInclude Include="WaterPre.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsMessageMap.h" />
     <ClInclude Include="WindowsThrowMacros.h" />

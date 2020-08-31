@@ -14,6 +14,8 @@
 #include "ChiliMath.h"
 #include "EnvironmentPass.h"
 #include "PreCalSimpleCube.h"
+#include "WaterPre.h"
+#include "LambertianPass_Water.h"
 
 namespace Rgph
 {
@@ -62,8 +64,23 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
+			auto pass = std::make_unique<WaterPrePass>(gfx, "waterPre", gfx.GetWidth(), gfx.GetWidth());
+			AppendPass(std::move(pass));
+		}
+		{
+			auto pass = std::make_unique<LambertianPass_Water>(gfx, "water");
+			pass->SetSinkLinkage("shadowMap", "shadowMap.map");
+			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
+			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
+			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
+			pass->SetSinkLinkage("waterMap", "waterPre.waterPreOut");
+			pass->SetSinkLinkage("renderTarget", "environment.renderTarget");
+			pass->SetSinkLinkage("depthStencil", "environment.depthStencil");
+			AppendPass(std::move(pass));
+		}
+		{
 			auto pass = std::make_unique<OutlineMaskGenerationPass>( gfx,"outlineMask" );
-			pass->SetSinkLinkage( "depthStencil","environment.depthStencil" );
+			pass->SetSinkLinkage( "depthStencil","water.depthStencil" );
 			AppendPass( std::move( pass ) );
 		}
 
@@ -101,7 +118,7 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<VerticalBlurPass>( "vertical",gfx );
-			pass->SetSinkLinkage( "renderTarget","environment.renderTarget" );
+			pass->SetSinkLinkage( "renderTarget","water.renderTarget" );
 			pass->SetSinkLinkage( "depthStencil","outlineMask.depthStencil" );
 			pass->SetSinkLinkage( "scratchIn","horizontal.scratchOut" );
 			pass->SetSinkLinkage( "kernel","$.blurKernel" );
@@ -212,10 +229,12 @@ namespace Rgph
 	{
 		dynamic_cast<EnvironmentPass&>(FindPassByName("environment")).BindMainCamera(cam);
 		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindMainCamera( cam );
+		dynamic_cast<LambertianPass&>(FindPassByName("water")).BindMainCamera(cam);
 	}
 	void Rgph::BlurOutlineRenderGraph::BindShadowCamera( Camera& cam )
 	{
 		dynamic_cast<ShadowMappingPass&>(FindPassByName( "shadowMap" )).BindShadowCamera( cam );
 		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindShadowCamera( cam );
+		dynamic_cast<LambertianPass&>(FindPassByName("water")).BindShadowCamera(cam);
 	}
 }

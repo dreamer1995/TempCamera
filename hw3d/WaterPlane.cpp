@@ -26,15 +26,15 @@ WaterPlane::WaterPlane(Graphics& gfx, float size)
 	{
 		Technique shade("Shade", Chan::main);
 		{
-			Step only("lambertian");
+			Step only("water");
 
 			only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
 			only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
 			only.AddBindable(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
-			only.AddBindable(Texture::Resolve(gfx, "", 3u));
+			//AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('C')));
 			only.AddBindable(Texture::Resolve(gfx, "Images\\DesertSand_albedo.jpg", 4u));
 			only.AddBindable(Texture::Resolve(gfx, "Images\\white.jpg", 5u));
-			only.AddBindable(Texture::Resolve(gfx, "", 6u));
+			//AddBind(TexturePre::Resolve(gfx, 6u, gfx.GetShaderResourceView('N')));
 			//AddBind(Texture::Resolve(gfx, "Images\\white.jpg", 30u, false, true));
 
 			only.AddBindable(Sampler::Resolve(gfx));

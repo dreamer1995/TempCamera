@@ -221,14 +221,13 @@ namespace Bind
 		switch (type)
 		{
 		case Type::PreCalSimpleCube:
-			srvDesc.Texture2D.MipLevels = 1;
+			srvDesc.TextureCube.MipLevels = 1;
 			break;
 		case Type::PreCalMipCube:
 			srvDesc.TextureCube.MipLevels = 5;
 			break;
-		case Type::PreBRDFPlane:
 		default:
-			srvDesc.TextureCube.MipLevels = 1;
+			srvDesc.Texture2D.MipLevels = 1;
 		}
 
 		wrl::ComPtr<ID3D11Resource> pRes;

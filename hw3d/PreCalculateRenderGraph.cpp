@@ -12,7 +12,7 @@ namespace Rgph
 	{
 		gfx.SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 400.0f));
 		{
-			auto pass = std::make_unique<PreCalSimpleCube>("preCalSimpleCube", gfx, gfx.GetWidth(), gfx.GetHeight());
+			auto pass = std::make_unique<PreCalSimpleCube>("preCalSimpleCube", gfx, gfx.GetWidth(), gfx.GetWidth());
 			pPreCalSimpleCube = pass->pPreCalSimpleCube;
 			AppendPass(std::move(pass));
 		}
