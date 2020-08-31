@@ -12,17 +12,17 @@ class Graphics;
 
 namespace Rgph
 {
-	class WaterPrePass : public RenderQueuePass
+	class WaterCaustics : public RenderQueuePass
 	{
 	public:
-		WaterPrePass(Graphics& gfx, std::string name, unsigned int fullWidth, unsigned int fullHeight)
+		WaterCaustics(Graphics& gfx, std::string name, unsigned int fullWidth, unsigned int fullHeight)
 			:
 			RenderQueuePass(std::move(name))
 		{
 			using namespace Bind;
 			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 3u);
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));
-			RegisterSource(DirectBindableSource<Bind::RenderTarget>::Make("waterPreOut", renderTarget));
+			RegisterSource(DirectBindableSource<Bind::RenderTarget>::Make("waterCausticOut", renderTarget));
 		}
 		//void BindMainCamera(const Camera& cam) noexcept
 		//{

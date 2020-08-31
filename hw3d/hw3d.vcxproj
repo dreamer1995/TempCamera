@@ -505,6 +505,7 @@
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexShader.h" />
     <ClInclude Include="VerticalBlurPass.h" />
+    <ClInclude Include="WaterCaustics.h" />
     <ClInclude Include="WaterPlane.h" />
     <ClInclude Include="WaterPre.h" />
     <ClInclude Include="Window.h" />

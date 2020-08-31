@@ -16,6 +16,7 @@
 #include "PreCalSimpleCube.h"
 #include "WaterPre.h"
 #include "LambertianPass_Water.h"
+#include "WaterCaustics.h"
 
 namespace Rgph
 {
@@ -68,12 +69,17 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
+			auto pass = std::make_unique<WaterCaustics>(gfx, "waterCaustic", gfx.GetWidth(), gfx.GetWidth());
+			AppendPass(std::move(pass));
+		}
+		{
 			auto pass = std::make_unique<LambertianPass_Water>(gfx, "water");
 			pass->SetSinkLinkage("shadowMap", "shadowMap.map");
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
-			pass->SetSinkLinkage("waterMap", "waterPre.waterPreOut");
+			pass->SetSinkLinkage("waterPreMap", "waterPre.waterPreOut");
+			pass->SetSinkLinkage("waterCausticMap", "waterCaustic.waterCausticOut");
 			pass->SetSinkLinkage("renderTarget", "environment.renderTarget");
 			pass->SetSinkLinkage("depthStencil", "environment.depthStencil");
 			AppendPass(std::move(pass));
