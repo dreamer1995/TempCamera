@@ -20,7 +20,7 @@ namespace Rgph
 			RenderQueuePass(std::move(name))
 		{
 			using namespace Bind;
-			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 3u);
+			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 6u);
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));
 			RegisterSource(DirectBindableSource<Bind::RenderTarget>::Make("waterCausticOut", renderTarget));
 		}

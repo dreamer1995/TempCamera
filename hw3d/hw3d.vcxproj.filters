@@ -339,6 +339,9 @@
     <ClCompile Include="WaterPlane.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="PrePlaneCalculatePass.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -721,6 +724,9 @@
     </ClInclude>
     <ClInclude Include="WaterCaustics.h">
       <Filter>Header Files\Jobber\Passlib</Filter>
+    </ClInclude>
+    <ClInclude Include="PrePlaneCalculatePass.h">
+      <Filter>Header Files\Jobber\Passlib\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

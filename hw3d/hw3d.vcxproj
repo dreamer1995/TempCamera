@@ -105,6 +105,7 @@
     <ClCompile Include="PreCalMipCube.cpp" />
     <ClCompile Include="PreCalSimpleCube.cpp" />
     <ClCompile Include="PreCubeCalculatePass.cpp" />
+    <ClCompile Include="PrePlaneCalculatePass.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="ShadowCameraCBuf.cpp" />
     <ClCompile Include="ShadowSampler.cpp" />
@@ -398,6 +399,7 @@
     <ClInclude Include="PreCalMipCube.h" />
     <ClInclude Include="PreCalSimpleCube.h" />
     <ClInclude Include="PreCubeCalculatePass.h" />
+    <ClInclude Include="PrePlaneCalculatePass.h" />
     <ClInclude Include="Projection.h" />
     <ClInclude Include="ShadowCameraCBuf.h" />
     <ClInclude Include="ShadowMappingPass.h" />
