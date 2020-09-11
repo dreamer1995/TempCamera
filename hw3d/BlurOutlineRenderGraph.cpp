@@ -43,10 +43,6 @@ namespace Rgph
 			auto pass = std::make_unique<ShadowMappingPass>( gfx,"shadowMap" );
 			AppendPass( std::move( pass ) );
 		}
-		//{
-		//	auto pass = std::make_unique<ShadowMappingPass>(gfx, "shadowMap");
-		//	AppendPass(std::move(pass));
-		//}
 		{
 			auto pass = std::make_unique<LambertianPass>( gfx,"lambertian" );
 			pass->SetSinkLinkage( "shadowMap","shadowMap.map" );
