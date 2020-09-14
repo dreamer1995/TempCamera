@@ -4,23 +4,12 @@
 #include <vector>
 #include "Sink.h"
 #include "Source.h"
-#include "Stencil.h"
 #include "Camera.h"
-#include "DepthStencil.h"
-#include "Sampler.h"
-#include "Texture.h"
-#include "BindingPass.h"
 #include "ConstantBuffers.h"
-#include "Bindable.h"
+#include "BindableCommon.h"
 #include "Cube.h"
 
-namespace Bind
-{
-	class IndexBuffer;
-	class VertexBuffer;
-	class Topology;
-	class InputLayout;
-}
+using namespace Bind;
 
 class Graphics;
 
@@ -33,32 +22,29 @@ namespace Rgph
 			:
 			RenderQueuePass(std::move(name))
 		{
-			pVcbuf = std::make_unique<Bind::VertexConstantBuffer<Transforms>>(gfx, 0u);
+			pVcbuf = std::make_unique<VertexConstantBuffer<Transforms>>(gfx, 0u);
 			auto model = Cube::MakeIndependentSimple();
-			AddBind(Bind::VertexBuffer::Resolve(gfx, "$preskybox", model.vertices));
-			AddBind(Bind::IndexBuffer::Resolve(gfx, "$preskybox", model.indices));
-			auto pvs = Bind::VertexShader::Resolve(gfx, "CausticBakeNVS.cso");
-			auto pvsbc = pvs->GetBytecode();
-			AddBind(std::move(pvs));
+			AddBind(VertexBuffer::Resolve(gfx, "$waterpre", model.vertices));
+			AddBind(IndexBuffer::Resolve(gfx, "$waterpre", model.indices));
 
-			AddBind(Bind::Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
-			AddBind(Bind::Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
-			AddBind(Bind::Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
-
-			auto vs = Bind::VertexShader::Resolve(gfx, "SkyBoxVS.cso");
-			AddBind(Bind::InputLayout::Resolve(gfx, model.vertices.GetLayout(), *vs));
+			auto vs = VertexShader::Resolve(gfx, "CausticBakeNVS.cso");
+			AddBind(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *vs));
 			AddBind(std::move(vs));
-			AddBind(Bind::Topology::Resolve(gfx));
+
+			AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
+			AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
+			AddBind(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
+
+			AddBind(Topology::Resolve(gfx));
 			AddBind(PixelShader::Resolve(gfx, "SphereToCubePS.cso"));
 			AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear));
-			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullWidth, 3u);
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));
-			RegisterSource(DirectBindableSource<Bind::RenderTarget>::Make("waterPreOut", renderTarget));
+			AddBind(Bind::Rasterizer::Resolve(gfx, false));
+
+			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, fullWidth, fullWidth, 3u);
+			RegisterSource(DirectBindableSource<RenderTarget>::Make("waterPreOut", renderTarget));
 		}
-		//void BindMainCamera(const Camera& cam) noexcept
-		//{
-		//	pMainCamera = &cam;
-		//}
+
 		void Execute(Graphics& gfx) const noxnd override
 		{
 			renderTarget->Clear(gfx);
@@ -71,6 +57,6 @@ namespace Rgph
 			DirectX::XMMATRIX matrix_MVP;
 		};
 	private:
-		std::unique_ptr<Bind::VertexConstantBuffer<Transforms>> pVcbuf;
+		std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;
 	};
 }
