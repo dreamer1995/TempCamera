@@ -10,7 +10,15 @@
 class Plane
 {
 public:
-	static IndexedTriangleList MakeTesselatedTextured( Dvtx::VertexLayout layout,int divisions_x,int divisions_y )
+	enum class Type
+	{
+		SimpleQuad,
+		PlaneTextured,
+		PlaneTexturedNormal,
+		PlaneTexturedTBN
+	};
+	static IndexedTriangleList MakeTesselatedTextured
+	(Dvtx::VertexLayout layout, int divisions_x, int divisions_y, bool withTexture, bool withNormal, bool withTangent)
 	{
 		namespace dx = DirectX;
 		assert( divisions_x >= 1 );
@@ -27,22 +35,60 @@ public:
 			const float side_y = height / 2.0f;
 			const float divisionSize_x = width / float( divisions_x );
 			const float divisionSize_y = height / float( divisions_y );
-			const float divisionSize_x_tc = 1.0f / float( divisions_x );
-			const float divisionSize_y_tc = 1.0f / float( divisions_y );
-
+			float divisionSize_x_tc;
+			float divisionSize_y_tc;
+			if (withTexture)
+			{
+				divisionSize_x_tc = 1.0f / float(divisions_x);
+				divisionSize_y_tc = 1.0f / float(divisions_y);
+			}
 			for( int y = 0,i = 0; y < nVertices_y; y++ )
 			{
 				const float y_pos = float( y ) * divisionSize_y - side_y;
-				const float y_pos_tc = 1.0f - float( y ) * divisionSize_y_tc;
+				float y_pos_tc;
+				if (withTexture)
+					y_pos_tc = 1.0f - float(y) * divisionSize_y_tc;
 				for( int x = 0; x < nVertices_x; x++,i++ )
 				{
-					const float x_pos = float( x ) * divisionSize_x - side_x;
-					const float x_pos_tc = float( x ) * divisionSize_x_tc;
-					vb.EmplaceBack(
-						dx::XMFLOAT3{ x_pos,y_pos,0.0f },
-						dx::XMFLOAT3{ 0.0f,0.0f,-1.0f },
-						dx::XMFLOAT2{ x_pos_tc,y_pos_tc }
-					);
+					const float x_pos = float( x ) * divisionSize_x - side_x;	
+					if (withTexture)
+					{
+						float x_pos_tc = float(x) * divisionSize_x_tc;
+						if (withNormal)
+						{
+							if (withTangent)
+							{
+								vb.EmplaceBack(
+									dx::XMFLOAT3{ x_pos,y_pos,0.0f },
+									dx::XMFLOAT3{ 1.0f,0.0f,0.0f },
+									dx::XMFLOAT3{ 0.0f,-1.0f,0.0f },
+									dx::XMFLOAT3{ 0.0f,0.0f,-1.0f },
+									dx::XMFLOAT2{ x_pos_tc,y_pos_tc }
+								);
+							}
+							else
+							{
+								vb.EmplaceBack(
+									dx::XMFLOAT3{ x_pos,y_pos,0.0f },
+									dx::XMFLOAT3{ 0.0f,0.0f,-1.0f },
+									dx::XMFLOAT2{ x_pos_tc,y_pos_tc }
+								);
+							}
+						}
+						else
+						{
+							vb.EmplaceBack(
+								dx::XMFLOAT3{ x_pos,y_pos,0.0f },
+								dx::XMFLOAT2{ x_pos_tc,y_pos_tc }
+							);
+						}
+					}
+					else
+					{
+						vb.EmplaceBack(
+							dx::XMFLOAT3{ x_pos,y_pos,0.0f }
+						);
+					}
 				}
 			}
 		}
@@ -72,14 +118,34 @@ public:
 
 		return{ std::move( vb ),std::move( indices ) };
 	}
-	static IndexedTriangleList Make()
+	static IndexedTriangleList Make(Type type = Type::SimpleQuad, UINT divisions = 1)
 	{
+		bool withTexture = false;
+		bool withNormal = false;
+		bool withTangent = false;
 		using Dvtx::VertexLayout;
 		VertexLayout vl;
-		vl.Append( VertexLayout::Position3D );
-		vl.Append( VertexLayout::Normal );
-		vl.Append( VertexLayout::Texture2D );
+		vl.Append(VertexLayout::Position3D);
+		switch (type)
+		{
+		case Type::PlaneTexturedTBN:
+		{
+			vl.Append(VertexLayout::Tangent);
+			vl.Append(VertexLayout::Binormal);
+			withTangent = true;
+		}	
+		case Type::PlaneTexturedNormal:
+		{
+			vl.Append(VertexLayout::Normal);
+			withNormal = true;
+		}
+		case Type::PlaneTextured:
+		{
+			vl.Append(VertexLayout::Texture2D);
+			withTexture = true;
+		}
+		}
 
-		return MakeTesselatedTextured( std::move( vl ),1,1 );
+		return MakeTesselatedTextured(std::move(vl), divisions, divisions, withTexture, withNormal, withTangent);
 	}
 };

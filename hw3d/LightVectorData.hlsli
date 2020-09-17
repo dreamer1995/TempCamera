@@ -1,3 +1,21 @@
+cbuffer DirectionalLightCBuf : register(b2)//PS
+{
+    float3 direction;
+    float3 DdiffuseColor;
+    float DdiffuseIntensity;
+};
+
+cbuffer PointLightCBuf : register(b3)//PS
+{
+    float3 lightPos;
+    float3 ambient;
+    float3 diffuseColor;
+    float diffuseIntensity;
+    float attConst;
+    float attLin;
+    float attQuad;
+};
+
 struct LightVectorData
 {
     float3 irradiance;

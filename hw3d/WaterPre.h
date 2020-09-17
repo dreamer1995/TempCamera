@@ -7,7 +7,7 @@
 #include "Camera.h"
 #include "ConstantBuffers.h"
 #include "BindableCommon.h"
-#include "Cube.h"
+#include "Plane.h"
 
 using namespace Bind;
 
@@ -23,7 +23,7 @@ namespace Rgph
 			RenderQueuePass(std::move(name))
 		{
 			pVcbuf = std::make_unique<VertexConstantBuffer<Transforms>>(gfx, 0u);
-			auto model = Cube::MakeIndependentSimple();
+			auto model = Plane::Make(Plane::Type::PlaneTexturedTBN);
 			AddBind(VertexBuffer::Resolve(gfx, "$waterpre", model.vertices));
 			AddBind(IndexBuffer::Resolve(gfx, "$waterpre", model.indices));
 

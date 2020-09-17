@@ -1,4 +1,4 @@
-cbuffer TransformCBuf : register(b0)
+cbuffer TransformCBuf : register(b0)//VS, PS
 {
 	matrix matrix_MVP;
 	matrix matrix_MV;
@@ -11,26 +11,8 @@ cbuffer TransformCBuf : register(b0)
 	matrix matrix_W2M;
 };
 
-cbuffer CameraCBuf : register(b1)
+cbuffer CameraCBuf : register(b1)//PS
 {
 	float3 cameraPos;
 	float3 cameraDir;
-};
-
-cbuffer DirectionalLightCBuf : register(b2)
-{
-	float3 direction;
-	float3 DdiffuseColor;
-	float DdiffuseIntensity;
-};
-
-cbuffer PointLightCBuf : register(b3)
-{
-    float3 lightPos;
-    float3 ambient;
-    float3 diffuseColor;
-    float diffuseIntensity;
-    float attConst;
-    float attLin;
-    float attQuad;
 };

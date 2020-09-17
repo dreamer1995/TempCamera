@@ -865,5 +865,11 @@
     <FxCompile Include="PBRPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="CausticBakeNPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticBakeNVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
