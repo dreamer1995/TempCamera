@@ -44,7 +44,7 @@ PhongSphere::PhongSphere(Graphics& gfx, float radius)
 		buf["color"] = DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f };
 		buf["specularWeight"] = 0.3f;
 		buf["specularGloss"] = 30.0f;
-		only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 4u));
+		only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
 
 		only.AddBindable(std::make_shared<TransformCbuf>(gfx));
 

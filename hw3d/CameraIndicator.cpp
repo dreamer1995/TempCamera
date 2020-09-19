@@ -76,7 +76,7 @@ CameraIndicator::CameraIndicator( Graphics& gfx )
 			dx::XMFLOAT3 color = { 0.2f,0.2f,0.6f };
 			float padding;
 		} colorConst;
-		only.AddBindable( PixelConstantBuffer<PSColorConstant>::Resolve( gfx,colorConst,4u ) );
+		only.AddBindable( PixelConstantBuffer<PSColorConstant>::Resolve( gfx,colorConst,10u ) );
 
 		only.AddBindable( std::make_shared<TransformCbuf>( gfx ) );
 

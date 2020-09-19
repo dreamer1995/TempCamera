@@ -5,7 +5,7 @@ DirectionalLight::DirectionalLight(Graphics& gfx, float radius, float size)
 	:
 	mesh(gfx, radius),
 	arrow(gfx, size),
-	cbuf(gfx, 2u)
+	cbuf(gfx, 3u)
 {
 	Reset();
 }

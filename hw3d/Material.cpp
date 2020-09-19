@@ -121,7 +121,7 @@ Material::Material( Graphics& gfx,const aiMaterial& material,const std::filesyst
 			}
 			buf["useNormalMap"].SetIfExists( true );
 			buf["normalMapWeight"].SetIfExists( 1.0f );
-			step.AddBindable( std::make_unique<Bind::CachingPixelConstantBufferEx>( gfx,std::move( buf ),4u ) );
+			step.AddBindable( std::make_unique<Bind::CachingPixelConstantBufferEx>( gfx,std::move( buf ),10u ) );
 		}
 		phong.AddStep( std::move( step ) );
 		techniques.push_back( std::move( phong ) );
@@ -149,7 +149,7 @@ Material::Material( Graphics& gfx,const aiMaterial& material,const std::filesyst
 				lay.Add<Dcb::Float3>( "materialColor" );
 				auto buf = Dcb::Buffer( std::move( lay ) );
 				buf["materialColor"] = DirectX::XMFLOAT3{ 1.0f,0.4f,0.4f };
-				draw.AddBindable( std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,4u ) );
+				draw.AddBindable( std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,10u ) );
 			}
 
 			// TODO: better sub-layout generation tech for future consideration maybe

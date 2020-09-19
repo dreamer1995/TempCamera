@@ -36,7 +36,7 @@ SolidArrow::SolidArrow(Graphics& gfx, float size)
 		lay.Add<Dcb::Float3>("Color");
 		auto buf = Dcb::Buffer(std::move(lay));
 		buf["Color"] = DirectX::XMFLOAT3{ 1.0f,0.0f,0.0f };
-		only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 4u));
+		only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
 
 		only.AddBindable(std::make_shared<TransformCbuf>(gfx));
 

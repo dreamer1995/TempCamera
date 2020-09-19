@@ -19,7 +19,7 @@ namespace Rgph
 		Dcb::RawLayout l;
 		l.Add<Dcb::Float>("roughness");
 		Dcb::Buffer buf{ std::move(l) };
-		roughness = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 4u);
+		roughness = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 		AddBind(roughness);
 
 		AddBindSink<Bind::RenderTarget>("HDIn");

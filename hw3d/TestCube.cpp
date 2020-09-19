@@ -50,7 +50,7 @@ TestCube::TestCube( Graphics& gfx,float size )
 			buf["specularGloss"] = 20.0f;
 			buf["useNormalMap"] = true;
 			buf["normalMapWeight"] = 1.0f;
-			only.AddBindable( std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,4u ) );
+			only.AddBindable( std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,10u ) );
 
 
 			only.AddBindable( Rasterizer::Resolve( gfx,false ) );
@@ -82,7 +82,7 @@ TestCube::TestCube( Graphics& gfx,float size )
 			lay.Add<Dcb::Float4>( "color" );
 			auto buf = Dcb::Buffer( std::move( lay ) );
 			buf["color"] = DirectX::XMFLOAT4{ 1.0f,0.4f,0.4f,1.0f };
-			draw.AddBindable( std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,4u ) );
+			draw.AddBindable( std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,10u ) );
 
 			// TODO: better sub-layout generation tech for future consideration maybe
 			draw.AddBindable( InputLayout::Resolve( gfx,model.vertices.GetLayout(),*VertexShader::Resolve( gfx,"Solid_VS.cso" ) ) );

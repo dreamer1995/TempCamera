@@ -3,7 +3,7 @@
 TextureCube EnvMap;
 SamplerState basicSampler;
 
-cbuffer ExternalData : register(b4)
+cbuffer ExternalData : register(b10)
 {
 	float roughness;
 }

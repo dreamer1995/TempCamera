@@ -3,7 +3,7 @@
 #include "LightVectorData.hlsli"
 #include "Algorithms.hlsli"
 
-cbuffer ObjectCBuf : register(b4)
+cbuffer ObjectCBuf : register(b10)
 {
     float3 materialColor;
     float3 specularColor;

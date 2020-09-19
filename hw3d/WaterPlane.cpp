@@ -58,7 +58,33 @@ WaterPlane::WaterPlane(Graphics& gfx, float size)
 			buf["useNormalMap"] = true;
 			dx::XMStoreFloat4x4(&buf["EVRotation"], dx::XMMatrixIdentity());
 			buf["depth"] = 2.471f;
-			cBuf = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 4u);
+			cBuf = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+			only.AddBindable(cBuf);
+
+			only.AddBindable(Rasterizer::Resolve(gfx, false));
+
+			only.AddBindable(tcb);
+
+			shade.AddStep(std::move(only));
+		}
+
+		Technique shade("PreCalculate", Chan::waterPre);
+		{
+			Step only("waterPre");
+
+			Dcb::RawLayout lay;
+			lay.Add<Dcb::Float>("roughness");
+			lay.Add<Dcb::Float>("metallic");
+			lay.Add<Dcb::Bool>("normalMappingEnabled");
+			lay.Add<Dcb::Matrix>("EVRotation");
+			lay.Add<Dcb::Float>("depth");
+			auto buf = Dcb::Buffer(std::move(lay));
+			buf["roughness"] = 0.321f;
+			buf["metallic"] = 0.572f;
+			buf["useNormalMap"] = true;
+			dx::XMStoreFloat4x4(&buf["EVRotation"], dx::XMMatrixIdentity());
+			buf["depth"] = 2.471f;
+			cBuf = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 			only.AddBindable(cBuf);
 
 			only.AddBindable(Rasterizer::Resolve(gfx, false));

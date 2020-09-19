@@ -1,11 +1,11 @@
-cbuffer DirectionalLightCBuf : register(b2)//PS
+cbuffer DirectionalLightCBuf : register(b3)//PS
 {
     float3 direction;
     float3 DdiffuseColor;
     float DdiffuseIntensity;
 };
 
-cbuffer PointLightCBuf : register(b3)//PS
+cbuffer PointLightCBuf : register(b4)//PS
 {
     float3 lightPos;
     float3 ambient;

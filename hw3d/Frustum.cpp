@@ -60,7 +60,7 @@ Frustum::Frustum( Graphics& gfx,float width,float height,float nearZ,float farZ 
 				dx::XMFLOAT3 color = { 0.6f,0.2f,0.2f };
 				float padding;
 			} colorConst;
-			unoccluded.AddBindable( PixelConstantBuffer<PSColorConstant>::Resolve( gfx,colorConst,4u ) );
+			unoccluded.AddBindable( PixelConstantBuffer<PSColorConstant>::Resolve( gfx,colorConst,10u ) );
 
 			unoccluded.AddBindable( std::make_shared<TransformCbuf>( gfx ) );
 
@@ -82,7 +82,7 @@ Frustum::Frustum( Graphics& gfx,float width,float height,float nearZ,float farZ 
 				dx::XMFLOAT3 color = { 0.25f,0.08f,0.08f };
 				float padding;
 			} colorConst;
-			occluded.AddBindable( PixelConstantBuffer<PSColorConstant2>::Resolve( gfx,colorConst,4u ) );
+			occluded.AddBindable( PixelConstantBuffer<PSColorConstant2>::Resolve( gfx,colorConst,10u ) );
 
 			occluded.AddBindable( std::make_shared<TransformCbuf>( gfx ) );
 

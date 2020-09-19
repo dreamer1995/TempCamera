@@ -39,7 +39,7 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 			lay.Add<Dcb::Float4>("color");
 			auto buf = Dcb::Buffer(std::move(lay));
 			buf["color"] = dx::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f };
-			only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 4u));
+			only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
 
 			only.AddBindable(Rasterizer::Resolve(gfx, true));
 

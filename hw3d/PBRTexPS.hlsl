@@ -8,7 +8,7 @@ Texture2D tex;
 Texture2D nmap : register(t1);
 Texture2D rmamap : register(t2);
 
-cbuffer ObjectCBuf : register(b4)
+cbuffer ObjectCBuf : register(b10)
 {
 	float3 baseColor;
 	float roughness;
