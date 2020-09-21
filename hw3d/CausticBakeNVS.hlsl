@@ -2,7 +2,6 @@
 
 cbuffer ObjectCBuf : register(b10)
 {
-	//float time;
 	float4 A;
 	float4 S;
 	float4 L;
@@ -24,9 +23,9 @@ struct VSOut
 
 struct VSIn {
 	float3 pos : Position;
-	float3 n : Normal;
 	float3 t : Tangent;
 	float3 b : Binormal;
+	float3 n : Normal;
 	float2 uv : Texcoord;
 };
 

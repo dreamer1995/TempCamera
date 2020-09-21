@@ -1,12 +1,13 @@
 #include "Constants.hlsli"
-cbuffer ObjectCBuf : register(b5)
+#include <PBRHeader.hlsli>
+
+cbuffer ObjectCBuf : register(b10)
 {
-	float _time;
 	float speed;
-	float __roughness;
+	float roughness;
 	float flatten1;
 	float flatten2;
-	bool _normalMapEnabled;
+	bool normalMapEnabled;
 };
 
 Texture2D rmap;
@@ -32,9 +33,9 @@ float4 main(PSIn i) : SV_Target
 	float variationSharpness = 13.0511389f;
 	fRoughness = pow(fRoughness, variationSharpness) * variationSharpness;
 	fRoughness = saturate(fRoughness);
-	fRoughness = __roughness * lerp(0.164602f, 0.169983f, fRoughness);
+	fRoughness = roughness * lerp(0.164602f, 0.169983f, fRoughness);
 	// sample normal from map if normal mapping enabled	
-	if (_normalMapEnabled)
+	if (normalMapEnabled)
 	{
 		float3 mediumWaves = lerp(Motion_4WayChaos_Normal(mnmap, i.uv, speed), float3(0.5f, 0.5f, 1.0f), flatten1);
 		float3 smallWaves = lerp(Motion_4WayChaos_Normal(snmap, i.uv, speed), float3(0.5f, 0.5f, 1.0f), flatten2 + 0.65f);
@@ -69,7 +70,7 @@ float Motion_4WayChaos(Texture2D textureIn, float2 uv, float speed)
 	float outPut = 0.0f;
 	for (int i = 0; i < 4; i++)
 	{
-		float textureSample = textureIn.Sample(splr, uv + offset[i] + pannerDir[i] * _time * speed).r;
+		float textureSample = textureIn.Sample(splr, uv + offset[i] + pannerDir[i] * time * speed).r;
 		outPut += textureSample;
 	}
 
@@ -89,7 +90,7 @@ float3 Motion_4WayChaos_Normal(Texture2D textureIn, float2 uv, float speed)
 	float3 outPut = float3(0.0f, 0.0f, 0.0f);
 	for (int i = 0; i < 4; i++)
 	{
-		float3 textureSample = textureIn.Sample(splr, uv + offset[i] + pannerDir[i] * _time * speed).rgb;
+		float3 textureSample = textureIn.Sample(splr, uv + offset[i] + pannerDir[i] * time * speed).rgb;
 		outPut += textureSample;
 	}
 

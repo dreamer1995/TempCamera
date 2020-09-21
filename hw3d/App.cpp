@@ -20,33 +20,39 @@ App::App( const std::string& commandLine )
 	dLight(wnd.Gfx()),
 	pointLight( wnd.Gfx(),{ 10.0f,5.0f,0.0f } )
 {
+	time = 0;
+	cVBuf = std::make_unique<Bind::VertexConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
+	cPBuf = std::make_unique<Bind::PixelConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cameras.AddCamera( std::make_unique<Camera>( wnd.Gfx(),"A",dx::XMFLOAT3{ -13.5f,6.0f,3.5f },0.0f,PI / 2.0f ) );
 	pCam = std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f,28.8f,-6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f);
 	cameras.AddCamera(pCam);
 	cameras.AddCamera( pointLight.ShareCamera() );
 
 	//D3DTestScratchPad( wnd );
-	cube.SetPos( { 10.0f,5.0f,6.0f } );
-	cube2.SetPos( { 10.0f,5.0f,14.0f } );
-	nano.SetRootTransform(
-		dx::XMMatrixRotationY( PI / 2.f ) *
-		dx::XMMatrixTranslation( 27.f,-0.56f,1.7f )
-	);
-	gobber.SetRootTransform(
-		dx::XMMatrixRotationY( -PI / 2.f ) *
-		dx::XMMatrixTranslation( -8.f,10.f,0.f )
-	);
 
-	cube.LinkTechniques( rg );
-	cube2.LinkTechniques( rg );
-	pointLight.LinkTechniques( rg );
-	dLight.LinkTechniques(rg);
-	sponza.LinkTechniques( rg );
-	gobber.LinkTechniques( rg );
-	nano.LinkTechniques( rg );
+	//cube.SetPos( { 10.0f,5.0f,6.0f } );
+	//cube2.SetPos( { 10.0f,5.0f,14.0f } );
+	//nano.SetRootTransform(
+	//	dx::XMMatrixRotationY( PI / 2.f ) *
+	//	dx::XMMatrixTranslation( 27.f,-0.56f,1.7f )
+	//);
+	//gobber.SetRootTransform(
+	//	dx::XMMatrixRotationY( -PI / 2.f ) *
+	//	dx::XMMatrixTranslation( -8.f,10.f,0.f )
+	//);
+
 	skybox.LinkTechniques(rg);
 	cameras.LinkTechniques(rg);
-	sphere.LinkTechniques(rg);
+	pointLight.LinkTechniques( rg );
+	dLight.LinkTechniques(rg);
+
+	//sponza.LinkTechniques( rg );
+	//gobber.LinkTechniques( rg );
+	//nano.LinkTechniques( rg );
+	//cube.LinkTechniques(rg);
+	//cube2.LinkTechniques(rg);
+	//sphere.LinkTechniques(rg);
+	water.LinkTechniques(rg);
 
 	//wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,400.0f ) );
 	rg.BindShadowCamera(*pointLight.ShareCamera());
@@ -252,6 +258,8 @@ void App::HandleInput( float dt )
 
 void App::DoFrame( float dt )
 {
+	time += dt;
+	UpdateCommonVar(wnd.Gfx(), {time});
 	//wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().BeginFrame(0.1f, 0.1f, 0.1f);
 	//wnd.Gfx().SetCamera(cameras->GetMatrix() );
@@ -268,20 +276,21 @@ void App::DoFrame( float dt )
 	dLight.Bind(wnd.Gfx());
 
 	cameras.Submit(Chan::main);
-	cube.Submit(Chan::main);
-	cube2.Submit(Chan::main);
-	sponza.Submit(Chan::main);
-	gobber.Submit(Chan::main);
-	nano.Submit(Chan::main);
-	sphere.UpdateENV(skybox.pitch, skybox.yaw, skybox.roll);
-	sphere.Submit(Chan::main);
 
-	sponza.Submit(Chan::shadow);
-	gobber.Submit(Chan::shadow);
-	nano.Submit(Chan::shadow);
-	cube.Submit(Chan::shadow);
-	cube2.Submit(Chan::shadow);
-	sphere.Submit(Chan::shadow);
+	//cube.Submit(Chan::main);
+	//cube2.Submit(Chan::main);
+	//sponza.Submit(Chan::main);
+	//gobber.Submit(Chan::main);
+	//nano.Submit(Chan::main);
+	//sphere.UpdateENV(skybox.pitch, skybox.yaw, skybox.roll);
+	//sphere.Submit(Chan::main);
+
+	//sponza.Submit(Chan::shadow);
+	//gobber.Submit(Chan::shadow);
+	//nano.Submit(Chan::shadow);
+	//cube.Submit(Chan::shadow);
+	//cube2.Submit(Chan::shadow);
+	//sphere.Submit(Chan::shadow);
 
 	rg.Execute( wnd.Gfx() );
 	
@@ -292,20 +301,21 @@ void App::DoFrame( float dt )
 	}
 
 	// imgui windows
-	static MP sponzeProbe{ "Sponza" };
-	static MP gobberProbe{ "Gobber" };
-	static MP nanoProbe{ "Nano" };
-	sponzeProbe.SpawnWindow( sponza );
-	gobberProbe.SpawnWindow( gobber );
-	nanoProbe.SpawnWindow( nano );
 	cameras.SpawnWindow( wnd.Gfx() );
 	pointLight.SpawnControlWindow();
 	dLight.SpawnControlWindow();
 	ShowImguiDemoWindow();
-	cube.SpawnControlWindow( wnd.Gfx(),"Cube 1" );
-	cube2.SpawnControlWindow( wnd.Gfx(),"Cube 2" );
 	skybox.SpawnControlWindow(wnd.Gfx(), "SkyBox");
-	sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
+
+	//static MP sponzeProbe{ "Sponza" };
+	//static MP gobberProbe{ "Gobber" };
+	//static MP nanoProbe{ "Nano" };
+	//sponzeProbe.SpawnWindow(sponza);
+	//gobberProbe.SpawnWindow(gobber);
+	//nanoProbe.SpawnWindow(nano);
+	//cube.SpawnControlWindow(wnd.Gfx(), "Cube 1");
+	//cube2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
+	//sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
 
 	rg.RenderWidgets( wnd.Gfx() );
 
@@ -350,3 +360,13 @@ int App::Go()
 		DoFrame( dt );
 	}
 }
+
+void App::UpdateCommonVar(Graphics& gfx, const CommonVar& cvar) noxnd
+{
+	cVBuf->Update(gfx, cvar);
+	cVBuf->Bind(gfx);
+	cPBuf->Update(gfx, cvar);
+	cPBuf->Bind(gfx);
+}
+std::unique_ptr<Bind::VertexConstantBuffer<App::CommonVar>> App::cVBuf;
+std::unique_ptr<Bind::PixelConstantBuffer<App::CommonVar>> App::cPBuf;

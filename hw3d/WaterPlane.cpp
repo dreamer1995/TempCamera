@@ -28,66 +28,64 @@ WaterPlane::WaterPlane(Graphics& gfx, float size)
 		{
 			Step only("water");
 
-			only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
-			only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
-			only.AddBindable(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
-			//AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('C')));
-			only.AddBindable(Texture::Resolve(gfx, "Images\\DesertSand_albedo.jpg", 4u));
-			only.AddBindable(Texture::Resolve(gfx, "Images\\white.jpg", 5u));
-			//AddBind(TexturePre::Resolve(gfx, 6u, gfx.GetShaderResourceView('N')));
-			//AddBind(Texture::Resolve(gfx, "Images\\white.jpg", 30u, false, true));
+			//only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
+			//only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
+			//only.AddBindable(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
+			////AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('C')));
+			//only.AddBindable(Texture::Resolve(gfx, "Images\\DesertSand_albedo.jpg", 4u));
+			//only.AddBindable(Texture::Resolve(gfx, "Images\\white.jpg", 5u));
+			////AddBind(TexturePre::Resolve(gfx, 6u, gfx.GetShaderResourceView('N')));
+			////AddBind(Texture::Resolve(gfx, "Images\\white.jpg", 30u, false, true));
 
-			only.AddBindable(Sampler::Resolve(gfx));
-			only.AddBindable(Sampler::Resolve(gfx, Sampler::Type::Clamp, 1u));
+			//only.AddBindable(Sampler::Resolve(gfx));
+			//only.AddBindable(Sampler::Resolve(gfx, Sampler::Type::Clamp, 1u));
 
-			auto pvs = VertexShader::Resolve(gfx, "FluidVS.cso");
-			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *pvs));
-			only.AddBindable(std::move(pvs));
+			//auto pvs = VertexShader::Resolve(gfx, "FluidVS.cso");
+			//only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *pvs));
+			//only.AddBindable(std::move(pvs));
 
-			only.AddBindable(PixelShader::Resolve(gfx, "FluidPS.cso"));
+			//only.AddBindable(PixelShader::Resolve(gfx, "FluidPS.cso"));
 
-			Dcb::RawLayout lay;
-			lay.Add<Dcb::Float>("roughness");
-			lay.Add<Dcb::Float>("metallic");
-			lay.Add<Dcb::Bool>("normalMappingEnabled");
-			lay.Add<Dcb::Matrix>("EVRotation");
-			lay.Add<Dcb::Float>("depth");
-			auto buf = Dcb::Buffer(std::move(lay));
-			buf["roughness"] = 0.321f;
-			buf["metallic"] = 0.572f;
-			buf["useNormalMap"] = true;
-			dx::XMStoreFloat4x4(&buf["EVRotation"], dx::XMMatrixIdentity());
-			buf["depth"] = 2.471f;
-			cBuf = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
-			only.AddBindable(cBuf);
+			//Dcb::RawLayout lay;
+			//lay.Add<Dcb::Float>("roughness");
+			//lay.Add<Dcb::Float>("metallic");
+			//lay.Add<Dcb::Bool>("normalMappingEnabled");
+			//lay.Add<Dcb::Matrix>("EVRotation");
+			//lay.Add<Dcb::Float>("depth");
+			//auto buf = Dcb::Buffer(std::move(lay));
+			//buf["roughness"] = 0.321f;
+			//buf["metallic"] = 0.572f;
+			//buf["useNormalMap"] = true;
+			//dx::XMStoreFloat4x4(&buf["EVRotation"], dx::XMMatrixIdentity());
+			//buf["depth"] = 2.471f;
+			//cBuf = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+			//only.AddBindable(cBuf);
 
-			only.AddBindable(Rasterizer::Resolve(gfx, false));
+			//only.AddBindable(Rasterizer::Resolve(gfx, false));
 
-			only.AddBindable(tcb);
+			//only.AddBindable(tcb);
 
-			shade.AddStep(std::move(only));
+			//shade.AddStep(std::move(only));
 		}
 
-		Technique shade("PreCalculate", Chan::waterPre);
+		Technique preNormal("PreCalculate", Chan::waterPre);
 		{
 			Step only("waterPre");
 
 			Dcb::RawLayout lay;
+			lay.Add<Dcb::Float>("speed");
 			lay.Add<Dcb::Float>("roughness");
-			lay.Add<Dcb::Float>("metallic");
+			lay.Add<Dcb::Float>("flatten1");
+			lay.Add<Dcb::Float>("flatten2");
 			lay.Add<Dcb::Bool>("normalMappingEnabled");
-			lay.Add<Dcb::Matrix>("EVRotation");
-			lay.Add<Dcb::Float>("depth");
 			auto buf = Dcb::Buffer(std::move(lay));
-			buf["roughness"] = 0.321f;
-			buf["metallic"] = 0.572f;
-			buf["useNormalMap"] = true;
-			dx::XMStoreFloat4x4(&buf["EVRotation"], dx::XMMatrixIdentity());
-			buf["depth"] = 2.471f;
+			buf["speed"] = 0.0f;
+			buf["roughness"] = 0.572f;
+			buf["flatten1"] = 0.182f;
+			buf["flatten2"] = 0.0f;
+			buf["normalMappingEnabled"] = true;
 			cBuf = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 			only.AddBindable(cBuf);
-
-			only.AddBindable(Rasterizer::Resolve(gfx, false));
 
 			only.AddBindable(tcb);
 

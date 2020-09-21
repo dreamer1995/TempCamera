@@ -61,7 +61,31 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
+			Dcb::RawLayout l;
+			l.Add<Dcb::Float4>("amplitude");
+			l.Add<Dcb::Float4>("wavespeed");
+			l.Add<Dcb::Float4>("wavelength");
+			l.Add<Dcb::Float4>("omega");
+			l.Add<Dcb::Float4>("Q");
+			l.Add<Dcb::Float4>("directionX");
+			l.Add<Dcb::Float4>("directionZ");
+			Dcb::Buffer buf{ std::move(l) };
+			buf["amplitude"] = dx::XMFLOAT4{ 0.071f,0.032f,0.048f,0.063f };
+			buf["wavespeed"] = dx::XMFLOAT4{ 0.097f,0.258f,0.179f,0.219f };
+			buf["wavelength"] = dx::XMFLOAT4{ 0.887f,0.774f,0.790f,0.844f };
+			buf["omega"] = dx::XMFLOAT4{ 0.0f,0.0f,0.0f,0.0f };
+			buf["Q"] = dx::XMFLOAT4{ 1.0f,0.871f,0.935f,0.844f };
+			buf["directionX"] = dx::XMFLOAT4{ 0.0f,0.113f,0.306f,0.281f };
+			buf["directionZ"] = dx::XMFLOAT4{ 0.629f,0.081f,0.484f,0.156f };
+			
+			waterFlow = std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 10u);
+			AddGlobalSource(DirectBindableSource<Bind::CachingVertexConstantBufferEx>::Make("waterFlow", waterFlow));
+		}
+		{
 			auto pass = std::make_unique<WaterPrePass>(gfx, "waterPre", gfx.GetWidth(), gfx.GetWidth());
+			pass->SetSinkLinkage("waterFlow", "$.waterFlow");
+			pass->SetSinkLinkage("renderTarget", "environment.renderTarget");
+			pass->SetSinkLinkage("depthStencil", "environment.depthStencil");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -74,10 +98,10 @@ namespace Rgph
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
-			pass->SetSinkLinkage("waterPreMap", "waterPre.waterPreOut");
+			//pass->SetSinkLinkage("waterPreMap", "waterPre.waterPreOut");
 			pass->SetSinkLinkage("waterCausticMap", "waterCaustic.waterCausticOut");
-			pass->SetSinkLinkage("renderTarget", "environment.renderTarget");
-			pass->SetSinkLinkage("depthStencil", "environment.depthStencil");
+			pass->SetSinkLinkage("renderTarget", "waterPre.renderTarget");
+			pass->SetSinkLinkage("depthStencil", "waterPre.depthStencil");
 			AppendPass(std::move(pass));
 		}
 		{

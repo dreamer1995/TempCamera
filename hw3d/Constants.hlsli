@@ -16,3 +16,8 @@ cbuffer CameraCBuf : register(b1)//PS
 	float3 cameraPos;
 	float3 cameraDir;
 };
+
+cbuffer Time : register(b2)//VS, PS
+{
+	float time;
+};
