@@ -1,4 +1,4 @@
-#include "WaterPlane.h"
+#include "PlaneWater.h"
 #include "Plane.h"
 #include "BindableCommon.h"
 //#include "TransformCbufDoubleboi.h"
@@ -9,7 +9,9 @@
 #include "TransformCbufScaling.h"
 #include "Channels.h"
 
-WaterPlane::WaterPlane(Graphics& gfx, float size)
+PlaneWater::PlaneWater(Graphics& gfx, float size)
+	:
+	normalPlane(gfx, 1.0f)
 {
 	using namespace Bind;
 	namespace dx = DirectX;
@@ -67,31 +69,6 @@ WaterPlane::WaterPlane(Graphics& gfx, float size)
 
 			//shade.AddStep(std::move(only));
 		}
-
-		Technique preNormal("PreCalculate", Chan::waterPre);
-		{
-			Step only("waterPre");
-
-			Dcb::RawLayout lay;
-			lay.Add<Dcb::Float>("speed");
-			lay.Add<Dcb::Float>("roughness");
-			lay.Add<Dcb::Float>("flatten1");
-			lay.Add<Dcb::Float>("flatten2");
-			lay.Add<Dcb::Bool>("normalMappingEnabled");
-			auto buf = Dcb::Buffer(std::move(lay));
-			buf["speed"] = 0.0f;
-			buf["roughness"] = 0.572f;
-			buf["flatten1"] = 0.182f;
-			buf["flatten2"] = 0.0f;
-			buf["normalMappingEnabled"] = true;
-			cBuf = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
-			only.AddBindable(cBuf);
-
-			only.AddBindable(tcb);
-
-			shade.AddStep(std::move(only));
-		}
-		AddTechnique(std::move(shade));
 	}
 
 	//AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
@@ -123,27 +100,27 @@ WaterPlane::WaterPlane(Graphics& gfx, float size)
 	//AddBind(std::make_shared<TransformCbufDoubleboi>(gfx, *this, 0u, 4u));
 }
 
-void WaterPlane::SetPos(DirectX::XMFLOAT3 pos) noexcept
+void PlaneWater::SetPos(DirectX::XMFLOAT3 pos) noexcept
 {
 	this->pos = pos;
 }
 
-void WaterPlane::SetRotation(float roll, float pitch, float yaw) noexcept
+void PlaneWater::SetRotation(float roll, float pitch, float yaw) noexcept
 {
 	this->roll = roll;
 	this->pitch = pitch;
 	this->yaw = yaw;
 }
 
-DirectX::XMMATRIX WaterPlane::GetTransformXM() const noexcept
+DirectX::XMMATRIX PlaneWater::GetTransformXM() const noexcept
 {
 	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
 		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
-void WaterPlane::SpawnControlWindow(Graphics& gfx) noexcept
+void PlaneWater::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 {
-	if (ImGui::Begin("Plane"))
+	if (ImGui::Begin(name))
 	{
 		ImGui::Text("Position");
 		ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f, "%.1f");
@@ -202,13 +179,27 @@ void WaterPlane::SpawnControlWindow(Graphics& gfx) noexcept
 		} probe;
 
 		Accept(probe);
+
+		normalPlane.SpawnControlWindow(gfx, "WaterPre");
 	}
 	ImGui::End();
 }
 
-void WaterPlane::UpdateENV(float pitch, float yaw, float roll) noexcept
+void PlaneWater::UpdateENV(float pitch, float yaw, float roll) noexcept
 {
 	auto k = cBuf->GetBuffer();
 	DirectX::XMStoreFloat4x4(&k["EVRotation"], DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll));
 	cBuf->SetBuffer(k);
+}
+
+void PlaneWater::LinkTechniquesEX(Rgph::RenderGraph& rg)
+{
+	normalPlane.LinkTechniques(rg);
+	LinkTechniques(rg);
+}
+
+void PlaneWater::SubmitEX(size_t channels) const
+{
+	normalPlane.Submit(channels);
+	Submit(channels);
 }

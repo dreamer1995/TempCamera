@@ -36,7 +36,6 @@ namespace Rgph
 			RenderQueuePass::Execute(gfx);
 		}
 	private:
-		std::shared_ptr<Bind::ShadowSampler> pShadowSampler;
 		const Camera* pMainCamera = nullptr;
 	};
 }

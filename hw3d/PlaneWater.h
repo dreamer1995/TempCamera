@@ -3,16 +3,19 @@
 #include "Bindable.h"
 #include "IndexBuffer.h"
 #include "ConstantBuffersEx.h"
+#include "PlaneWaterNormalBake.h"
 
-class WaterPlane : public Drawable
+class PlaneWater : public Drawable
 {
 public:
-	WaterPlane(Graphics& gfx, float size);
+	PlaneWater(Graphics& gfx, float size);
 	void SetPos(DirectX::XMFLOAT3 pos) noexcept;
 	void SetRotation(float roll, float pitch, float yaw) noexcept;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
-	void SpawnControlWindow(Graphics& gfx) noexcept;
+	void SpawnControlWindow(Graphics& gfx, const char* name) noexcept;
 	void UpdateENV(float pitch, float yaw, float roll) noexcept;
+	void LinkTechniquesEX(Rgph::RenderGraph& rg);
+	void SubmitEX(size_t channels) const;
 public:
 	struct VSMaterialConstant
 	{
@@ -36,4 +39,5 @@ private:
 	float pitch = 0.0f;
 	float yaw = 0.0f;
 	std::shared_ptr<Bind::CachingPixelConstantBufferEx> cBuf;
+	PlaneWaterNormalBake normalPlane;
 };

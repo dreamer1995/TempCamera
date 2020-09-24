@@ -255,7 +255,7 @@ namespace Rgph
 	{
 		dynamic_cast<EnvironmentPass&>(FindPassByName("environment")).BindMainCamera(cam);
 		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindMainCamera( cam );
-		dynamic_cast<LambertianPass&>(FindPassByName("water")).BindMainCamera(cam);
+		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindMainCamera(cam);
 	}
 	void Rgph::BlurOutlineRenderGraph::BindShadowCamera( Camera& cam )
 	{

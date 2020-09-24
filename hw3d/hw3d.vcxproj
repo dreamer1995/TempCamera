@@ -99,6 +99,7 @@
     <ClCompile Include="CameraContainer.cpp" />
     <ClCompile Include="CameraIndicator.cpp" />
     <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="PlaneWaterNormalBake.cpp" />
     <ClCompile Include="PreCalBlurCube.cpp" />
     <ClCompile Include="PreCalculateRenderGraph.cpp" />
     <ClCompile Include="PreCalLUTPlane.cpp" />
@@ -379,7 +380,7 @@
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="VertexShader.cpp" />
     <ClCompile Include="VerticalBlurPass.cpp" />
-    <ClCompile Include="WaterPlane.cpp" />
+    <ClCompile Include="PlaneWater.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
     <ClCompile Include="WinMain.cpp" />
@@ -407,6 +408,7 @@
     <ClInclude Include="Channels.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="LambertianPass_Water.h" />
+    <ClInclude Include="PlaneWaterNormalBake.h" />
     <ClInclude Include="PreCalBlurCube.h" />
     <ClInclude Include="PreCalculateRenderGraph.h" />
     <ClInclude Include="PreCalLUTPlane.h" />
@@ -522,7 +524,7 @@
     <ClInclude Include="VertexShader.h" />
     <ClInclude Include="VerticalBlurPass.h" />
     <ClInclude Include="WaterCaustics.h" />
-    <ClInclude Include="WaterPlane.h" />
+    <ClInclude Include="PlaneWater.h" />
     <ClInclude Include="WaterPre.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsMessageMap.h" />

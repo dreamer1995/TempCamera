@@ -13,7 +13,7 @@
 #include "DirectionalLight.h"
 #include "TestSphere.h"
 #include "ConstantBuffers.h"
-#include "WaterPlane.h"
+#include "PlaneWater.h"
 
 class App
 {
@@ -57,5 +57,5 @@ private:
 	bool savingDepth = false;
 	std::shared_ptr<Camera> pCam;
 	TestSphere sphere{ wnd.Gfx(),4.0f };
-	WaterPlane water{ wnd.Gfx() ,1.0 };
+	PlaneWater water{ wnd.Gfx() ,1.0 };
 };

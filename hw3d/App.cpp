@@ -18,12 +18,12 @@ App::App( const std::string& commandLine )
 	wnd( 1280,720,"The Donkey Fart Box" ),
 	scriptCommander( TokenizeQuoted( commandLine ) ),
 	dLight(wnd.Gfx()),
-	pointLight( wnd.Gfx(),{ 10.0f,5.0f,0.0f } )
+	pointLight( wnd.Gfx(),{ 0.0f,0.0f,0.0f }, 0.0f )
 {
 	time = 0;
 	cVBuf = std::make_unique<Bind::VertexConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cPBuf = std::make_unique<Bind::PixelConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
-	cameras.AddCamera( std::make_unique<Camera>( wnd.Gfx(),"A",dx::XMFLOAT3{ -13.5f,6.0f,3.5f },0.0f,PI / 2.0f ) );
+	cameras.AddCamera( std::make_unique<Camera>( wnd.Gfx(),"A",dx::XMFLOAT3{ 0.0f,0.0f,-5.0f },0.0f, 0.0f) );
 	pCam = std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f,28.8f,-6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f);
 	cameras.AddCamera(pCam);
 	cameras.AddCamera( pointLight.ShareCamera() );
@@ -52,7 +52,7 @@ App::App( const std::string& commandLine )
 	//cube.LinkTechniques(rg);
 	//cube2.LinkTechniques(rg);
 	//sphere.LinkTechniques(rg);
-	water.LinkTechniques(rg);
+	water.LinkTechniquesEX(rg);
 
 	//wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,400.0f ) );
 	rg.BindShadowCamera(*pointLight.ShareCamera());
@@ -276,7 +276,7 @@ void App::DoFrame( float dt )
 	dLight.Bind(wnd.Gfx());
 
 	cameras.Submit(Chan::main);
-
+	water.SubmitEX(Chan::main);
 	//cube.Submit(Chan::main);
 	//cube2.Submit(Chan::main);
 	//sponza.Submit(Chan::main);
@@ -316,7 +316,7 @@ void App::DoFrame( float dt )
 	//cube.SpawnControlWindow(wnd.Gfx(), "Cube 1");
 	//cube2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
 	//sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
-
+	water.SpawnControlWindow(wnd.Gfx(), "Water");
 	rg.RenderWidgets( wnd.Gfx() );
 
 	if (ImGui::Begin("Delete"))

@@ -336,11 +336,14 @@
     <ClCompile Include="TestSphere.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="WaterPlane.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
     <ClCompile Include="PrePlaneCalculatePass.cpp">
       <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaneWater.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaneWaterNormalBake.cpp">
+      <Filter>Source Files\Drawable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -713,9 +716,6 @@
     <ClInclude Include="TestSphere.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="WaterPlane.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="WaterPre.h">
       <Filter>Header Files\Jobber\Passlib</Filter>
     </ClInclude>
@@ -727,6 +727,12 @@
     </ClInclude>
     <ClInclude Include="PrePlaneCalculatePass.h">
       <Filter>Header Files\Jobber\Passlib\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaneWater.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaneWaterNormalBake.h">
+      <Filter>Header Files\Drawable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
