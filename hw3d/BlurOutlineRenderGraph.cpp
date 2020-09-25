@@ -246,6 +246,46 @@ namespace Rgph
 			}
 		}
 		ImGui::End();
+
+		if (ImGui::Begin("WaterWave"))
+		{
+			auto buf = waterFlow->GetBuffer();
+			namespace dx = DirectX;
+			float dirty = false;
+			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+
+			if (auto v = buf["amplitude"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("Amplitude", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["wavespeed"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("Wavespeed", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["wavelength"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("Wavelength", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["omega"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("Omega", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}if (auto v = buf["Q"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("Q", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}if (auto v = buf["DirectionX"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("DirectionX", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}if (auto v = buf["DirectionY"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("DirectionY", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+
+			if (dirty)
+			{
+				waterFlow->SetBuffer(buf);
+			}
+		}
+			ImGui::End();
 	}
 	void Rgph::BlurOutlineRenderGraph::DumpShadowMap( Graphics & gfx,const std::string & path )
 	{

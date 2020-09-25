@@ -4,8 +4,8 @@ cbuffer TransformCBuf : register(b0)//VS, PS
 	matrix matrix_MV;
 	matrix matrix_V;
 	matrix matrix_P;
-	matrix matrixmatrix_VP;
-	matrix matrixmatrix_T_MV;
+	matrix matrix_VP;
+	matrix matrix_T_MV;
 	matrix matrix_IT_MV;
 	matrix matrix_M2W;
 	matrix matrix_W2M;

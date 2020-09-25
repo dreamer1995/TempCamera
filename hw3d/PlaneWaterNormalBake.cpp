@@ -6,7 +6,7 @@
 #include "imgui/imgui.h"
 #include "DynamicConstant.h"
 #include "TechniqueProbe.h"
-#include "TransformCbuf.h"
+#include "TransformCbufScaling.h"
 #include "Channels.h"
 
 PlaneWaterNormalBake::PlaneWaterNormalBake(Graphics& gfx, float size)
@@ -21,7 +21,7 @@ PlaneWaterNormalBake::PlaneWaterNormalBake(Graphics& gfx, float size)
 	pIndices = IndexBuffer::Resolve(gfx, geometryTag, model.indices);
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	auto tcb = std::make_shared<TransformCbuf>(gfx);
+	auto tcb = std::make_shared<TransformCbufScaling>(gfx);
 
 	{
 		Technique shade("Shade", Chan::main);
@@ -105,6 +105,10 @@ void PlaneWaterNormalBake::SpawnControlWindow(Graphics& gfx,const char* name) no
 					return tagScratch.c_str();
 				};
 
+				if (auto v = buf["scale"]; v.Exists())
+				{
+					dcheck(ImGui::SliderFloat("Scale", &v, 0.0f, 10.0f, "%.3f", 1.0f));
+				}
 				if (auto v = buf["speed"]; v.Exists())
 				{
 					dcheck(ImGui::SliderFloat(tag("Speed"), &v, 0.0f, 10.0f, "%.3f", 1.0f));
