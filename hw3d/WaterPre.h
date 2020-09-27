@@ -26,12 +26,9 @@ namespace Rgph
 			AddBind(Bind::Rasterizer::Resolve(gfx, false));
 
 			AddBindSink<Bind::CachingVertexConstantBufferEx>("waterFlow");
-			//renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, fullWidth, fullWidth, 3u);
-			//RegisterSource(DirectBindableSource<RenderTarget>::Make("waterPreOut", renderTarget));
-			RegisterSink(DirectBufferSink<RenderTarget>::Make("renderTarget", renderTarget));
-			RegisterSink(DirectBufferSink<DepthStencil>::Make("depthStencil", depthStencil));
-			RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));
-			RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
+			AddBindSink<Bind::CachingPixelConstantBufferEx>("waterRipple");
+			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, fullWidth, fullWidth, 3u);
+			RegisterSource(DirectBindableSource<RenderTarget>::Make("waterPreOut", renderTarget));
 		}
 
 		void Execute(Graphics& gfx) const noxnd override

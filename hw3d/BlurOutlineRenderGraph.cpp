@@ -82,10 +82,25 @@ namespace Rgph
 			AddGlobalSource(DirectBindableSource<Bind::CachingVertexConstantBufferEx>::Make("waterFlow", waterFlow));
 		}
 		{
+			Dcb::RawLayout lay;
+			lay.Add<Dcb::Float>("speed");
+			lay.Add<Dcb::Float>("roughness");
+			lay.Add<Dcb::Float>("flatten1");
+			lay.Add<Dcb::Float>("flatten2");
+			lay.Add<Dcb::Bool>("normalMappingEnabled");
+			auto buf = Dcb::Buffer(std::move(lay));
+			buf["speed"] = 0.3f;
+			buf["roughness"] = 0.572f;
+			buf["flatten1"] = 0.182f;
+			buf["flatten2"] = 0.0f;
+			buf["normalMappingEnabled"] = true;
+			waterRipple = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("waterRipple", waterRipple));
+		}
+		{
 			auto pass = std::make_unique<WaterPrePass>(gfx, "waterPre", gfx.GetWidth(), gfx.GetWidth());
 			pass->SetSinkLinkage("waterFlow", "$.waterFlow");
-			pass->SetSinkLinkage("renderTarget", "environment.renderTarget");
-			pass->SetSinkLinkage("depthStencil", "environment.depthStencil");
+			pass->SetSinkLinkage("waterRipple", "$.waterRipple");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -98,10 +113,10 @@ namespace Rgph
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
-			//pass->SetSinkLinkage("waterPreMap", "waterPre.waterPreOut");
+			pass->SetSinkLinkage("waterPreMap", "waterPre.waterPreOut");
 			pass->SetSinkLinkage("waterCausticMap", "waterCaustic.waterCausticOut");
-			pass->SetSinkLinkage("renderTarget", "waterPre.renderTarget");
-			pass->SetSinkLinkage("depthStencil", "waterPre.depthStencil");
+			pass->SetSinkLinkage("renderTarget", "environment.renderTarget");
+			pass->SetSinkLinkage("depthStencil", "environment.depthStencil");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -285,7 +300,41 @@ namespace Rgph
 				waterFlow->SetBuffer(buf);
 			}
 		}
-			ImGui::End();
+		ImGui::End();
+		if (ImGui::Begin("WaterRipple"))
+		{
+			auto buf = waterRipple->GetBuffer();
+			namespace dx = DirectX;
+			float dirty = false;
+			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+
+			if (auto v = buf["speed"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat("Speed", &v, 0.0f, 10.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["roughness"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat("Roughness", &v, 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["flatten1"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat("Flatten1", &v, 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["flatten2"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat("Flatten2", &v, 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["normalMappingEnabled"]; v.Exists())
+			{
+				dcheck(ImGui::Checkbox("Normal Map Enable", &v));
+			}
+
+			if (dirty)
+			{
+				waterRipple->SetBuffer(buf);
+			}
+		}
+		ImGui::End();
 	}
 	void Rgph::BlurOutlineRenderGraph::DumpShadowMap( Graphics & gfx,const std::string & path )
 	{

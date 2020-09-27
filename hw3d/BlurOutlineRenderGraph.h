@@ -40,5 +40,6 @@ namespace Rgph
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> blurDirection;
 		Rgph::PreCalculateRenderGraph prg;
 		std::shared_ptr<Bind::CachingVertexConstantBufferEx> waterFlow;
+		std::shared_ptr<Bind::CachingPixelConstantBufferEx> waterRipple;
 	};
 }

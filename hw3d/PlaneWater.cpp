@@ -10,15 +10,13 @@
 #include "Channels.h"
 
 PlaneWater::PlaneWater(Graphics& gfx, float size)
-	:
-	normalPlane(gfx, 1.0f)
 {
 	using namespace Bind;
 	namespace dx = DirectX;
 
-	auto model = Plane::Make();
+	auto model = Plane::Make(Plane::Type::PlaneTexturedTBN, 128);
 	model.Transform(dx::XMMatrixScaling(size, size, 1.0f));
-	const auto geometryTag = "$fluid." + std::to_string(size);
+	const auto geometryTag = "$water." + std::to_string(size);
 	pVertices = VertexBuffer::Resolve(gfx, geometryTag, model.vertices);
 	pIndices = IndexBuffer::Resolve(gfx, geometryTag, model.indices);
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -98,6 +96,27 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 	//AddBind(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
 	//AddBind(std::make_shared<TransformCbufDoubleboi>(gfx, *this, 0u, 4u));
+
+	Technique preNormal("PreNormal", Chan::waterPre);
+	{
+		Step only("waterPre");
+
+		auto vs = VertexShader::Resolve(gfx, "CausticBakeNVS.cso");
+		only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *vs));
+		only.AddBindable(std::move(vs));
+
+		only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
+		only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
+		only.AddBindable(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
+
+		only.AddBindable(PixelShader::Resolve(gfx, "CausticBakeNPS.cso"));
+		only.AddBindable(Sampler::Resolve(gfx, Sampler::Type::Bilinear));
+
+		only.AddBindable(std::move(tcb));
+
+		preNormal.AddStep(std::move(only));
+	}
+	AddTechnique(std::move(preNormal));
 }
 
 void PlaneWater::SetPos(DirectX::XMFLOAT3 pos) noexcept
@@ -179,8 +198,6 @@ void PlaneWater::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 		} probe;
 
 		Accept(probe);
-
-		normalPlane.SpawnControlWindow(gfx, "WaterPre");
 	}
 	ImGui::End();
 }
@@ -190,16 +207,4 @@ void PlaneWater::UpdateENV(float pitch, float yaw, float roll) noexcept
 	auto k = cBuf->GetBuffer();
 	DirectX::XMStoreFloat4x4(&k["EVRotation"], DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll));
 	cBuf->SetBuffer(k);
-}
-
-void PlaneWater::LinkTechniquesEX(Rgph::RenderGraph& rg)
-{
-	normalPlane.LinkTechniques(rg);
-	LinkTechniques(rg);
-}
-
-void PlaneWater::SubmitEX(size_t channels) const
-{
-	normalPlane.Submit(channels);
-	Submit(channels);
 }

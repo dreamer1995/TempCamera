@@ -57,5 +57,5 @@ private:
 	bool savingDepth = false;
 	std::shared_ptr<Camera> pCam;
 	TestSphere sphere{ wnd.Gfx(),4.0f };
-	PlaneWater water{ wnd.Gfx() ,1.0 };
+	PlaneWater water{ wnd.Gfx() ,5.0 };
 };
