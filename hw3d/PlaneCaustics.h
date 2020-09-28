@@ -5,10 +5,10 @@
 #include "ConstantBuffersEx.h"
 #include "ChiliMath.h"
 
-class PlaneWaterNormalBake : public Drawable
+class PlaneCaustics : public Drawable
 {
 public:
-	PlaneWaterNormalBake(Graphics& gfx, float size);
+	PlaneCaustics(Graphics& gfx, float size);
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 	void SpawnControlWindow(Graphics& gfx, const char* name) noexcept;
 private:

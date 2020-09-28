@@ -342,6 +342,9 @@
     <ClCompile Include="PlaneWater.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="PlaneCaustics.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -726,6 +729,9 @@
       <Filter>Header Files\Jobber\Passlib\Base</Filter>
     </ClInclude>
     <ClInclude Include="PlaneWater.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaneCaustics.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
   </ItemGroup>

@@ -99,6 +99,7 @@
     <ClCompile Include="CameraContainer.cpp" />
     <ClCompile Include="CameraIndicator.cpp" />
     <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="PlaneCaustics.cpp" />
     <ClCompile Include="PreCalBlurCube.cpp" />
     <ClCompile Include="PreCalculateRenderGraph.cpp" />
     <ClCompile Include="PreCalLUTPlane.cpp" />
@@ -421,6 +422,7 @@
     <ClInclude Include="Channels.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="LambertianPass_Water.h" />
+    <ClInclude Include="PlaneCaustics.h" />
     <ClInclude Include="PreCalBlurCube.h" />
     <ClInclude Include="PreCalculateRenderGraph.h" />
     <ClInclude Include="PreCalLUTPlane.h" />
