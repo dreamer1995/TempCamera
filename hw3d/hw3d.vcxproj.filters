@@ -342,9 +342,6 @@
     <ClCompile Include="PlaneWater.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="PlaneWaterNormalBake.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -731,9 +728,6 @@
     <ClInclude Include="PlaneWater.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="PlaneWaterNormalBake.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -875,6 +869,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="CausticBakeNVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="E:\Git\TempCamera\hw3d\FluidPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="E:\Git\TempCamera\hw3d\FluidVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

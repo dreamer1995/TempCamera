@@ -37,14 +37,14 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 			////AddBind(TexturePre::Resolve(gfx, 6u, gfx.GetShaderResourceView('N')));
 			////AddBind(Texture::Resolve(gfx, "Images\\white.jpg", 30u, false, true));
 
-			//only.AddBindable(Sampler::Resolve(gfx));
+			only.AddBindable(Sampler::Resolve(gfx));
 			//only.AddBindable(Sampler::Resolve(gfx, Sampler::Type::Clamp, 1u));
 
-			//auto pvs = VertexShader::Resolve(gfx, "FluidVS.cso");
-			//only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *pvs));
-			//only.AddBindable(std::move(pvs));
+			auto pvs = VertexShader::Resolve(gfx, "FluidVS.cso");
+			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *pvs));
+			only.AddBindable(std::move(pvs));
 
-			//only.AddBindable(PixelShader::Resolve(gfx, "FluidPS.cso"));
+			only.AddBindable(PixelShader::Resolve(gfx, "FluidPS.cso"));
 
 			//Dcb::RawLayout lay;
 			//lay.Add<Dcb::Float>("roughness");
@@ -61,14 +61,14 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 			//cBuf = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 			//only.AddBindable(cBuf);
 
-			//only.AddBindable(Rasterizer::Resolve(gfx, false));
+			only.AddBindable(Rasterizer::Resolve(gfx, true));
 
-			//only.AddBindable(tcb);
+			only.AddBindable(tcb);
 
-			//shade.AddStep(std::move(only));
+			shade.AddStep(std::move(only));
 		}
+		AddTechnique(std::move(shade));
 	}
-
 	//AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
 	//AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
 	//AddBind(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));

@@ -24,6 +24,7 @@ namespace Rgph
 			RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::SkyBox));
+			AddBind(Blender::Resolve(gfx, false));
 		}
 		void BindMainCamera(const Camera& cam) noexcept
 		{

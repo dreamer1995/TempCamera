@@ -98,13 +98,14 @@ namespace Rgph
 			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("waterRipple", waterRipple));
 		}
 		{
-			auto pass = std::make_unique<WaterPrePass>(gfx, "waterPre", gfx.GetWidth(), gfx.GetWidth());
+			auto pass = std::make_unique<WaterPrePass>(gfx, "waterPre", gfx.GetWidth());
 			pass->SetSinkLinkage("waterFlow", "$.waterFlow");
 			pass->SetSinkLinkage("waterRipple", "$.waterRipple");
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<WaterCaustics>(gfx, "waterCaustic", gfx.GetWidth(), gfx.GetWidth());
+			auto pass = std::make_unique<WaterCaustics>(gfx, "waterCaustic", gfx.GetWidth());
+			pass->SetSinkLinkage("waterPreMap", "waterPre.waterPreOut");
 			AppendPass(std::move(pass));
 		}
 		{
