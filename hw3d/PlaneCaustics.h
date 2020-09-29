@@ -3,7 +3,6 @@
 #include "Bindable.h"
 #include "IndexBuffer.h"
 #include "ConstantBuffersEx.h"
-#include "ChiliMath.h"
 
 class PlaneCaustics : public Drawable
 {

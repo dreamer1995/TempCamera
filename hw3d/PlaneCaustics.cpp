@@ -1,7 +1,6 @@
 #include "PlaneCaustics.h"
 #include "Plane.h"
 #include "BindableCommon.h"
-//#include "TransformCbufDoubleboi.h"
 #include "ConstantBuffersEx.h"
 #include "imgui/imgui.h"
 #include "DynamicConstant.h"
@@ -50,7 +49,7 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 
 DirectX::XMMATRIX PlaneCaustics::GetTransformXM() const noexcept
 {
-	return DirectX::XMMatrixRotationRollPitchYaw(PI / 2.0f, 0.0f, 0.0f);
+	return DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
 }
 
 void PlaneCaustics::SpawnControlWindow(Graphics& gfx,const char* name) noexcept

@@ -9,6 +9,7 @@
 #include "DepthStencil.h"
 #include "ShadowCameraCBuf.h"
 #include "ShadowSampler.h"
+#include "Blender.h"
 
 class Graphics;
 
