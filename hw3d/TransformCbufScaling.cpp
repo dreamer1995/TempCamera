@@ -21,8 +21,12 @@ void Bind::TransformCbufScaling::Bind( Graphics& gfx ) noxnd
 	const float scale = buf["scale"];
 	const auto scaleMatrix = dx::XMMatrixScaling( scale,scale,scale );
 	auto xf = GetTransforms( gfx );
+	xf.matrix_W2M = scaleMatrix * xf.matrix_W2M;
+	xf.matrix_MV = xf.matrix_MV * scaleMatrix;
 	xf.matrix_M2W = xf.matrix_M2W * scaleMatrix;
 	xf.matrix_MVP = xf.matrix_MVP * scaleMatrix;
+	xf.matrix_T_MV = scaleMatrix * xf.matrix_T_MV;
+	xf.matrix_IT_MV = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, xf.matrix_T_MV));
 	UpdateBindImpl( gfx,xf );
 }
 

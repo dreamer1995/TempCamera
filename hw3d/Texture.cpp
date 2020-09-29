@@ -7,10 +7,11 @@ namespace Bind
 {
 	namespace wrl = Microsoft::WRL;
 
-	Texture::Texture( Graphics& gfx,const std::string& path,UINT slot )
+	Texture::Texture(Graphics& gfx, const std::string& path, UINT slot, Type type)
 		:
 		path( path ),
-		slot( slot )
+		slot( slot ),
+		type(type)
 	{
 		INFOMAN( gfx );
 
@@ -65,16 +66,30 @@ namespace Bind
 	void Texture::Bind( Graphics& gfx ) noxnd
 	{
 		INFOMAN_NOHR( gfx );
-		GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetShaderResources( slot,1u,pTextureView.GetAddressOf() ) );
+		switch (type)
+		{
+		case Type::Vertex:
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
+			break;
+		case Type::Hull:
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
+			break;
+		case Type::Domin:
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
+			break;
+		default:
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
+		}
+		
 	}
-	std::shared_ptr<Texture> Texture::Resolve( Graphics& gfx,const std::string& path,UINT slot )
+	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::string& path, UINT slot, Type type)
 	{
-		return Codex::Resolve<Texture>( gfx,path,slot );
+		return Codex::Resolve<Texture>(gfx, path, slot, type);
 	}
-	std::string Texture::GenerateUID( const std::string& path,UINT slot )
+	std::string Texture::GenerateUID(const std::string& path, UINT slot, Type type)
 	{
 		using namespace std::string_literals;
-		return typeid(Texture).name() + "#"s + path + "#" + std::to_string( slot );
+		return typeid(Texture).name() + "#"s + path + "#" + std::to_string(slot) + std::to_string((int)type);
 	}
 	std::string Texture::GetUID() const noexcept
 	{

@@ -14,3 +14,5 @@
 #include "Rasterizer.h"
 #include "Stencil.h"
 #include "NullPixelShader.h"
+#include "HullShader.h"
+#include "DomainShader.h"

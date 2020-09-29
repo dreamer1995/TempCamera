@@ -15,10 +15,11 @@ public:
 		SimpleQuad,
 		PlaneTextured,
 		PlaneTexturedNormal,
-		PlaneTexturedTBN
+		PlaneTexturedTBN,
+		TessellatedQuad
 	};
 	static IndexedTriangleList MakeTesselatedTextured
-	(Dvtx::VertexLayout layout, int divisions_x, int divisions_y, bool withTexture, bool withNormal, bool withTangent)
+	(Dvtx::VertexLayout layout, int divisions_x, int divisions_y, bool withTexture, bool withNormal, bool withTangent, bool tessellated)
 	{
 		namespace dx = DirectX;
 		assert( divisions_x >= 1 );
@@ -108,10 +109,18 @@ public:
 					{ vxy2i( x,y ),vxy2i( x + 1,y ),vxy2i( x,y + 1 ),vxy2i( x + 1,y + 1 ) };
 					indices.push_back( indexArray[0] );
 					indices.push_back( indexArray[2] );
-					indices.push_back( indexArray[1] );
-					indices.push_back( indexArray[1] );
-					indices.push_back( indexArray[2] );
-					indices.push_back( indexArray[3] );
+					if (tessellated)
+					{
+						indices.push_back(indexArray[3]);
+						indices.push_back(indexArray[1]);
+					}
+					else
+					{
+						indices.push_back(indexArray[1]);
+						indices.push_back(indexArray[1]);
+						indices.push_back(indexArray[2]);
+						indices.push_back(indexArray[3]);
+					}
 				}
 			}
 		}
@@ -123,11 +132,14 @@ public:
 		bool withTexture = false;
 		bool withNormal = false;
 		bool withTangent = false;
+		bool tessellated = false;
 		using Dvtx::VertexLayout;
 		VertexLayout vl;
 		vl.Append(VertexLayout::Position3D);
 		switch (type)
 		{
+		case Type::TessellatedQuad:
+			tessellated = true;
 		case Type::PlaneTexturedTBN:
 		{
 			vl.Append(VertexLayout::Tangent);
@@ -146,6 +158,6 @@ public:
 		}
 		}
 
-		return MakeTesselatedTextured(std::move(vl), divisions, divisions, withTexture, withNormal, withTangent);
+		return MakeTesselatedTextured(std::move(vl), divisions, divisions, withTexture, withNormal, withTangent, tessellated);
 	}
 };

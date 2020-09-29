@@ -345,6 +345,12 @@
     <ClCompile Include="PlaneCaustics.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="HullShader.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="DomainShader.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -734,6 +740,12 @@
     <ClInclude Include="PlaneCaustics.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="HullShader.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="DomainShader.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -877,10 +889,22 @@
     <FxCompile Include="CausticBakeNVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="E:\Git\TempCamera\hw3d\FluidPS.hlsl">
+    <FxCompile Include="FluidPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="E:\Git\TempCamera\hw3d\FluidVS.hlsl">
+    <FxCompile Include="FluidVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticDS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticHS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

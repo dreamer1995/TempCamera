@@ -57,17 +57,6 @@ namespace Bind
 		UINT slot;
 	};
 
-	class PixelConstantBufferEx : public ConstantBufferEx
-	{
-	public:
-		using ConstantBufferEx::ConstantBufferEx;
-		void Bind( Graphics& gfx ) noxnd override
-		{
-			INFOMAN_NOHR( gfx );
-			GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetConstantBuffers( slot,1u,pConstantBuffer.GetAddressOf() ) );
-		}
-	};
-
 	class VertexConstantBufferEx : public ConstantBufferEx
 	{
 	public:
@@ -76,6 +65,39 @@ namespace Bind
 		{
 			INFOMAN_NOHR( gfx );
 			GFX_THROW_INFO_ONLY( GetContext( gfx )->VSSetConstantBuffers( slot,1u,pConstantBuffer.GetAddressOf() ) );
+		}
+	};
+
+	class HullConstantBufferEx : public ConstantBufferEx
+	{
+	public:
+		using ConstantBufferEx::ConstantBufferEx;
+		void Bind(Graphics& gfx) noxnd override
+		{
+			INFOMAN_NOHR(gfx);
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf()));
+		}
+	};
+
+	class DomainConstantBufferEx : public ConstantBufferEx
+	{
+	public:
+		using ConstantBufferEx::ConstantBufferEx;
+		void Bind(Graphics& gfx) noxnd override
+		{
+			INFOMAN_NOHR(gfx);
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf()));
+		}
+	};
+
+	class PixelConstantBufferEx : public ConstantBufferEx
+	{
+	public:
+		using ConstantBufferEx::ConstantBufferEx;
+		void Bind( Graphics& gfx ) noxnd override
+		{
+			INFOMAN_NOHR( gfx );
+			GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetConstantBuffers( slot,1u,pConstantBuffer.GetAddressOf() ) );
 		}
 	};
 
@@ -127,6 +149,8 @@ namespace Bind
 		Dcb::Buffer buf;
 	};
 
-	using CachingPixelConstantBufferEx = CachingConstantBufferEx<PixelConstantBufferEx>;
 	using CachingVertexConstantBufferEx = CachingConstantBufferEx<VertexConstantBufferEx>;
+	using CachingHullConstantBufferEx = CachingConstantBufferEx<HullConstantBufferEx>;
+	using CachingDomainConstantBufferEx = CachingConstantBufferEx<DomainConstantBufferEx>;
+	using CachingPixelConstantBufferEx = CachingConstantBufferEx<PixelConstantBufferEx>;
 }
