@@ -19,6 +19,13 @@ namespace Bind
 			PreCalMipCube,
 			PreBRDFPlane
 		};
+		enum class Shader
+		{
+			Vertex,
+			Hull,
+			Domain,
+			Pixel
+		};
 	public:
 		void BindAsBuffer( Graphics& gfx ) noxnd override;
 		void BindAsBuffer( Graphics& gfx,BufferResource* depthStencil ) noxnd override;

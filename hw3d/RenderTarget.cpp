@@ -303,6 +303,10 @@ namespace Bind
 	void ShaderInputRenderTarget::Bind( Graphics& gfx ) noxnd
 	{
 		INFOMAN_NOHR( gfx );
+
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
 		GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetShaderResources( slot,1,pShaderResourceView.GetAddressOf() ) );	
 	}
 	
