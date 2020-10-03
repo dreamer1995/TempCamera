@@ -78,8 +78,10 @@ namespace Rgph
 			buf["directionX"] = dx::XMFLOAT4{ 0.0f,0.113f,0.306f,0.281f };
 			buf["directionZ"] = dx::XMFLOAT4{ 0.629f,0.081f,0.484f,0.156f };
 			
-			waterFlow = std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 10u);
-			AddGlobalSource(DirectBindableSource<Bind::CachingVertexConstantBufferEx>::Make("waterFlow", waterFlow));
+			waterFlowVS = std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 10u);
+			waterFlowDS = std::make_shared<Bind::CachingDomainConstantBufferEx>(gfx, buf, 10u);
+			AddGlobalSource(DirectBindableSource<Bind::CachingVertexConstantBufferEx>::Make("waterFlowVS", waterFlowVS));
+			AddGlobalSource(DirectBindableSource<Bind::CachingDomainConstantBufferEx>::Make("waterFlowDS", waterFlowDS));
 		}
 		{
 			Dcb::RawLayout lay;
@@ -99,13 +101,14 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<WaterPrePass>(gfx, "waterPre", gfx.GetWidth());
-			pass->SetSinkLinkage("waterFlow", "$.waterFlow");
+			pass->SetSinkLinkage("waterFlow", "$.waterFlowVS");
 			pass->SetSinkLinkage("waterRipple", "$.waterRipple");
 			AppendPass(std::move(pass));
 		}
 		{
 			auto pass = std::make_unique<WaterCaustics>(gfx, "waterCaustic", gfx.GetWidth());
 			pass->SetSinkLinkage("waterPreMap", "waterPre.waterPreOut");
+			pass->SetSinkLinkage("waterFlow", "$.waterFlowDS");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -265,7 +268,7 @@ namespace Rgph
 
 		if (ImGui::Begin("WaterWave"))
 		{
-			auto buf = waterFlow->GetBuffer();
+			auto buf = waterFlowVS->GetBuffer();
 			namespace dx = DirectX;
 			float dirty = false;
 			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
@@ -298,7 +301,8 @@ namespace Rgph
 
 			if (dirty)
 			{
-				waterFlow->SetBuffer(buf);
+				waterFlowVS->SetBuffer(buf);
+				waterFlowDS->SetBuffer(buf);
 			}
 		}
 		ImGui::End();

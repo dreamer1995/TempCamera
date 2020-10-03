@@ -19,13 +19,6 @@ namespace Bind
 			PreCalMipCube,
 			PreBRDFPlane
 		};
-		enum class Shader
-		{
-			Vertex,
-			Hull,
-			Domain,
-			Pixel
-		};
 	public:
 		void BindAsBuffer( Graphics& gfx ) noxnd override;
 		void BindAsBuffer( Graphics& gfx,BufferResource* depthStencil ) noxnd override;
@@ -54,11 +47,12 @@ namespace Bind
 	class ShaderInputRenderTarget : public RenderTarget
 	{
 	public:
-		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type = Type::Default);
+		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type = Type::Default, UINT shaderIndex = 0b1u);
 		void Bind( Graphics& gfx ) noxnd override;
 		Surface ToSurface( Graphics& gfx ) const;
 	private:
 		UINT slot;
+		UINT shaderIndex;
 	public:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
 	};

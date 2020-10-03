@@ -7,11 +7,11 @@ namespace Bind
 {
 	namespace wrl = Microsoft::WRL;
 
-	Texture::Texture(Graphics& gfx, const std::string& path, UINT slot, Type type)
+	Texture::Texture(Graphics& gfx, const std::string& path, UINT slot, UINT shaderIndex)
 		:
 		path( path ),
 		slot( slot ),
-		type(type)
+		shaderIndex(shaderIndex)
 	{
 		INFOMAN( gfx );
 
@@ -66,30 +66,35 @@ namespace Bind
 	void Texture::Bind( Graphics& gfx ) noxnd
 	{
 		INFOMAN_NOHR( gfx );
-		switch (type)
+		assert(shaderIndex & 0b00001111);
+		for (UINT i = 0; i < 5; i++)
 		{
-		case Type::Vertex:
-			GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
-			break;
-		case Type::Hull:
-			GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
-			break;
-		case Type::Domin:
-			GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
-			break;
-		default:
-			GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
+			if (shaderIndex & 0b00001000)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
+			}
+			if (shaderIndex & 0b00000100)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
+			}
+			if (shaderIndex & 0b00000010)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
+			}
+			if (shaderIndex & 0b00000001)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
+			}
 		}
-		
 	}
-	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::string& path, UINT slot, Type type)
+	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::string& path, UINT slot, UINT shaderIndex)
 	{
-		return Codex::Resolve<Texture>(gfx, path, slot, type);
+		return Codex::Resolve<Texture>(gfx, path, slot, shaderIndex);
 	}
-	std::string Texture::GenerateUID(const std::string& path, UINT slot, Type type)
+	std::string Texture::GenerateUID(const std::string& path, UINT slot, UINT shaderIndex)
 	{
 		using namespace std::string_literals;
-		return typeid(Texture).name() + "#"s + path + "#" + std::to_string(slot) + std::to_string((int)type);
+		return typeid(Texture).name() + "#"s + path + "#" + std::to_string(slot) + std::to_string(shaderIndex);
 	}
 	std::string Texture::GetUID() const noexcept
 	{

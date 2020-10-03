@@ -4,6 +4,7 @@
 #include "IndexBuffer.h"
 #include "ConstantBuffersEx.h"
 #include "ChiliMath.h"
+#include "PlaneCaustics.h"
 
 class PlaneWater : public Drawable
 {
@@ -14,6 +15,8 @@ public:
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 	void SpawnControlWindow(Graphics& gfx, const char* name) noexcept;
 	void UpdateENV(float pitch, float yaw, float roll) noexcept;
+	void SubmitEX(size_t channels1, size_t channels2) const;
+	void LinkTechniquesEX(Rgph::RenderGraph& rg);
 public:
 	struct VSMaterialConstant
 	{
@@ -37,4 +40,5 @@ private:
 	float pitch = PI / 2.0f;
 	float yaw = 0.0f;
 	std::shared_ptr<Bind::CachingPixelConstantBufferEx> cBuf;
+	PlaneCaustics waterCaustics;
 };

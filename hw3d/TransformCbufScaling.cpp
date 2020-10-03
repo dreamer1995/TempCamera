@@ -3,9 +3,9 @@
 
 namespace dx = DirectX;
 
-Bind::TransformCbufScaling::TransformCbufScaling( Graphics& gfx,float scale )
+Bind::TransformCbufScaling::TransformCbufScaling(Graphics& gfx, float scale, UINT otherShaderIndex)
 	:
-	TransformCbuf( gfx ),
+	TransformCbuf(gfx, otherShaderIndex),
 	buf( MakeLayout() )
 {
 	buf["scale"] = scale;

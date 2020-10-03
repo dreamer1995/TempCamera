@@ -21,16 +21,18 @@ namespace Bind
 			DirectX::XMMATRIX matrix_W2M;
 		};
 	public:
-		TransformCbuf( Graphics& gfx,UINT slot = 0u, UINT slotP = 0u);
+		TransformCbuf(Graphics& gfx, UINT otherShaderIndex = 0b0u);
 		void Bind( Graphics& gfx ) noxnd override;
 		void InitializeParentReference( const Drawable& parent ) noexcept override;
 		std::unique_ptr<CloningBindable> Clone() const noexcept override;
 	protected:
 		void UpdateBindImpl( Graphics& gfx,const Transforms& tf ) noxnd;
 		Transforms GetTransforms( Graphics& gfx ) noxnd;
+		const Drawable* pParent = nullptr;
+		UINT otherShaderIndex;
 	private:
 		static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;
 		static std::unique_ptr<PixelConstantBuffer<Transforms>> pPcbuf;
-		const Drawable* pParent = nullptr;
+		static std::unique_ptr<DomainConstantBuffer<Transforms>> pDcbuf;
 	};
 }

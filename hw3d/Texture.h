@@ -8,18 +8,11 @@ namespace Bind
 	class Texture : public Bindable
 	{
 	public:
-		enum class Type
-		{
-			Vertex,
-			Hull,
-			Domin,
-			Pixel
-		};
-		Texture(Graphics& gfx, const std::string& path, UINT slot = 0, Type type = Type::Pixel);
+		Texture(Graphics& gfx, const std::string& path, UINT slot = 0, UINT shaderIndex = 0b1u);
 		Texture(Graphics& gfx, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureViewIn, UINT slot = 0);
 		void Bind( Graphics& gfx ) noxnd override;
-		static std::shared_ptr<Texture> Resolve(Graphics& gfx, const std::string& path, UINT slot = 0, Type type = Type::Pixel);
-		static std::string GenerateUID(const std::string& path, UINT slot = 0, Type type = Type::Pixel);
+		static std::shared_ptr<Texture> Resolve(Graphics& gfx, const std::string& path, UINT slot = 0, UINT shaderIndex = 0b1u);
+		static std::string GenerateUID(const std::string& path, UINT slot = 0, UINT shaderIndex = 0b1u);
 		std::string GetUID() const noexcept override;
 		bool HasAlpha() const noexcept;
 	private:
@@ -30,6 +23,6 @@ namespace Bind
 		bool hasAlpha = false;
 		std::string path;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureView;
-		Type type;
+		UINT shaderIndex;
 	};
 }

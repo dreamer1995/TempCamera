@@ -7,7 +7,7 @@ namespace Bind
 	class TransformCbufScaling : public TransformCbuf
 	{
 	public:
-		TransformCbufScaling( Graphics& gfx,float scale = 1.0f );
+		TransformCbufScaling(Graphics& gfx, float scale = 1.0f, UINT otherShaderIndex = 0b0u);
 		void Accept( TechniqueProbe& probe ) override;
 		void Bind( Graphics& gfx ) noxnd override;
 		std::unique_ptr<CloningBindable> Clone() const noexcept override;

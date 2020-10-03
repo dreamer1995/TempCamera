@@ -10,6 +10,8 @@
 #include "Channels.h"
 
 PlaneWater::PlaneWater(Graphics& gfx, float size)
+	:
+	waterCaustics(gfx, 5.0f)
 {
 	using namespace Bind;
 	namespace dx = DirectX;
@@ -207,4 +209,14 @@ void PlaneWater::UpdateENV(float pitch, float yaw, float roll) noexcept
 	auto k = cBuf->GetBuffer();
 	DirectX::XMStoreFloat4x4(&k["EVRotation"], DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll));
 	cBuf->SetBuffer(k);
+}
+
+void PlaneWater::SubmitEX(size_t channels1, size_t channels2) const
+{
+	Submit(channels1);
+	Submit(channels2);
+}
+void PlaneWater::LinkTechniquesEX(Rgph::RenderGraph& rg)
+{
+	LinkTechniques(rg);
 }

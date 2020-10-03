@@ -124,11 +124,21 @@ void Graphics::BeginFrame( float red,float green,float blue ) noexcept
 		ImGui::NewFrame();
 	}
 	// clearing shader inputs to prevent simultaneous in/out bind carried over from prev frame
+	
+	UINT index[] = { 0,3,4,5 };
+	for (auto &c : index)
+	{
+		ClearShaderResources(c);
+	}
+}
+
+void Graphics::ClearShaderResources(UINT slot) noexcept
+{
 	ID3D11ShaderResourceView* const pNullTex = nullptr;
-	pContext->PSSetShaderResources( 0,1,&pNullTex ); // fullscreen input texture
-	pContext->PSSetShaderResources( 3,1,&pNullTex ); // shadow map texture
-	pContext->PSSetShaderResources(4, 1, &pNullTex); // reflection diffuse map texture
-	pContext->PSSetShaderResources(5, 1, &pNullTex); // reflection specular map texture
+	pContext->VSSetShaderResources(slot, 1, &pNullTex);
+	pContext->HSSetShaderResources(slot, 1, &pNullTex);
+	pContext->DSSetShaderResources(slot, 1, &pNullTex);
+	pContext->PSSetShaderResources(slot, 1, &pNullTex);
 }
 
 void Graphics::DrawIndexed( UINT count ) noxnd

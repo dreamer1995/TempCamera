@@ -138,8 +138,6 @@ public:
 		vl.Append(VertexLayout::Position3D);
 		switch (type)
 		{
-		case Type::TessellatedQuad:
-			tessellated = true;
 		case Type::PlaneTexturedTBN:
 		{
 			vl.Append(VertexLayout::Tangent);
@@ -151,6 +149,8 @@ public:
 			vl.Append(VertexLayout::Normal);
 			withNormal = true;
 		}
+		case Type::TessellatedQuad:
+			tessellated = true;
 		case Type::PlaneTextured:
 		{
 			vl.Append(VertexLayout::Texture2D);

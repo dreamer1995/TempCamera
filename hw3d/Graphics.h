@@ -75,6 +75,7 @@ public:
 	UINT GetWidth() const noexcept;
 	UINT GetHeight() const noexcept;
 	std::shared_ptr<Bind::RenderTarget> GetTarget();
+	void ClearShaderResources(UINT slot) noexcept;
 private:
 	UINT width;
 	UINT height;

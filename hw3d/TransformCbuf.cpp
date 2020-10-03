@@ -2,15 +2,21 @@
 
 namespace Bind
 {
-	TransformCbuf::TransformCbuf( Graphics& gfx,UINT slot, UINT slotP)
+	TransformCbuf::TransformCbuf(Graphics& gfx, UINT otherShaderIndex)
+		:
+		otherShaderIndex(otherShaderIndex)
 	{
 		if( !pVcbuf )
 		{
-			pVcbuf = std::make_unique<VertexConstantBuffer<Transforms>>( gfx,slot );
+			pVcbuf = std::make_unique<VertexConstantBuffer<Transforms>>( gfx,0 );
 		}
 		if (!pPcbuf)
 		{
-			pPcbuf = std::make_unique<PixelConstantBuffer<Transforms>>(gfx, slotP);
+			pPcbuf = std::make_unique<PixelConstantBuffer<Transforms>>(gfx, 0);
+		}
+		if (!pDcbuf && otherShaderIndex & 0b00000001)
+		{
+			pDcbuf = std::make_unique<DomainConstantBuffer<Transforms>>(gfx, 0);
 		}
 	}
 
@@ -37,6 +43,11 @@ namespace Bind
 		pVcbuf->Bind( gfx );
 		pPcbuf->Update(gfx, tf);
 		pPcbuf->Bind(gfx);
+		if (otherShaderIndex & 0b00000001)
+		{
+			pDcbuf->Update(gfx, tf);
+			pDcbuf->Bind(gfx);
+		}
 	}
 
 	TransformCbuf::Transforms TransformCbuf::GetTransforms( Graphics& gfx ) noxnd
@@ -65,4 +76,5 @@ namespace Bind
 
 	std::unique_ptr<VertexConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pVcbuf;
 	std::unique_ptr<PixelConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pPcbuf;
+	std::unique_ptr<DomainConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pDcbuf;
 }

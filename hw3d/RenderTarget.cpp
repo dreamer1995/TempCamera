@@ -206,10 +206,11 @@ namespace Bind
 		}
 	}
 
-	ShaderInputRenderTarget::ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type)
+	ShaderInputRenderTarget::ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type, UINT shaderIndex)
 		:
 		RenderTarget(gfx, width, height, type),
-		slot( slot )
+		slot( slot ),
+		shaderIndex(shaderIndex) 
 	{
 		INFOMAN( gfx );
 
@@ -303,11 +304,26 @@ namespace Bind
 	void ShaderInputRenderTarget::Bind( Graphics& gfx ) noxnd
 	{
 		INFOMAN_NOHR( gfx );
-
-		GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
-		GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
-		GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
-		GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetShaderResources( slot,1,pShaderResourceView.GetAddressOf() ) );	
+		assert(shaderIndex & 0b00001111);
+		for (UINT i = 0; i < 5; i++)
+		{
+			if (shaderIndex & 0b00001000)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
+			}
+			if (shaderIndex & 0b00000100)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
+			}
+			if (shaderIndex & 0b00000010)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
+			}
+			if (shaderIndex & 0b00000001)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
+			}
+		}	
 	}
 	
 

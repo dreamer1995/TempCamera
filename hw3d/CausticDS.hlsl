@@ -12,12 +12,12 @@ cbuffer TransformCBuf
 	matrix matrix_W2M;
 };
 
-cbuffer CBufLight : register(b1)
-{
-	float3 direction;
-};
+//cbuffer CBufLight : register(b2)
+//{
+//	float3 direction;
+//};
 
-cbuffer CBufProperties : register(b2)
+cbuffer CBufProperties : register(b10)
 {
 	float4 A;
 	float4 S;
@@ -30,7 +30,7 @@ cbuffer CBufProperties : register(b2)
 	float time;
 };
 
-Texture2D hmap : register(t10);
+Texture2D hmap : register(t0);
 Texture2D nmap : register(t6);
 SamplerState splr;
 
@@ -113,7 +113,7 @@ DS_OUTPUT main(
 	o.newPos = (float3)worldPos;
 
 	o.pos = float4(mul(worldPos, matrix_W2M).xy * shootScale, 0.0f, 1.0f);
-	//o.pos = mul(float4(o.newPos, 1.0f), matrix_VP);
+	o.pos = mul(float4(o.newPos, 1.0f), matrix_VP);
 
 	return o;
 }

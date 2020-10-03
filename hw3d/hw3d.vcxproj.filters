@@ -258,9 +258,6 @@
     <ClCompile Include="BindingPass.cpp">
       <Filter>Source Files\Jobber\Passlib</Filter>
     </ClCompile>
-    <ClCompile Include="TransformCbufScaling.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
     <ClCompile Include="Pass.cpp">
       <Filter>Source Files\Jobber</Filter>
     </ClCompile>
@@ -349,6 +346,9 @@
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="DomainShader.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformCbufScaling.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
   </ItemGroup>

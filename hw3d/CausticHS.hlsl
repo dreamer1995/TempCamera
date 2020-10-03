@@ -1,4 +1,4 @@
-cbuffer CBuf
+cbuffer CBuf : register(b10)
 {
 	int tessellation;
 };

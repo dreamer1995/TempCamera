@@ -25,7 +25,7 @@ namespace Rgph
 
 			AddBindSink<Bind::CachingVertexConstantBufferEx>("waterFlow");
 			AddBindSink<Bind::CachingPixelConstantBufferEx>("waterRipple");
-			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, fullWidth, fullWidth, 4u);
+			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, fullWidth, fullWidth, 4u, RenderTarget::Type::Default, 0b0011u);
 			RegisterSource(DirectBindableSource<RenderTarget>::Make("waterPreOut", renderTarget));
 		}
 

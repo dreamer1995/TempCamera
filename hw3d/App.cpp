@@ -52,7 +52,7 @@ App::App( const std::string& commandLine )
 	//cube.LinkTechniques(rg);
 	//cube2.LinkTechniques(rg);
 	//sphere.LinkTechniques(rg);
-	water.LinkTechniques(rg);
+	water.LinkTechniquesEX(rg);
 
 	//wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,400.0f ) );
 	rg.BindShadowCamera(*pointLight.ShareCamera());
@@ -276,8 +276,7 @@ void App::DoFrame( float dt )
 	dLight.Bind(wnd.Gfx());
 
 	cameras.Submit(Chan::main);
-	water.Submit(Chan::waterPre);
-	water.Submit(Chan::main);
+	water.SubmitEX(Chan::waterPre, Chan::main);
 	//cube.Submit(Chan::main);
 	//cube2.Submit(Chan::main);
 	//sponza.Submit(Chan::main);
