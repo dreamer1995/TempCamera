@@ -13,14 +13,14 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 	using namespace Bind;
 	namespace dx = DirectX;
 
-	auto model = Plane::Make(Plane::Type::TessellatedQuad, 128);
+	auto model = Plane::Make(Plane::Type::TessellatedQuadTextured, 128);
 	model.Transform(dx::XMMatrixScaling(size, size, 1.0f));
 	const auto geometryTag = "$waterCaustics." + std::to_string(size);
 	pVertices = VertexBuffer::Resolve(gfx, geometryTag, model.vertices);
 	pIndices = IndexBuffer::Resolve(gfx, geometryTag, model.indices);
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 
-	auto tcb = std::make_shared<TransformCbufScaling>(gfx, 0b1u);
+	auto tcb = std::make_shared<TransformCbufScaling>(gfx, 1.0f, 0b1u);
 
 	{
 		Technique shade("Shade", Chan::main);
@@ -31,9 +31,8 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *vs));
 			only.AddBindable(std::move(vs));
 
-			only.AddBindable(Texture::Resolve(gfx, "Images\\white.jpg", 0u, 0b0010u));
+			only.AddBindable(Texture::Resolve(gfx, "Images\\white.jpg", 0u, 0b10u));
 
-			only.AddBindable(Topology::Resolve(gfx));
 			only.AddBindable(HullShader::Resolve(gfx, "CausticHS.cso"));
 			only.AddBindable(DomainShader::Resolve(gfx, "CausticDS.cso"));
 			only.AddBindable(PixelShader::Resolve(gfx, "CausticPS.cso"));
@@ -42,7 +41,7 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 				Dcb::RawLayout lay;
 				lay.Add<Dcb::Float4>("color");
 				auto buf = Dcb::Buffer(std::move(lay));
-				buf["color"] = dx::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f };
+				buf["color"] = dx::XMFLOAT4{ 0.258823f,0.156862f,0.062745f,1.0f };
 				only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
 			}
 			
@@ -54,7 +53,7 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 				only.AddBindable(std::make_shared<Bind::CachingHullConstantBufferEx>(gfx, buf, 10u));
 			}
 			
-			only.AddBindable(Sampler::Resolve(gfx, Sampler::Type::Bilinear));
+			only.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Wrap, 0u, 0b10));
 
 			only.AddBindable(std::move(tcb));
 
@@ -102,7 +101,7 @@ void PlaneCaustics::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 				}
 				if (auto v = buf["color"]; v.Exists())
 				{
-					dcheck(ImGui::ColorPicker4(tag("OutLineColor"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v))));
+					dcheck(ImGui::ColorPicker4(tag("CausticBrightness"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v))));
 				}
 				if (auto v = buf["tessellation"]; v.Exists())
 				{

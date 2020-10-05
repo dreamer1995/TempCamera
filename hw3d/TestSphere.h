@@ -12,11 +12,9 @@ public:
 	void SetRotation(float roll, float pitch, float yaw) noexcept;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 	void SpawnControlWindow(Graphics& gfx, const char* name) noexcept;
-	void UpdateENV(float pitch, float yaw, float roll) noexcept;
 private:
 	DirectX::XMFLOAT3 pos = { 0.0f,5.0f,0.0f };
 	float roll = 0.0f;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
-	std::shared_ptr<Bind::CachingPixelConstantBufferEx> cBuf;
 };

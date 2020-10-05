@@ -16,7 +16,7 @@ public:
 		PlaneTextured,
 		PlaneTexturedNormal,
 		PlaneTexturedTBN,
-		TessellatedQuad
+		TessellatedQuadTextured
 	};
 	static IndexedTriangleList MakeTesselatedTextured
 	(Dvtx::VertexLayout layout, int divisions_x, int divisions_y, bool withTexture, bool withNormal, bool withTangent, bool tessellated)
@@ -138,6 +138,11 @@ public:
 		vl.Append(VertexLayout::Position3D);
 		switch (type)
 		{
+		case Type::TessellatedQuadTextured:
+			tessellated = true;
+			vl.Append(VertexLayout::Texture2D);
+			withTexture = true;
+			break;
 		case Type::PlaneTexturedTBN:
 		{
 			vl.Append(VertexLayout::Tangent);
@@ -149,8 +154,6 @@ public:
 			vl.Append(VertexLayout::Normal);
 			withNormal = true;
 		}
-		case Type::TessellatedQuad:
-			tessellated = true;
 		case Type::PlaneTextured:
 		{
 			vl.Append(VertexLayout::Texture2D);

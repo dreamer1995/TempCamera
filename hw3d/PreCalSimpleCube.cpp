@@ -17,7 +17,7 @@ namespace Rgph
 		AddBind(Texture::Resolve(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg"));
 		AddBind(PixelShader::Resolve(gfx, "SphereToCubePS.cso"));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
-		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear));
+		AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear));
 
 		pPreCalSimpleCube = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullHeight, fullHeight, 0u, ShaderInputRenderTarget::Type::PreCalSimpleCube);
 		renderTarget = pPreCalSimpleCube;

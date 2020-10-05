@@ -14,7 +14,6 @@ cbuffer ObjectCBuf : register(b10)
 	float metallic;
 	bool useNormalMap;
 	float normalMapWeight;
-	matrix EVRotation;
 };
 
 struct PSIn {

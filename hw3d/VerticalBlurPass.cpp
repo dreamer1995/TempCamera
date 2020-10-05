@@ -17,7 +17,7 @@ namespace Rgph
 		AddBind( PixelShader::Resolve( gfx,"BlurOutline_PS.cso" ) );
 		AddBind( Blender::Resolve( gfx,true ) );
 		AddBind( Stencil::Resolve( gfx,Stencil::Mode::Mask ) );
-		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear, 0u, true));
+		AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Mirror, 0u));
 
 		AddBindSink<RenderTarget>( "scratchIn" );
 		AddBindSink<CachingPixelConstantBufferEx>( "kernel" );

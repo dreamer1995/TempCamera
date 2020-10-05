@@ -4,9 +4,10 @@
 
 namespace Bind
 {
-	Blender::Blender( Graphics& gfx,bool blending,std::optional<float> factors_in )
+	Blender::Blender(Graphics& gfx, bool blending, BlendMode blendMode, std::optional<float> factors_in)
 		:
-		blending( blending )
+		blending( blending ),
+		blendMode(blendMode)
 	{
 		INFOMAN( gfx );
 
@@ -29,8 +30,18 @@ namespace Bind
 			}
 			else
 			{
-				brt.SrcBlend = D3D11_BLEND_SRC_ALPHA;
-				brt.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+				switch (blendMode)
+				{
+				case BlendMode::Additive:
+					brt.SrcBlend = D3D11_BLEND_ONE;
+					brt.DestBlend = D3D11_BLEND_ONE;
+					break;
+				case BlendMode::OneMinus:
+					brt.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+					brt.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+					break;
+				}
+				
 			}
 		}
 		GFX_THROW_INFO( GetDevice( gfx )->CreateBlendState( &blendDesc,&pBlender ) );
@@ -55,17 +66,17 @@ namespace Bind
 		return factors->front();
 	}
 	
-	std::shared_ptr<Blender> Blender::Resolve( Graphics& gfx,bool blending,std::optional<float> factor )
+	std::shared_ptr<Blender> Blender::Resolve(Graphics& gfx, bool blending, BlendMode blendMode, std::optional<float> factor)
 	{
-		return Codex::Resolve<Blender>( gfx,blending,factor );
+		return Codex::Resolve<Blender>(gfx, blending, blendMode, factor);
 	}
-	std::string Blender::GenerateUID( bool blending,std::optional<float> factor )
+	std::string Blender::GenerateUID(bool blending, BlendMode blendMode, std::optional<float> factor)
 	{
 		using namespace std::string_literals;
-		return typeid(Blender).name() + "#"s + (blending ? "b"s : "n"s) + (factor ? "#f"s + std::to_string( *factor ) : "");
+		return typeid(Blender).name() + "#"s + (blending ? "b"s : "n"s) + std::to_string(blendMode) + (factor ? "#f"s + std::to_string(*factor) : "");
 	}
 	std::string Blender::GetUID() const noexcept
 	{
-		return GenerateUID( blending,factors ? factors->front() : std::optional<float>{} );
+		return GenerateUID(blending, blendMode, factors ? factors->front() : std::optional<float>{});
 	}
 }

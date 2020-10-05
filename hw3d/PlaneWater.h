@@ -14,7 +14,6 @@ public:
 	void SetRotation(float roll, float pitch, float yaw) noexcept;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 	void SpawnControlWindow(Graphics& gfx, const char* name) noexcept;
-	void UpdateENV(float pitch, float yaw, float roll) noexcept;
 	void SubmitEX(size_t channels1, size_t channels2) const;
 	void LinkTechniquesEX(Rgph::RenderGraph& rg);
 public:
@@ -35,10 +34,9 @@ public:
 		float padding[2];
 	} vmc;
 private:
-	DirectX::XMFLOAT3 pos = { 0.0f,0.0f,0.0f };
+	DirectX::XMFLOAT3 pos = { -5.0f, 17.0f, -1.0f };
 	float roll = 0.0f;
 	float pitch = PI / 2.0f;
 	float yaw = 0.0f;
-	std::shared_ptr<Bind::CachingPixelConstantBufferEx> cBuf;
 	PlaneCaustics waterCaustics;
 };

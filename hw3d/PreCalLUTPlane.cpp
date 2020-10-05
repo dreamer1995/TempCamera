@@ -16,7 +16,7 @@ namespace Rgph
 	{
 		AddBind(PixelShader::Resolve(gfx, "IntegrateBRDFPixelShader.cso"));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
-		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear));
+		AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear));
 
 		pPreCalLUTPlane = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 13u, ShaderInputRenderTarget::Type::PreBRDFPlane);
 		renderTarget = pPreCalLUTPlane;

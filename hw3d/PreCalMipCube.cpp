@@ -15,7 +15,7 @@ namespace Rgph
 	{
 		AddBind(PixelShader::Resolve(gfx, "PrefilterMapPixelShader.cso"));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
-		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear));
+		AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear));
 		Dcb::RawLayout l;
 		l.Add<Dcb::Float>("roughness");
 		Dcb::Buffer buf{ std::move(l) };

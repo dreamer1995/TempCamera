@@ -20,7 +20,7 @@ namespace Rgph
 			using namespace Bind;
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));
 			AddBind(Bind::Rasterizer::Resolve(gfx, true));
-			AddBind(Blender::Resolve(gfx, true));
+			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::Additive));
 			AddBindSink<Bind::Bindable>("waterPreMap");
 			AddBindSink<Bind::CachingDomainConstantBufferEx>("waterFlow");
 			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullWidth, 5u);
@@ -30,6 +30,7 @@ namespace Rgph
 		{
 			renderTarget->Clear(gfx);
 			RenderQueuePass::Execute(gfx);
+			gfx.UnbindTessellationShaders();
 		}
 	};
 }

@@ -28,11 +28,11 @@ namespace Bind
 	protected:
 		void UpdateBindImpl( Graphics& gfx,const Transforms& tf ) noxnd;
 		Transforms GetTransforms( Graphics& gfx ) noxnd;
-		const Drawable* pParent = nullptr;
 		UINT otherShaderIndex;
 	private:
 		static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;
 		static std::unique_ptr<PixelConstantBuffer<Transforms>> pPcbuf;
+		const Drawable* pParent = nullptr;
 		static std::unique_ptr<DomainConstantBuffer<Transforms>> pDcbuf;
 	};
 }

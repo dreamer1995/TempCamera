@@ -15,7 +15,7 @@ namespace Rgph
 	{
 		AddBind(PixelShader::Resolve(gfx, "SkyboxConvolutionPS.cso"));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
-		AddBind(Sampler::Resolve(gfx, Sampler::Type::Bilinear));
+		AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear));
 
 		AddBindSink<Bind::RenderTarget>("HDIn");
 

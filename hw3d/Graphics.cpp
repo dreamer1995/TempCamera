@@ -196,6 +196,12 @@ std::shared_ptr<Bind::RenderTarget> Graphics::GetTarget()
 	return pTarget;
 }
 
+void Graphics::UnbindTessellationShaders() noexcept
+{
+	pContext->HSSetShader(NULL, nullptr, 0u);
+	pContext->DSSetShader(NULL, nullptr, 0u);
+}
+
 
 // Graphics exception stuff
 Graphics::HrException::HrException( int line,const char* file,HRESULT hr,std::vector<std::string> infoMsgs ) noexcept

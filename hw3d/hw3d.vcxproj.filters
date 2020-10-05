@@ -333,9 +333,6 @@
     <ClCompile Include="TestSphere.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="PrePlaneCalculatePass.cpp">
-      <Filter>Source Files\Jobber\Passlib</Filter>
-    </ClCompile>
     <ClCompile Include="PlaneWater.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
@@ -730,9 +727,6 @@
     </ClInclude>
     <ClInclude Include="WaterCaustics.h">
       <Filter>Header Files\Jobber\Passlib</Filter>
-    </ClInclude>
-    <ClInclude Include="PrePlaneCalculatePass.h">
-      <Filter>Header Files\Jobber\Passlib\Base</Filter>
     </ClInclude>
     <ClInclude Include="PlaneWater.h">
       <Filter>Header Files\Drawable</Filter>

@@ -98,7 +98,7 @@ namespace Bind
 	}
 	std::string Texture::GetUID() const noexcept
 	{
-		return GenerateUID( path,slot );
+		return GenerateUID(path, slot, shaderIndex);
 	}
 	bool Texture::HasAlpha() const noexcept
 	{

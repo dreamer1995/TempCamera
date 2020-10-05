@@ -17,7 +17,7 @@ namespace Rgph
 	{
 		AddBind( PixelShader::Resolve( gfx,"BlurOutline_PS.cso" ) );
 		AddBind( Blender::Resolve( gfx,false ) );
-		AddBind(Sampler::Resolve(gfx, Sampler::Type::Point, 0u, true));
+		AddBind(Sampler::Resolve(gfx, Sampler::Filter::Point, Sampler::Address::Mirror, 0u));
 		
 		AddBindSink<Bind::RenderTarget>( "scratchIn" );
 		AddBindSink<Bind::CachingPixelConstantBufferEx>( "kernel" );

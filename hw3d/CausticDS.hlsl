@@ -1,16 +1,5 @@
 // A constant buffer that stores the three basic column-major matrices for composing geometry.
-cbuffer TransformCBuf
-{
-	matrix matrix_MVP;
-	matrix matrix_MV;
-	matrix matrix_V;
-	matrix matrix_P;
-	matrix matrix_VP;
-	matrix matrix_T_MV;
-	matrix matrix_IT_MV;
-	matrix matrix_M2W;
-	matrix matrix_W2M;
-};
+#include "Constants.hlsli"
 
 //cbuffer CBufLight : register(b2)
 //{
@@ -26,12 +15,11 @@ cbuffer CBufProperties : register(b10)
 	float4 Q;
 	float4 Dx;
 	float4 Dz;
-	float depth;
-	float time;
+	//float depth;
 };
 
 Texture2D hmap : register(t0);
-Texture2D nmap : register(t6);
+Texture2D nmap : register(t4);
 SamplerState splr;
 
 struct DS_OUTPUT
@@ -88,12 +76,13 @@ DS_OUTPUT main(
 
 	float disPosY = CalculateWavesDisplacement(sinp);
 
-	float depthR = o.oldPos.y + disPosY + depth;
+	//float depthR = o.oldPos.y + disPosY + depth;
+	float depthR = o.oldPos.y + disPosY + 2.471f;
 
-	float shootScale = 1.0f;
+	float shootScale = 5.0f;
 	float _shootScale = 1.0f / shootScale;
 
-	float3 bumpNormal = nmap.SampleLevel(splr, (uv) * shootScale, 0.0f).rgb;
+	float3 bumpNormal = nmap.SampleLevel(splr, uv, 0.0f).rgb;
 	bumpNormal = bumpNormal * 2.0f - 1.0f;
 
 	const float NdotL = max(dot(bumpNormal, float3(0.0f, 1.0f, 0.0f)), 0.0f);
@@ -107,13 +96,13 @@ DS_OUTPUT main(
 	//float depthmap = hmap.SampleLevel(splr, (uv) * shootScale, 0.0f).r;
 	float depthmap = (o.oldPos.z + 1.0f) * 0.5f;
 
-	float4 worldPos = mul(pos, matrix_M2W) + float4(Rv.x * (depthR * depthmap) * _shootScale, 0.0f,
-													Rv.z * (depthR * depthmap) * _shootScale, 0.0f);
+	float4 worldPos = mul(pos, matrix_M2W) + float4(Rv.x * (depthR * depthmap), 0.0f,
+													Rv.z * (depthR * depthmap), 0.0f);
 
 	o.newPos = (float3)worldPos;
 
-	o.pos = float4(mul(worldPos, matrix_W2M).xy * shootScale, 0.0f, 1.0f);
-	o.pos = mul(float4(o.newPos, 1.0f), matrix_VP);
+	o.pos = float4(mul(worldPos, matrix_W2M).xy * _shootScale, 0.0f, 1.0f);
+	//o.pos = mul(float4(o.newPos, 1.0f), matrix_VP);
 
 	return o;
 }

@@ -2,7 +2,6 @@
 #include "Plane.h"
 #include "BindableCommon.h"
 //#include "TransformCbufDoubleboi.h"
-#include "ConstantBuffersEx.h"
 #include "imgui/imgui.h"
 #include "DynamicConstant.h"
 #include "TechniqueProbe.h"
@@ -30,17 +29,15 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 		{
 			Step only("water");
 
-			//only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
-			//only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
-			//only.AddBindable(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
-			////AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('C')));
-			//only.AddBindable(Texture::Resolve(gfx, "Images\\DesertSand_albedo.jpg", 4u));
-			//only.AddBindable(Texture::Resolve(gfx, "Images\\white.jpg", 5u));
-			////AddBind(TexturePre::Resolve(gfx, 6u, gfx.GetShaderResourceView('N')));
-			////AddBind(Texture::Resolve(gfx, "Images\\white.jpg", 30u, false, true));
+			only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
+			only.AddBindable(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
+			only.AddBindable(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
+			//AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('C')));
+			only.AddBindable(Texture::Resolve(gfx, "Images\\DesertSand_albedo.jpg", 3u));
+			only.AddBindable(Texture::Resolve(gfx, "Images\\white.jpg", 4u, 0b1001));
 
 			only.AddBindable(Sampler::Resolve(gfx));
-			//only.AddBindable(Sampler::Resolve(gfx, Sampler::Type::Clamp, 1u));
+			only.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 1u));
 
 			auto pvs = VertexShader::Resolve(gfx, "FluidVS.cso");
 			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *pvs));
@@ -48,20 +45,40 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 
 			only.AddBindable(PixelShader::Resolve(gfx, "FluidPS.cso"));
 
-			//Dcb::RawLayout lay;
-			//lay.Add<Dcb::Float>("roughness");
-			//lay.Add<Dcb::Float>("metallic");
-			//lay.Add<Dcb::Bool>("normalMappingEnabled");
-			//lay.Add<Dcb::Matrix>("EVRotation");
-			//lay.Add<Dcb::Float>("depth");
-			//auto buf = Dcb::Buffer(std::move(lay));
-			//buf["roughness"] = 0.321f;
-			//buf["metallic"] = 0.572f;
-			//buf["useNormalMap"] = true;
-			//dx::XMStoreFloat4x4(&buf["EVRotation"], dx::XMMatrixIdentity());
-			//buf["depth"] = 2.471f;
-			//cBuf = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
-			//only.AddBindable(cBuf);
+			{
+				Dcb::RawLayout lay;
+				lay.Add<Dcb::Float3>("color");
+				lay.Add<Dcb::Float3>("attenuation");
+				lay.Add<Dcb::Float3>("scatteringKd");
+				lay.Add<Dcb::Float>("depth");
+				auto buf = Dcb::Buffer(std::move(lay));
+				buf["color"] = dx::XMFLOAT3{ 0.0f,0.384313f,0.580392f };
+				buf["attenuation"] = dx::XMFLOAT3{ 5.0f,5.0f,5.0f };
+				buf["scatteringKd"] = dx::XMFLOAT3{ 1.0f,1.0f,1.0f };
+				buf["depth"] = 1.0f;
+				only.AddBindable(std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 11u));
+			}
+			{
+				Dcb::RawLayout lay;
+				lay.Add<Dcb::Float>("metallic");
+				lay.Add<Dcb::Float>("roughness");
+				lay.Add<Dcb::Bool>("normalMappingEnabled");
+				lay.Add<Dcb::Float>("speed");
+				lay.Add<Dcb::Float>("depth");
+				lay.Add<Dcb::Float>("tilling");
+				lay.Add<Dcb::Float>("flatten1");
+				lay.Add<Dcb::Float>("flatten2");
+				auto buf = Dcb::Buffer(std::move(lay));
+				buf["metallic"] = 0.572f;
+				buf["roughness"] = 0.321f;
+				buf["normalMappingEnabled"] = true;
+				buf["speed"] = 0.25f;
+				buf["depth"] = 2.471f;
+				buf["tilling"] = 1.0f;
+				buf["flatten1"] = 0.182f;
+				buf["flatten2"] = 0.0f;
+				only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
+			}
 
 			only.AddBindable(Rasterizer::Resolve(gfx, true));
 
@@ -112,7 +129,7 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 		only.AddBindable(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
 
 		only.AddBindable(PixelShader::Resolve(gfx, "CausticBakeNPS.cso"));
-		only.AddBindable(Sampler::Resolve(gfx, Sampler::Type::Bilinear));
+		only.AddBindable(Sampler::Resolve(gfx));
 
 		only.AddBindable(std::move(tcb));
 
@@ -202,21 +219,17 @@ void PlaneWater::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 		Accept(probe);
 	}
 	ImGui::End();
-}
-
-void PlaneWater::UpdateENV(float pitch, float yaw, float roll) noexcept
-{
-	auto k = cBuf->GetBuffer();
-	DirectX::XMStoreFloat4x4(&k["EVRotation"], DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll));
-	cBuf->SetBuffer(k);
+	waterCaustics.SpawnControlWindow(gfx, "Caustics");
 }
 
 void PlaneWater::SubmitEX(size_t channels1, size_t channels2) const
 {
 	Submit(channels1);
+	waterCaustics.Submit(channels2);
 	Submit(channels2);
 }
 void PlaneWater::LinkTechniquesEX(Rgph::RenderGraph& rg)
 {
 	LinkTechniques(rg);
+	waterCaustics.LinkTechniques(rg);
 }

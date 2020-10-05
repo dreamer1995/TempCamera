@@ -6,23 +6,30 @@ namespace Bind
 	class Sampler : public Bindable
 	{
 	public:
-		enum class Type
+		enum class Filter
 		{
 			Anisotropic,
 			Bilinear,
-			Point,
-			Clamp
+			Point
+		};
+		enum class Address
+		{
+			Clamp,
+			Wrap,
+			Mirror
 		};
 	public:
-		Sampler(Graphics& gfx, Type type, UINT slot, bool reflect);
+		Sampler(Graphics& gfx, Filter filter, Address address, UINT slot, UINT shaderIndex);
 		void Bind( Graphics& gfx ) noxnd override;
-		static std::shared_ptr<Sampler> Resolve(Graphics& gfx, Type type = Type::Anisotropic, UINT slot = 0u, bool reflect = false);
-		static std::string GenerateUID( Type type, UINT slot, bool reflect );
+		static std::shared_ptr<Sampler> Resolve(Graphics& gfx, Filter filter = Filter::Anisotropic, Address address = Address::Wrap,
+			UINT slot = 0u, UINT shaderIndex = 0b1u);
+		static std::string GenerateUID(Filter filter, Address address, UINT slot, UINT shaderIndex);
 		std::string GetUID() const noexcept override;
 	protected:
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> pSampler;
-		Type type;
-		bool reflect;
+		Filter filter;
+		Address address;
+		UINT shaderIndex;
 	private:
 		UINT slot;
 	};

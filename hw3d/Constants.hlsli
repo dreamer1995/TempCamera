@@ -17,7 +17,8 @@ cbuffer CameraCBuf : register(b1)//PS
 	float3 cameraDir;
 };
 
-cbuffer Time : register(b2)//VS, PS
+cbuffer Time : register(b2)//VS, DS, PS
 {
 	float time;
+	matrix EVRotation;
 };

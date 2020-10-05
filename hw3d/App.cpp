@@ -18,12 +18,13 @@ App::App( const std::string& commandLine )
 	wnd( 1280,720,"The Donkey Fart Box" ),
 	scriptCommander( TokenizeQuoted( commandLine ) ),
 	dLight(wnd.Gfx()),
-	pointLight( wnd.Gfx(),{ 0.0f,0.0f,0.0f }, 0.0f )
+	pointLight( wnd.Gfx(),{ -5.0f, 17.0f, -1.0f }, 0.0f )
 {
 	time = 0;
 	cVBuf = std::make_unique<Bind::VertexConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cPBuf = std::make_unique<Bind::PixelConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
-	cameras.AddCamera( std::make_unique<Camera>( wnd.Gfx(),"A",dx::XMFLOAT3{ 0.0f,0.0f,-5.0f },0.0f, 0.0f) );
+	cDBuf = std::make_unique<Bind::DomainConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
+	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ 5.1f,26.6f,-17.6f }, 31.0f * PI / 180.0f, -41.0f * PI / 180.0f));
 	pCam = std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f,28.8f,-6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f);
 	cameras.AddCamera(pCam);
 	cameras.AddCamera( pointLight.ShareCamera() );
@@ -259,7 +260,7 @@ void App::HandleInput( float dt )
 void App::DoFrame( float dt )
 {
 	time += dt;
-	UpdateCommonVar(wnd.Gfx(), {time});
+	UpdateCommonVar(wnd.Gfx(), { time,DirectX::XMMatrixRotationRollPitchYaw(skybox.pitch, skybox.yaw, skybox.roll) });
 	//wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().BeginFrame(0.1f, 0.1f, 0.1f);
 	//wnd.Gfx().SetCamera(cameras->GetMatrix() );
@@ -282,7 +283,6 @@ void App::DoFrame( float dt )
 	//sponza.Submit(Chan::main);
 	//gobber.Submit(Chan::main);
 	//nano.Submit(Chan::main);
-	//sphere.UpdateENV(skybox.pitch, skybox.yaw, skybox.roll);
 	//sphere.Submit(Chan::main);
 
 	//sponza.Submit(Chan::shadow);
@@ -367,6 +367,9 @@ void App::UpdateCommonVar(Graphics& gfx, const CommonVar& cvar) noxnd
 	cVBuf->Bind(gfx);
 	cPBuf->Update(gfx, cvar);
 	cPBuf->Bind(gfx);
+	cDBuf->Update(gfx, cvar);
+	cDBuf->Bind(gfx);
 }
 std::unique_ptr<Bind::VertexConstantBuffer<App::CommonVar>> App::cVBuf;
 std::unique_ptr<Bind::PixelConstantBuffer<App::CommonVar>> App::cPBuf;
+std::unique_ptr<Bind::DomainConstantBuffer<App::CommonVar>> App::cDBuf;

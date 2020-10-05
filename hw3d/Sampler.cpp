@@ -4,38 +4,46 @@
 
 namespace Bind
 {
-	Sampler::Sampler(Graphics& gfx, Type type, UINT slot, bool reflect)
+	Sampler::Sampler(Graphics& gfx, Filter filter, Address address, UINT slot, UINT shaderIndex)
 		:
-		type( type ),
-		reflect( reflect ),
-		slot(slot)
+		filter(filter),
+		address(address),
+		slot(slot),
+		shaderIndex(shaderIndex)
 	{
 		INFOMAN( gfx );
 
 		D3D11_SAMPLER_DESC samplerDesc = CD3D11_SAMPLER_DESC{ CD3D11_DEFAULT{} };
-		samplerDesc.Filter = [type]() {
-			switch( type )
+		samplerDesc.Filter = [filter]() {
+			switch(filter)
 			{
-			case Type::Anisotropic: return D3D11_FILTER_ANISOTROPIC;
-			case Type::Point: return D3D11_FILTER_MIN_MAG_MIP_POINT;
+			case Filter::Anisotropic: return D3D11_FILTER_ANISOTROPIC;
+			case Filter::Point: return D3D11_FILTER_MIN_MAG_MIP_POINT;
 			default:
-			case Type::Bilinear: return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+			return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 			}
 		}();
-		switch (type)
+		switch (address)
 		{
-		case Type::Clamp:
+		case Address::Clamp:
 		{
-			samplerDesc.AddressU = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_CLAMP;
-			samplerDesc.AddressV = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_CLAMP;
-			samplerDesc.AddressW = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_CLAMP;
+			samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+			samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+			samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+			break;
+		}
+		case Address::Mirror:
+		{
+			samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
+			samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MIRROR;
+			samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MIRROR;
 			break;
 		}
 		default:
 		{
-			samplerDesc.AddressU = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_WRAP;
-			samplerDesc.AddressV = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_WRAP;
-			samplerDesc.AddressW = reflect ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_WRAP;
+			samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+			samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+			samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 			samplerDesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
 		}
 		}
@@ -46,19 +54,39 @@ namespace Bind
 	void Sampler::Bind( Graphics& gfx ) noxnd
 	{
 		INFOMAN_NOHR( gfx );
-		GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetSamplers(slot, 1, pSampler.GetAddressOf()));
+		assert(shaderIndex & 0b00001111);
+		for (UINT i = 0; i < 5; i++)
+		{
+			if (shaderIndex & 0b00001000)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetSamplers(slot, 1, pSampler.GetAddressOf()));
+			}
+			if (shaderIndex & 0b00000100)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetSamplers(slot, 1, pSampler.GetAddressOf()));
+			}
+			if (shaderIndex & 0b00000010)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetSamplers(slot, 1, pSampler.GetAddressOf()));
+			}
+			if (shaderIndex & 0b00000001)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetSamplers(slot, 1, pSampler.GetAddressOf()));
+			}
+		}
 	}
-	std::shared_ptr<Sampler> Sampler::Resolve(Graphics& gfx, Type type, UINT slot, bool reflect)
+	std::shared_ptr<Sampler> Sampler::Resolve(Graphics& gfx, Filter filter, Address address, UINT slot, UINT shaderIndex)
 	{
-		return Codex::Resolve<Sampler>(gfx, type, slot, reflect);
+		return Codex::Resolve<Sampler>(gfx, filter, address, slot, shaderIndex);
 	}
-	std::string Sampler::GenerateUID(Type type, UINT slot, bool reflect)
+	std::string Sampler::GenerateUID(Filter filter, Address address, UINT slot, UINT shaderIndex)
 	{
 		using namespace std::string_literals;
-		return typeid(Sampler).name() + "#"s + std::to_string( (int)type ) + std::to_string((int)slot) + (reflect ? "R"s : "W"s);
+		return typeid(Sampler).name() + "#"s + std::to_string( (int)filter) + std::to_string((int)address) + std::to_string((int)slot) +
+			std::to_string(shaderIndex);
 	}
 	std::string Sampler::GetUID() const noexcept
 	{
-		return GenerateUID(type, slot, reflect);
+		return GenerateUID(filter, address, slot, shaderIndex);
 	}
 }

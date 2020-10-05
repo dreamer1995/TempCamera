@@ -26,11 +26,13 @@ private:
 	struct CommonVar
 	{
 		float time;
+		DirectX::XMMATRIX EVRotation;
 		float padding[3];
 	};
 	float time;
 	static std::unique_ptr<Bind::VertexConstantBuffer<CommonVar>> cVBuf;
 	static std::unique_ptr<Bind::PixelConstantBuffer<CommonVar>> cPBuf;
+	static std::unique_ptr<Bind::DomainConstantBuffer<CommonVar>> cDBuf;
 private:
 	void DoFrame( float dt );
 	void HandleInput( float dt );
