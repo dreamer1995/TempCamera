@@ -55,7 +55,7 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 				buf["color"] = dx::XMFLOAT3{ 0.0f,0.384313f,0.580392f };
 				buf["attenuation"] = dx::XMFLOAT3{ 5.0f,5.0f,5.0f };
 				buf["scatteringKd"] = dx::XMFLOAT3{ 1.0f,1.0f,1.0f };
-				buf["depth"] = 1.0f;
+				buf["depth"] = 2.471f;
 				only.AddBindable(std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 11u));
 			}
 			{
