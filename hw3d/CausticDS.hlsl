@@ -101,7 +101,7 @@ DS_OUTPUT main(
 
 	o.newPos = (float3)worldPos;
 
-	o.pos = float4(mul(worldPos, matrix_W2M).xy * _shootScale, 0.0f, 1.0f);
+	o.pos = float4((mul(worldPos, matrix_W2M).xy - float2(0.0f, 4.0f)) * _shootScale, 0.0f, 1.0f);
 	//o.pos = mul(float4(o.newPos, 1.0f), matrix_VP);
 
 	return o;
