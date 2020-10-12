@@ -111,6 +111,7 @@ void Camera::Reset( Graphics& gfx ) noexcept
 	}
 	pitch = homePitch;
 	yaw = homeYaw;
+	yaw_ = 0;
 
 	const dx::XMFLOAT3 angles = { pitch,yaw,0.0f };
 	indicator.SetRotation( angles );

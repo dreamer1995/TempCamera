@@ -34,7 +34,7 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 			only.AddBindable(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
 			//AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('C')));
 			only.AddBindable(Texture::Resolve(gfx, "Images\\DesertSand_albedo.jpg", 3u));
-			only.AddBindable(Texture::Resolve(gfx, "Images\\white.jpg", 4u, 0b1001));
+			//only.AddBindable(Texture::Resolve(gfx, "Images\\white.jpg", 4u, 0b1001));
 
 			only.AddBindable(Sampler::Resolve(gfx));
 			only.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 1u));

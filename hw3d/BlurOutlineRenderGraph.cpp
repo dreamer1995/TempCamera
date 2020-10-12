@@ -291,10 +291,10 @@ namespace Rgph
 			}if (auto v = buf["Q"]; v.Exists())
 			{
 				dcheck(ImGui::SliderFloat4("Q", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-			}if (auto v = buf["DirectionX"]; v.Exists())
+			}if (auto v = buf["directionX"]; v.Exists())
 			{
 				dcheck(ImGui::SliderFloat4("DirectionX", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-			}if (auto v = buf["DirectionY"]; v.Exists())
+			}if (auto v = buf["directionZ"]; v.Exists())
 			{
 				dcheck(ImGui::SliderFloat4("DirectionY", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
 			}

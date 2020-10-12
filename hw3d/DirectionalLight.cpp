@@ -47,7 +47,7 @@ void DirectionalLight::Reset() noexcept
 		{ 1.0f,1.0f,1.0f },
 		1.0f,
 	};
-	pos = { 0.0f,24.0f,0.0f };
+	pos = { 0.0f,10.0f,0.0f };
 	pitch = -PI / 4;
 	yaw = -PI / 4;
 

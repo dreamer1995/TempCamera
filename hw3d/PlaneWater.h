@@ -34,7 +34,7 @@ public:
 		float padding[2];
 	} vmc;
 private:
-	DirectX::XMFLOAT3 pos = { -5.0f, 17.0f, -1.0f };
+	DirectX::XMFLOAT3 pos = { 0.0f, 0.0f, 0.0f };
 	float roll = 0.0f;
 	float pitch = PI / 2.0f;
 	float yaw = 0.0f;

@@ -18,13 +18,13 @@ App::App( const std::string& commandLine )
 	wnd( 1280,720,"The Donkey Fart Box" ),
 	scriptCommander( TokenizeQuoted( commandLine ) ),
 	dLight(wnd.Gfx()),
-	pointLight( wnd.Gfx(),{ -5.0f, 17.0f, -1.0f }, 0.0f )
+	pointLight( wnd.Gfx(),{ 0.0f, 0.0f, 0.0f }, 0.0f )
 {
 	time = 0;
 	cVBuf = std::make_unique<Bind::VertexConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cPBuf = std::make_unique<Bind::PixelConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cDBuf = std::make_unique<Bind::DomainConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
-	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ 5.1f,26.6f,-17.6f }, 31.0f * PI / 180.0f, -41.0f * PI / 180.0f));
+	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -11.f,9.6f,-12.8f }, 46.0f * PI / 180.0f, 47.0f * PI / 180.0f));
 	pCam = std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f,28.8f,-6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f);
 	cameras.AddCamera(pCam);
 	cameras.AddCamera( pointLight.ShareCamera() );
