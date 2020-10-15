@@ -141,7 +141,7 @@ float4 main(PSIn i) : SV_Target
 
 
 	//SkyMapMip.SampleLevel(splr, i.worldPos, roughness * MAX_REF_LOD).rgb
-	return float4(hmap.Sample(splr, i.uv).rgb, 1.0f);
+	return float4(color, 1.0f);
 	//const float3 diffuse = PdiffuseColor * PdiffuseIntensity * att * max(0, dot(i.normal, PlightDir)) +
 	//						DdiffuseColor * DdiffuseIntens6ity * max(0, dot(i.normal, direction));
 

@@ -94,14 +94,14 @@ DS_OUTPUT main(
 	//const float3 Rv = n * -direction + (n * c1 - c2) * bumpNormal;
 
 	//float depthmap = hmap.SampleLevel(splr, (uv) * shootScale, 0.0f).r;
-	float depthmap = (o.oldPos.z + 1.0f) * 0.5f;
+	float depthmap = (o.oldPos.z * 0.2f + 1.0f);
 
 	float4 worldPos = mul(pos, matrix_M2W) + float4(Rv.x * (depthR * depthmap), 0.0f,
 													Rv.z * (depthR * depthmap), 0.0f);
 
 	o.newPos = (float3)worldPos;
 
-	o.pos = float4((mul(worldPos, matrix_W2M).xy - float2(0.0f, 4.0f)) * _shootScale, 0.0f, 1.0f);
+	o.pos = float4(mul(worldPos, matrix_W2M).xy * _shootScale, 0.0f, 1.0f);
 	//o.pos = mul(float4(o.newPos, 1.0f), matrix_VP);
 
 	return o;

@@ -65,7 +65,7 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 
 DirectX::XMMATRIX PlaneCaustics::GetTransformXM() const noexcept
 {
-	return DirectX::XMMatrixRotationRollPitchYaw(PI / 2.0f, 0.0f, 0.0f) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f);
+	return DirectX::XMMatrixRotationRollPitchYaw(PI / 2.0f, 0.0f, 0.0f);
 }
 
 void PlaneCaustics::SpawnControlWindow(Graphics& gfx, const char* name) noexcept

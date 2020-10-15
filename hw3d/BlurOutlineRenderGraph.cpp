@@ -72,8 +72,9 @@ namespace Rgph
 			Dcb::Buffer buf{ std::move(l) };
 			buf["amplitude"] = dx::XMFLOAT4{ 0.071f,0.032f,0.048f,0.063f };
 			buf["wavespeed"] = dx::XMFLOAT4{ 0.097f,0.258f,0.179f,0.219f };
-			buf["wavelength"] = dx::XMFLOAT4{ 0.887f,0.774f,0.790f,0.844f };
-			buf["omega"] = dx::XMFLOAT4{ 0.0f,0.0f,0.0f,0.0f };
+			dx::XMFLOAT4 wavelength = { 0.887f,0.774f,0.790f,0.844f };
+			buf["wavelength"] = wavelength;
+			buf["omega"] = dx::XMFLOAT4{ 2 * PI / wavelength.x,2 * PI / wavelength.y,2 * PI / wavelength.z,2 * PI / wavelength.w };
 			buf["Q"] = dx::XMFLOAT4{ 1.0f,0.871f,0.935f,0.844f };
 			buf["directionX"] = dx::XMFLOAT4{ 0.0f,0.113f,0.306f,0.281f };
 			buf["directionZ"] = dx::XMFLOAT4{ 0.629f,0.081f,0.484f,0.156f };
@@ -117,7 +118,6 @@ namespace Rgph
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
-			pass->SetSinkLinkage("waterPreMap", "waterPre.waterPreOut");
 			pass->SetSinkLinkage("waterCausticMap", "waterCaustic.waterCausticOut");
 			pass->SetSinkLinkage("renderTarget", "environment.renderTarget");
 			pass->SetSinkLinkage("depthStencil", "environment.depthStencil");
@@ -272,6 +272,7 @@ namespace Rgph
 			namespace dx = DirectX;
 			float dirty = false;
 			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+			bool lDirty = false;
 
 			if (auto v = buf["amplitude"]; v.Exists())
 			{
@@ -287,20 +288,29 @@ namespace Rgph
 			}
 			if (auto v = buf["omega"]; v.Exists())
 			{
-				dcheck(ImGui::SliderFloat4("Omega", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-			}if (auto v = buf["Q"]; v.Exists())
+				lDirty = ImGui::SliderFloat4("Omega", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f);
+				dcheck(lDirty);
+			}
+			if (auto v = buf["Q"]; v.Exists())
 			{
 				dcheck(ImGui::SliderFloat4("Q", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-			}if (auto v = buf["directionX"]; v.Exists())
+			}
+			if (auto v = buf["directionX"]; v.Exists())
 			{
 				dcheck(ImGui::SliderFloat4("DirectionX", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-			}if (auto v = buf["directionZ"]; v.Exists())
+			}
+			if (auto v = buf["directionZ"]; v.Exists())
 			{
 				dcheck(ImGui::SliderFloat4("DirectionY", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
 			}
 
 			if (dirty)
 			{
+				if (lDirty)
+				{
+					dx::XMFLOAT4 wavelength = buf["wavelength"];
+					buf["omega"] = dx::XMFLOAT4{ 2 * PI / wavelength.x,2 * PI / wavelength.y,2 * PI / wavelength.z,2 * PI / wavelength.w };
+				}
 				waterFlowVS->SetBuffer(buf);
 				waterFlowDS->SetBuffer(buf);
 			}
