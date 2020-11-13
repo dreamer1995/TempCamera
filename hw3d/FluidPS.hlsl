@@ -94,7 +94,7 @@ float4 main(PSIn i) : SV_Target
 	const float2 subDistUV = UVRefractionDistorted(Rv, i.uv, depthR * depthmap * 0.5f);
 	float3 albedo = pow(gmap.Sample(splr, distUV).rgb, 2.2f);
 	albedo += caumap.Sample(splr, subDistUV * tilling).rgb * saturate(1 - depthR * depthmap);
-	albedo *= i.outScattering + i.inScattering;
+	//albedo *= i.outScattering + i.inScattering;
 	float3 F0 = float3(0.04f, 0.04f, 0.04f);
 	float fMetallic = saturate(metallic * depthR * depthmap);
 	F0 = lerp(F0, albedo, fMetallic);
