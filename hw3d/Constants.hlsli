@@ -11,7 +11,7 @@ cbuffer TransformCBuf : register(b0)//VS, PS
 	matrix matrix_W2M;
 };
 
-cbuffer CameraCBuf : register(b1)//PS
+cbuffer CameraCBuf : register(b1)//VS, PS
 {
 	float3 cameraPos;
 	float3 cameraDir;

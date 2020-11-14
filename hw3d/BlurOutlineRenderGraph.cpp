@@ -79,8 +79,8 @@ namespace Rgph
 			buf["directionX"] = dx::XMFLOAT4{ 0.0f,0.113f,0.306f,0.281f };
 			buf["directionZ"] = dx::XMFLOAT4{ 0.629f,0.081f,0.484f,0.156f };
 			
-			waterFlowVS = std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 10u);
-			waterFlowDS = std::make_shared<Bind::CachingDomainConstantBufferEx>(gfx, buf, 10u);
+			waterFlowVS = std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 5u);
+			waterFlowDS = std::make_shared<Bind::CachingDomainConstantBufferEx>(gfx, buf, 5u);
 			AddGlobalSource(DirectBindableSource<Bind::CachingVertexConstantBufferEx>::Make("waterFlowVS", waterFlowVS));
 			AddGlobalSource(DirectBindableSource<Bind::CachingDomainConstantBufferEx>::Make("waterFlowDS", waterFlowDS));
 		}
@@ -92,12 +92,12 @@ namespace Rgph
 			lay.Add<Dcb::Float>("flatten2");
 			lay.Add<Dcb::Bool>("normalMappingEnabled");
 			auto buf = Dcb::Buffer(std::move(lay));
-			buf["speed"] = 0.3f;
-			buf["roughness"] = 0.572f;
+			buf["speed"] = 0.25f;
+			buf["roughness"] = 0.321f;
 			buf["flatten1"] = 0.182f;
 			buf["flatten2"] = 0.0f;
 			buf["normalMappingEnabled"] = true;
-			waterRipple = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+			waterRipple = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 5u);
 			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("waterRipple", waterRipple));
 		}
 		{
@@ -114,6 +114,8 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<LambertianPass_Water>(gfx, "water");
+			pass->SetSinkLinkage("waterFlow", "$.waterFlowVS");
+			pass->SetSinkLinkage("waterRipple", "$.waterRipple");
 			pass->SetSinkLinkage("shadowMap", "shadowMap.map");
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
@@ -137,7 +139,7 @@ namespace Rgph
 				l.Add<Dcb::Array>( "coefficients" );
 				l["coefficients"].Set<Dcb::Float>( maxRadius * 2 + 1 );
 				Dcb::Buffer buf{ std::move( l ) };
-				blurKernel = std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,5u );
+				blurKernel = std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,10u );
 				SetKernelGauss( radius,sigma );
 				AddGlobalSource( DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make( "blurKernel",blurKernel ) );
 			}
@@ -145,7 +147,7 @@ namespace Rgph
 				Dcb::RawLayout l;
 				l.Add<Dcb::Bool>( "isHorizontal" );
 				Dcb::Buffer buf{ std::move( l ) };
-				blurDirection = std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,6u );
+				blurDirection = std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,11u );
 				AddGlobalSource( DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make( "blurDirection",blurDirection ) );
 			}
 		}

@@ -1,6 +1,6 @@
 #include "Constants.hlsli"
 
-cbuffer Offset : register(b7)
+cbuffer Offset : register(b10)
 {
     float offset;
 }

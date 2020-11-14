@@ -13,7 +13,8 @@ Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float
 	proj( gfx,1.0f,9.0f / 16.0f,0.5f,400.0f ),
 	indicator( gfx ),
 	tethered( tethered ),
-	cbuf(gfx, 1u)
+	vCbuf(gfx, 1u),
+	pCbuf(gfx, 1u)
 {
 	if( tethered )
 	{
@@ -263,6 +264,8 @@ void Camera::Bind(Graphics& gfx) const noexcept
 	dx::XMStoreFloat3(&lookVector, XMVector3Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
 		XMMatrixRotationRollPitchYaw(45.0f / 180.0f * PI, 0.0f, 0.0f)));
 	CameraCBuf cbData = { pos,{ 0.0f,1.0f,0.0f } };
-	cbuf.Update(gfx, cbData);
-	cbuf.Bind(gfx);
+	vCbuf.Update(gfx, cbData);
+	vCbuf.Bind(gfx);
+	pCbuf.Update(gfx, cbData);
+	pCbuf.Bind(gfx);
 }

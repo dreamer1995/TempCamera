@@ -1,13 +1,13 @@
 Texture2D tex;
 SamplerState splr;
 
-cbuffer Kernel : register(b5)
+cbuffer Kernel : register(b10)
 {
     uint nTaps;
     float coefficients[15];
 }
 
-cbuffer Control : register(b6)
+cbuffer Control : register(b11)
 {
     bool horizontal;
 }

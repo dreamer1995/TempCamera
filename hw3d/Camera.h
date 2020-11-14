@@ -58,5 +58,6 @@ private:
 
 	void KeepLookFront(DirectX::XMFLOAT3 position) noexcept;
 	float yaw_;
-	mutable Bind::PixelConstantBuffer<CameraCBuf> cbuf;
+	mutable Bind::VertexConstantBuffer<CameraCBuf> vCbuf;
+	mutable Bind::PixelConstantBuffer<CameraCBuf> pCbuf;
 };

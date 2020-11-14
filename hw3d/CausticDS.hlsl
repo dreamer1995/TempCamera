@@ -6,7 +6,7 @@
 //	float3 direction;
 //};
 
-cbuffer CBufProperties : register(b10)
+cbuffer CBufProperties : register(b5)
 {
 	float4 A;
 	float4 S;
@@ -15,7 +15,11 @@ cbuffer CBufProperties : register(b10)
 	float4 Q;
 	float4 Dx;
 	float4 Dz;
-	//float depth;
+};
+
+cbuffer CBufProperties2 : register(b10)
+{
+	float depth;
 };
 
 Texture2D hmap : register(t0);
@@ -76,8 +80,7 @@ DS_OUTPUT main(
 
 	float disPosY = CalculateWavesDisplacement(sinp);
 
-	//float depthR = o.oldPos.y + disPosY + depth;
-	float depthR = o.oldPos.y + disPosY + 2.471f;
+	float depthR = o.oldPos.y + disPosY + depth;
 
 	float shootScale = 5.0f;
 	float _shootScale = 1.0f / shootScale;

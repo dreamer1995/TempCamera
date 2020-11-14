@@ -56,27 +56,16 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 				buf["attenuation"] = dx::XMFLOAT3{ 5.0f,5.0f,5.0f };
 				buf["scatteringKd"] = dx::XMFLOAT3{ 1.0f,1.0f,1.0f };
 				buf["depth"] = 2.471f;
-				only.AddBindable(std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 11u));
+				vmc = std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 10u);
+				only.AddBindable(vmc);
 			}
 			{
 				Dcb::RawLayout lay;
 				lay.Add<Dcb::Float>("metallic");
-				lay.Add<Dcb::Float>("roughness");
-				lay.Add<Dcb::Bool>("normalMappingEnabled");
-				lay.Add<Dcb::Float>("speed");
-				lay.Add<Dcb::Float>("depth");
 				lay.Add<Dcb::Float>("tilling");
-				lay.Add<Dcb::Float>("flatten1");
-				lay.Add<Dcb::Float>("flatten2");
 				auto buf = Dcb::Buffer(std::move(lay));
 				buf["metallic"] = 0.572f;
-				buf["roughness"] = 0.321f;
-				buf["normalMappingEnabled"] = true;
-				buf["speed"] = 0.25f;
-				buf["depth"] = 2.471f;
 				buf["tilling"] = 1.0f;
-				buf["flatten1"] = 0.182f;
-				buf["flatten2"] = 0.0f;
 				only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
 			}
 
@@ -196,21 +185,29 @@ void PlaneWater::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 				{
 					dcheck(ImGui::SliderFloat(tag("Scale"), &v, 0.0f, 2.0f, "%.3f", 1.0f));
 				}
-				if (auto v = buf["roughness"]; v.Exists())
+				if (auto v = buf["color"]; v.Exists())
 				{
-					dcheck(ImGui::SliderFloat(tag("Roughness"), &v, 0.0f, 1.0f, "%.3f", 1.0f));
+					dcheck(ImGui::ColorEdit3(tag("Water Color"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
+				}
+				if (auto v = buf["attenuation"]; v.Exists())
+				{
+					dcheck(ImGui::DragFloat3(tag("Attenuation"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
+				}
+				if (auto v = buf["scatteringKd"]; v.Exists())
+				{
+					dcheck(ImGui::DragFloat3(tag("ScatteringKd"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
+				}
+				if (auto v = buf["depth"]; v.Exists())
+				{
+					dcheck(ImGui::SliderFloat(tag("Depth"), &v, 0.0f, 4.0f));
 				}
 				if (auto v = buf["metallic"]; v.Exists())
 				{
 					dcheck(ImGui::SliderFloat(tag("Metallic"), &v, 0.0f, 1.0f, "%.3f", 1.0f));
 				}
-				if (auto v = buf["useNormalMap"]; v.Exists())
+				if (auto v = buf["tilling"]; v.Exists())
 				{
-					dcheck(ImGui::Checkbox(tag("Normal Map Enable"), &v));
-				}
-				if (auto v = buf["depth"]; v.Exists())
-				{
-					dcheck(ImGui::SliderFloat(tag("Depth"), &v, 0.0f, 4.0f, "%.1f"));
+					dcheck(ImGui::SliderFloat(tag("Tilling"), &v, 0.0f, 2.0f));
 				}
 				return dirty;
 			}
@@ -225,6 +222,7 @@ void PlaneWater::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 void PlaneWater::SubmitEX(size_t channels1, size_t channels2) const
 {
 	Submit(channels1);
+	waterCaustics.dmc->GetBuffer()["depth"] = vmc->GetBuffer()["depth"];
 	waterCaustics.Submit(channels2);
 	Submit(channels2);
 }

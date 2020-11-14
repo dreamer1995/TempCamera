@@ -6,13 +6,15 @@
 cbuffer ObjectCBuf : register(b10)
 {
 	float metallic;
-	float roughness;
-	bool normalMapEnabled;
-	float speed;
-	float depth;
 	float tilling;
+};
+cbuffer ObjectCBuf2 : register(b5)
+{
+	float speed;
+	float roughness;
 	float flatten1;
 	float flatten2;
+	bool normalMapEnabled;
 };
 
 Texture2D rmap;
@@ -30,6 +32,7 @@ struct PSIn {
 	float2 uv : Texcoord;
 	float3 outScattering : Position1;
 	float3 inScattering : Position2;
+	float depth : Texcoord1;
 };
 
 float Motion_4WayChaos(Texture2D textureIn, float2 uv, float speed);
@@ -89,12 +92,12 @@ float4 main(PSIn i) : SV_Target
 
 	const float t = lerp(0.225f, 0.465f, max(dot(i.normal, -cameraDir), 0.0f));
 	const float3 Rv = lerp(cameraDir, -i.normal, t);
-	float depthR = depth + i.worldPos.y;
+	float depthR = i.depth + i.worldPos.y;
 	const float2 distUV = UVRefractionDistorted(Rv, i.uv, depthR * depthmap);
 	const float2 subDistUV = UVRefractionDistorted(Rv, i.uv, depthR * depthmap * 0.5f);
 	float3 albedo = pow(gmap.Sample(splr, distUV).rgb, 2.2f);
 	albedo += caumap.Sample(splr, subDistUV * tilling).rgb * saturate(1 - depthR * depthmap);
-	//albedo *= i.outScattering + i.inScattering;
+	albedo *= i.outScattering + i.inScattering;
 	float3 F0 = float3(0.04f, 0.04f, 0.04f);
 	float fMetallic = saturate(metallic * depthR * depthmap);
 	F0 = lerp(F0, albedo, fMetallic);

@@ -1,6 +1,6 @@
 #include "Constants.hlsli"
 
-cbuffer ObjectCBuf : register(b10)
+cbuffer ObjectCBuf : register(b5)
 {
 	float4 A;
 	float4 S;
@@ -11,7 +11,7 @@ cbuffer ObjectCBuf : register(b10)
 	float4 Dz;
 };
 
-cbuffer ObjectCBuf2 : register(b11)
+cbuffer ObjectCBuf2 : register(b10)
 {
 	float3 color;
 	float3 attenuation;
@@ -28,6 +28,7 @@ struct VSOut
 	float2 uv : Texcoord;
 	float3 outScattering : Position1;
 	float3 inScattering : Position2;
+	float depth : Texcoord1;
 	float4 pos : SV_Position;
 };
 
@@ -87,6 +88,8 @@ VSOut main(VSIn v)
 	o.outScattering = exp(-attenuation * d);
 
 	o.inScattering = color * (1 - o.outScattering * exp(-depthR * depthmap * scatteringKd));
+
+	o.depth = depth;
 
 	return o;
 }

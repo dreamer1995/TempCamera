@@ -17,6 +17,8 @@ namespace Rgph
 			LambertianPass(gfx, name)
 		{
 			using namespace Bind;
+			AddBindSink<Bind::CachingVertexConstantBufferEx>("waterFlow");
+			AddBindSink<Bind::CachingPixelConstantBufferEx>("waterRipple");
 			AddBindSink<Bind::Bindable>("waterCausticMap");
 		}
 	};

@@ -52,6 +52,15 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 				buf["tessellation"] = 6;
 				only.AddBindable(std::make_shared<Bind::CachingHullConstantBufferEx>(gfx, buf, 10u));
 			}
+
+			{
+				Dcb::RawLayout lay;
+				lay.Add<Dcb::Float>("depth");
+				auto buf = Dcb::Buffer(std::move(lay));
+				buf["depth"] = 2.471f;
+				dmc = std::make_shared<Bind::CachingDomainConstantBufferEx>(gfx, buf, 10u);
+				only.AddBindable(dmc);
+			}
 			
 			only.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Wrap, 0u, 0b10));
 
