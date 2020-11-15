@@ -82,7 +82,7 @@ DS_OUTPUT main(
 
 	float depthR = o.oldPos.y + disPosY + depth;
 
-	float shootScale = 5.0f;
+	float shootScale = 1.0f;
 	float _shootScale = 1.0f / shootScale;
 
 	float3 bumpNormal = nmap.SampleLevel(splr, uv, 0.0f).rgb;
@@ -97,7 +97,7 @@ DS_OUTPUT main(
 	//const float3 Rv = n * -direction + (n * c1 - c2) * bumpNormal;
 
 	//float depthmap = hmap.SampleLevel(splr, (uv) * shootScale, 0.0f).r;
-	float depthmap = (o.oldPos.z * 0.2f + 1.0f);
+	float depthmap = (o.oldPos.z + 1.0f) * 0.5f;
 
 	float4 worldPos = mul(pos, matrix_M2W) + float4(Rv.x * (depthR * depthmap), 0.0f,
 													Rv.z * (depthR * depthmap), 0.0f);

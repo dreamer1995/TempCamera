@@ -28,7 +28,6 @@ struct VSOut
 	float2 uv : Texcoord;
 	float3 outScattering : Position1;
 	float3 inScattering : Position2;
-	float depth : Texcoord1;
 	float4 pos : SV_Position;
 };
 
@@ -83,13 +82,11 @@ VSOut main(VSIn v)
 
 	//Water scattering
 
-	float d = length(viewDir) * t;  // one way!
+	float d = length(cameraPos - o.worldPos) * t;  // one way!
 
 	o.outScattering = exp(-attenuation * d);
 
 	o.inScattering = color * (1 - o.outScattering * exp(-depthR * depthmap * scatteringKd));
-
-	o.depth = depth;
 
 	return o;
 }

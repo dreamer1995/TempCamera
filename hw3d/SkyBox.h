@@ -2,6 +2,7 @@
 #include "Drawable.h"
 #include "Bindable.h"
 #include "IndexBuffer.h"
+#include "ChiliMath.h"
 
 class SkyBox : public Drawable
 {
@@ -14,7 +15,7 @@ public:
 private:
 	DirectX::XMFLOAT3 pos = { 1.0f,1.0f,1.0f };
 public:
-	float roll = 0.0f;
 	float pitch = 0.0f;
-	float yaw = 0.0f;
+	float yaw = 76.0f * PI / 180.0f;
+	float roll = 0.0f;
 };

@@ -23,4 +23,5 @@ private:
 	float yaw = 0.0f;
 	PlaneCaustics waterCaustics;
 	std::shared_ptr<Bind::CachingVertexConstantBufferEx> vmc;
+	std::shared_ptr<Bind::CachingPixelConstantBufferEx> pmc;
 };

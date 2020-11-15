@@ -10,7 +10,7 @@
 
 PlaneWater::PlaneWater(Graphics& gfx, float size)
 	:
-	waterCaustics(gfx, 5.0f)
+	waterCaustics(gfx, 1.0f)
 {
 	using namespace Bind;
 	namespace dx = DirectX;
@@ -52,7 +52,7 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 				lay.Add<Dcb::Float3>("scatteringKd");
 				lay.Add<Dcb::Float>("depth");
 				auto buf = Dcb::Buffer(std::move(lay));
-				buf["color"] = dx::XMFLOAT3{ 0.0f,0.384313f,0.580392f };
+				buf["color"] = dx::XMFLOAT3{ 0.45f,0.785f,0.956f };
 				buf["attenuation"] = dx::XMFLOAT3{ 5.0f,5.0f,5.0f };
 				buf["scatteringKd"] = dx::XMFLOAT3{ 1.0f,1.0f,1.0f };
 				buf["depth"] = 2.471f;
@@ -63,10 +63,13 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 				Dcb::RawLayout lay;
 				lay.Add<Dcb::Float>("metallic");
 				lay.Add<Dcb::Float>("tilling");
+				lay.Add<Dcb::Float>("_depth");
 				auto buf = Dcb::Buffer(std::move(lay));
 				buf["metallic"] = 0.572f;
 				buf["tilling"] = 1.0f;
-				only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
+				buf["_depth"] = 1.0f;
+				pmc = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+				only.AddBindable(pmc);
 			}
 
 			only.AddBindable(Rasterizer::Resolve(gfx, true));
@@ -77,33 +80,6 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 		}
 		AddTechnique(std::move(shade));
 	}
-	//AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
-	//AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
-	//AddBind(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
-	//AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('C')));
-	//AddBind(Texture::Resolve(gfx, "Images\\DesertSand_albedo.jpg", 4u));
-	//AddBind(Texture::Resolve(gfx, "Images\\white.jpg", 5u));
-	//AddBind(TexturePre::Resolve(gfx, 6u, gfx.GetShaderResourceView('N')));
-	//AddBind(TexturePre::Resolve(gfx, 10u, gfx.GetShaderResourceView()));
-	//AddBind(TexturePre::Resolve(gfx, 11u, gfx.GetShaderResourceView('M')));
-	//AddBind(TexturePre::Resolve(gfx, 12u, gfx.GetShaderResourceView('L')));
-	//AddBind(Texture::Resolve(gfx, "Images\\white.jpg", 30u, false, true));
-
-	//auto pvs = VertexShader::Resolve(gfx, "FluidVS.cso");
-	//auto pvsbc = pvs->GetBytecode();
-	//AddBind(std::move(pvs));
-
-	//AddBind(PixelShader::Resolve(gfx, "FluidPS.cso"));
-
-	//AddBind(VertexConstantBuffer<VSMaterialConstant>::Resolve(gfx, vmc, 2u));
-
-	//AddBind(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 5u));
-
-	//AddBind(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
-
-	//AddBind(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-
-	//AddBind(std::make_shared<TransformCbufDoubleboi>(gfx, *this, 0u, 4u));
 
 	Technique preNormal("PreNormal", Chan::waterPre);
 	{
@@ -222,7 +198,16 @@ void PlaneWater::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 void PlaneWater::SubmitEX(size_t channels1, size_t channels2) const
 {
 	Submit(channels1);
-	waterCaustics.dmc->GetBuffer()["depth"] = vmc->GetBuffer()["depth"];
+
+	auto buf = waterCaustics.dmc->GetBuffer();
+	auto buf2 = vmc->GetBuffer();
+	float f = buf2["depth"];
+	buf["depth"] = f;
+	waterCaustics.dmc->SetBuffer(buf);
+	auto buf3 = pmc->GetBuffer();
+	buf3["_depth"] = f;
+	pmc->SetBuffer(buf3);
+
 	waterCaustics.Submit(channels2);
 	Submit(channels2);
 }
