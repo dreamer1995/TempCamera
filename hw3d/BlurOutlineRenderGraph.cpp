@@ -268,90 +268,90 @@ namespace Rgph
 		}
 		ImGui::End();
 
-		if (ImGui::Begin("WaterWave"))
-		{
-			auto buf = waterFlowVS->GetBuffer();
-			namespace dx = DirectX;
-			float dirty = false;
-			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
-			bool lDirty = false;
+		//if (ImGui::Begin("WaterWave"))
+		//{
+		//	auto buf = waterFlowVS->GetBuffer();
+		//	namespace dx = DirectX;
+		//	float dirty = false;
+		//	const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+		//	bool lDirty = false;
 
-			if (auto v = buf["amplitude"]; v.Exists())
-			{
-				dcheck(ImGui::SliderFloat4("Amplitude", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-			}
-			if (auto v = buf["wavespeed"]; v.Exists())
-			{
-				dcheck(ImGui::SliderFloat4("Wavespeed", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-			}
-			if (auto v = buf["wavelength"]; v.Exists())
-			{
-				dcheck(ImGui::SliderFloat4("Wavelength", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-			}
-			if (auto v = buf["omega"]; v.Exists())
-			{
-				lDirty = ImGui::SliderFloat4("Omega", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f);
-				dcheck(lDirty);
-			}
-			if (auto v = buf["Q"]; v.Exists())
-			{
-				dcheck(ImGui::SliderFloat4("Q", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-			}
-			if (auto v = buf["directionX"]; v.Exists())
-			{
-				dcheck(ImGui::SliderFloat4("DirectionX", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-			}
-			if (auto v = buf["directionZ"]; v.Exists())
-			{
-				dcheck(ImGui::SliderFloat4("DirectionY", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-			}
+		//	if (auto v = buf["amplitude"]; v.Exists())
+		//	{
+		//		dcheck(ImGui::SliderFloat4("Amplitude", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+		//	}
+		//	if (auto v = buf["wavespeed"]; v.Exists())
+		//	{
+		//		dcheck(ImGui::SliderFloat4("Wavespeed", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+		//	}
+		//	if (auto v = buf["wavelength"]; v.Exists())
+		//	{
+		//		dcheck(ImGui::SliderFloat4("Wavelength", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+		//	}
+		//	if (auto v = buf["omega"]; v.Exists())
+		//	{
+		//		lDirty = ImGui::SliderFloat4("Omega", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f);
+		//		dcheck(lDirty);
+		//	}
+		//	if (auto v = buf["Q"]; v.Exists())
+		//	{
+		//		dcheck(ImGui::SliderFloat4("Q", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+		//	}
+		//	if (auto v = buf["directionX"]; v.Exists())
+		//	{
+		//		dcheck(ImGui::SliderFloat4("DirectionX", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+		//	}
+		//	if (auto v = buf["directionZ"]; v.Exists())
+		//	{
+		//		dcheck(ImGui::SliderFloat4("DirectionY", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+		//	}
 
-			if (dirty)
-			{
-				if (lDirty)
-				{
-					dx::XMFLOAT4 wavelength = buf["wavelength"];
-					buf["omega"] = dx::XMFLOAT4{ 2 * PI / wavelength.x,2 * PI / wavelength.y,2 * PI / wavelength.z,2 * PI / wavelength.w };
-				}
-				waterFlowVS->SetBuffer(buf);
-				waterFlowDS->SetBuffer(buf);
-			}
-		}
-		ImGui::End();
-		if (ImGui::Begin("WaterRipple"))
-		{
-			auto buf = waterRipple->GetBuffer();
-			namespace dx = DirectX;
-			float dirty = false;
-			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+		//	if (dirty)
+		//	{
+		//		if (lDirty)
+		//		{
+		//			dx::XMFLOAT4 wavelength = buf["wavelength"];
+		//			buf["omega"] = dx::XMFLOAT4{ 2 * PI / wavelength.x,2 * PI / wavelength.y,2 * PI / wavelength.z,2 * PI / wavelength.w };
+		//		}
+		//		waterFlowVS->SetBuffer(buf);
+		//		waterFlowDS->SetBuffer(buf);
+		//	}
+		//}
+		//ImGui::End();
+		//if (ImGui::Begin("WaterRipple"))
+		//{
+		//	auto buf = waterRipple->GetBuffer();
+		//	namespace dx = DirectX;
+		//	float dirty = false;
+		//	const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
 
-			if (auto v = buf["speed"]; v.Exists())
-			{
-				dcheck(ImGui::SliderFloat("Speed", &v, 0.0f, 10.0f, "%.3f", 1.0f));
-			}
-			if (auto v = buf["roughness"]; v.Exists())
-			{
-				dcheck(ImGui::SliderFloat("Roughness", &v, 0.0f, 1.0f, "%.3f", 1.0f));
-			}
-			if (auto v = buf["flatten1"]; v.Exists())
-			{
-				dcheck(ImGui::SliderFloat("Flatten1", &v, 0.0f, 1.0f, "%.3f", 1.0f));
-			}
-			if (auto v = buf["flatten2"]; v.Exists())
-			{
-				dcheck(ImGui::SliderFloat("Flatten2", &v, 0.0f, 1.0f, "%.3f", 1.0f));
-			}
-			if (auto v = buf["normalMappingEnabled"]; v.Exists())
-			{
-				dcheck(ImGui::Checkbox("Normal Map Enable", &v));
-			}
+		//	if (auto v = buf["speed"]; v.Exists())
+		//	{
+		//		dcheck(ImGui::SliderFloat("Speed", &v, 0.0f, 10.0f, "%.3f", 1.0f));
+		//	}
+		//	if (auto v = buf["roughness"]; v.Exists())
+		//	{
+		//		dcheck(ImGui::SliderFloat("Roughness", &v, 0.0f, 1.0f, "%.3f", 1.0f));
+		//	}
+		//	if (auto v = buf["flatten1"]; v.Exists())
+		//	{
+		//		dcheck(ImGui::SliderFloat("Flatten1", &v, 0.0f, 1.0f, "%.3f", 1.0f));
+		//	}
+		//	if (auto v = buf["flatten2"]; v.Exists())
+		//	{
+		//		dcheck(ImGui::SliderFloat("Flatten2", &v, 0.0f, 1.0f, "%.3f", 1.0f));
+		//	}
+		//	if (auto v = buf["normalMappingEnabled"]; v.Exists())
+		//	{
+		//		dcheck(ImGui::Checkbox("Normal Map Enable", &v));
+		//	}
 
-			if (dirty)
-			{
-				waterRipple->SetBuffer(buf);
-			}
-		}
-		ImGui::End();
+		//	if (dirty)
+		//	{
+		//		waterRipple->SetBuffer(buf);
+		//	}
+		//}
+		//ImGui::End();
 	}
 	void Rgph::BlurOutlineRenderGraph::DumpShadowMap( Graphics & gfx,const std::string & path )
 	{

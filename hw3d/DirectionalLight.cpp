@@ -45,11 +45,11 @@ void DirectionalLight::Reset() noexcept
 	cbData = {
 		{ 0.0f,-1.0f,0.0f },
 		{ 1.0f,1.0f,1.0f },
-		10.0f,
+		0.0f,
 	};
 	pos = { 0.0f,10.0f,0.0f };
-	pitch = 62.0f * PI / 180.0f;
-	yaw = 38.0f * PI / 180.0f;
+	pitch = -PI / 4;
+	yaw = -PI / 4;
 
 	roll = 0.0f;
 }
