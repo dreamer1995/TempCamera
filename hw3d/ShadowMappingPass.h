@@ -31,6 +31,7 @@ namespace Rgph
 			AddBind( VertexShader::Resolve( gfx,"Solid_VS.cso" ) );
 			AddBind( NullPixelShader::Resolve( gfx ) );
 			AddBind( Stencil::Resolve( gfx,Stencil::Mode::Off ) );
+			AddBindSink<Bind::Bindable>( "shadowRasterizer" );
 			AddBind( Blender::Resolve( gfx,false ) );
 			RegisterSource( DirectBindableSource<Bind::DepthStencil>::Make( "map",depthStencil ) );
 		}

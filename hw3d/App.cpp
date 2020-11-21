@@ -18,7 +18,7 @@ App::App( const std::string& commandLine )
 	wnd( 1280,720,"The Donkey Fart Box" ),
 	scriptCommander( TokenizeQuoted( commandLine ) ),
 	dLight(wnd.Gfx()),
-	pointLight( wnd.Gfx(),{ 12.2f, 9.6f, -2.6f }, 1.0f )
+	pointLight( wnd.Gfx(),{ 16.5f, 3.0f, 1.5f }, 1.0f )
 {
 	time = 0;
 	cVBuf = std::make_unique<Bind::VertexConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
@@ -317,7 +317,7 @@ void App::DoFrame( float dt )
 	cube2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
 	//sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
 	//water.SpawnControlWindow(wnd.Gfx(), "Water");
-	rg.RenderWidgets( wnd.Gfx() );
+	rg.RenderWindows( wnd.Gfx() );
 
 	if (ImGui::Begin("Delete"))
 	{

@@ -110,6 +110,7 @@
     <ClCompile Include="PreCubeCalculatePass.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="ShadowCameraCBuf.cpp" />
+    <ClCompile Include="ShadowRasterizer.cpp" />
     <ClCompile Include="ShadowSampler.cpp" />
     <ClCompile Include="SolidArrow.cpp" />
     <ClCompile Include="BindingPass.cpp" />
@@ -465,6 +466,7 @@
     <ClInclude Include="Projection.h" />
     <ClInclude Include="ShadowCameraCBuf.h" />
     <ClInclude Include="ShadowMappingPass.h" />
+    <ClInclude Include="ShadowRasterizer.h" />
     <ClInclude Include="ShadowSampler.h" />
     <ClInclude Include="SolidArrow.h" />
     <ClInclude Include="Bindable.h" />

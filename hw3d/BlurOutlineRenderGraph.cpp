@@ -12,6 +12,8 @@
 #include "DynamicConstant.h"
 #include "imgui/imgui.h"
 #include "ChiliMath.h"
+#include "ShadowSampler.h"
+#include "ShadowRasterizer.h"
 #include "EnvironmentPass.h"
 #include "PreCalSimpleCube.h"
 #include "WaterPre.h"
@@ -39,10 +41,39 @@ namespace Rgph
 			pass->SetSinkLinkage( "buffer","$.masterDepth" );
 			AppendPass( std::move( pass ) );
 		}
+
+		// setup shadow rasterizer
+		{
+			shadowRasterizer = std::make_shared<Bind::ShadowRasterizer>( gfx,10000,0.0005f,1.0f );
+			AddGlobalSource( DirectBindableSource<Bind::ShadowRasterizer>::Make( "shadowRasterizer",shadowRasterizer ) );
+		}
+
 		{
 			auto pass = std::make_unique<ShadowMappingPass>( gfx,"shadowMap" );
+			pass->SetSinkLinkage( "shadowRasterizer","$.shadowRasterizer" );
 			AppendPass( std::move( pass ) );
 		}
+
+		// setup shadow control buffer and sampler
+		{
+			{
+				Dcb::RawLayout l;
+				l.Add<Dcb::Integer>( "pcfLevel" );
+				l.Add<Dcb::Float>( "depthBias" );
+				l.Add<Dcb::Bool>( "hwPcf" );
+				Dcb::Buffer buf{ std::move( l ) };
+				buf["pcfLevel"] = 0;
+				buf["depthBias"] = 0.0005f;
+				buf["hwPcf"] = true;
+				shadowControl = std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,2 );
+				AddGlobalSource( DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make( "shadowControl",shadowControl ) );
+			}
+			{
+				shadowSampler = std::make_shared<Bind::ShadowSampler>( gfx );
+				AddGlobalSource( DirectBindableSource<Bind::ShadowSampler>::Make( "shadowSampler",shadowSampler ) );
+			}
+		}
+		
 		{
 			auto pass = std::make_unique<LambertianPass>( gfx,"lambertian" );
 			pass->SetSinkLinkage( "shadowMap","shadowMap.map" );
@@ -51,6 +82,8 @@ namespace Rgph
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
 			pass->SetSinkLinkage( "renderTarget","clearRT.buffer" );
 			pass->SetSinkLinkage( "depthStencil","clearDS.buffer" );
+			pass->SetSinkLinkage( "shadowControl","$.shadowControl" );
+			pass->SetSinkLinkage( "shadowSampler","$.shadowSampler" );
 			AppendPass( std::move( pass ) );
 		}
 		{
@@ -123,6 +156,8 @@ namespace Rgph
 			pass->SetSinkLinkage("waterCausticMap", "waterCaustic.waterCausticOut");
 			pass->SetSinkLinkage("renderTarget", "environment.renderTarget");
 			pass->SetSinkLinkage("depthStencil", "environment.depthStencil");
+			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
+			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -217,7 +252,14 @@ namespace Rgph
 		blurKernel->SetBuffer( k );
 	}
 	
-	void BlurOutlineRenderGraph::RenderWidgets( Graphics& gfx )
+	void BlurOutlineRenderGraph::RenderWindows( Graphics& gfx )
+	{
+		RenderShadowWindow( gfx );
+		RenderKernelWindow( gfx );
+		//RenderWaterWindow(gfx);
+	}
+
+	void BlurOutlineRenderGraph::RenderKernelWindow( Graphics& gfx )
 	{
 		if( ImGui::Begin( "Kernel" ) )
 		{
@@ -267,92 +309,134 @@ namespace Rgph
 			}
 		}
 		ImGui::End();
-
-		//if (ImGui::Begin("WaterWave"))
-		//{
-		//	auto buf = waterFlowVS->GetBuffer();
-		//	namespace dx = DirectX;
-		//	float dirty = false;
-		//	const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
-		//	bool lDirty = false;
-
-		//	if (auto v = buf["amplitude"]; v.Exists())
-		//	{
-		//		dcheck(ImGui::SliderFloat4("Amplitude", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-		//	}
-		//	if (auto v = buf["wavespeed"]; v.Exists())
-		//	{
-		//		dcheck(ImGui::SliderFloat4("Wavespeed", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-		//	}
-		//	if (auto v = buf["wavelength"]; v.Exists())
-		//	{
-		//		dcheck(ImGui::SliderFloat4("Wavelength", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-		//	}
-		//	if (auto v = buf["omega"]; v.Exists())
-		//	{
-		//		lDirty = ImGui::SliderFloat4("Omega", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f);
-		//		dcheck(lDirty);
-		//	}
-		//	if (auto v = buf["Q"]; v.Exists())
-		//	{
-		//		dcheck(ImGui::SliderFloat4("Q", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-		//	}
-		//	if (auto v = buf["directionX"]; v.Exists())
-		//	{
-		//		dcheck(ImGui::SliderFloat4("DirectionX", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-		//	}
-		//	if (auto v = buf["directionZ"]; v.Exists())
-		//	{
-		//		dcheck(ImGui::SliderFloat4("DirectionY", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
-		//	}
-
-		//	if (dirty)
-		//	{
-		//		if (lDirty)
-		//		{
-		//			dx::XMFLOAT4 wavelength = buf["wavelength"];
-		//			buf["omega"] = dx::XMFLOAT4{ 2 * PI / wavelength.x,2 * PI / wavelength.y,2 * PI / wavelength.z,2 * PI / wavelength.w };
-		//		}
-		//		waterFlowVS->SetBuffer(buf);
-		//		waterFlowDS->SetBuffer(buf);
-		//	}
-		//}
-		//ImGui::End();
-		//if (ImGui::Begin("WaterRipple"))
-		//{
-		//	auto buf = waterRipple->GetBuffer();
-		//	namespace dx = DirectX;
-		//	float dirty = false;
-		//	const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
-
-		//	if (auto v = buf["speed"]; v.Exists())
-		//	{
-		//		dcheck(ImGui::SliderFloat("Speed", &v, 0.0f, 10.0f, "%.3f", 1.0f));
-		//	}
-		//	if (auto v = buf["roughness"]; v.Exists())
-		//	{
-		//		dcheck(ImGui::SliderFloat("Roughness", &v, 0.0f, 1.0f, "%.3f", 1.0f));
-		//	}
-		//	if (auto v = buf["flatten1"]; v.Exists())
-		//	{
-		//		dcheck(ImGui::SliderFloat("Flatten1", &v, 0.0f, 1.0f, "%.3f", 1.0f));
-		//	}
-		//	if (auto v = buf["flatten2"]; v.Exists())
-		//	{
-		//		dcheck(ImGui::SliderFloat("Flatten2", &v, 0.0f, 1.0f, "%.3f", 1.0f));
-		//	}
-		//	if (auto v = buf["normalMappingEnabled"]; v.Exists())
-		//	{
-		//		dcheck(ImGui::Checkbox("Normal Map Enable", &v));
-		//	}
-
-		//	if (dirty)
-		//	{
-		//		waterRipple->SetBuffer(buf);
-		//	}
-		//}
-		//ImGui::End();
 	}
+
+	void BlurOutlineRenderGraph::RenderShadowWindow( Graphics& gfx )
+	{
+		if( ImGui::Begin( "Shadows" ) )
+		{
+			auto ctrl = shadowControl->GetBuffer();
+			bool bilin = shadowSampler->GetBilinear();
+
+			bool pcfChange = ImGui::SliderInt( "PCF Level",&ctrl["pcfLevel"],0,4 );
+			bool biasChange = ImGui::SliderFloat( "Post Bias",&ctrl["depthBias"],0.0f,0.1f,"%.6f",3.6f );
+			bool hwPcfChange = ImGui::Checkbox( "HW PCF",&ctrl["hwPcf"] );
+			ImGui::Checkbox( "Bilinear",&bilin );
+
+			if( pcfChange || biasChange || hwPcfChange )
+			{
+				shadowControl->SetBuffer( ctrl );
+			}
+
+			shadowSampler->SetHwPcf( ctrl["hwPcf"] );
+			shadowSampler->SetBilinear( bilin );
+
+			{
+				auto bias = shadowRasterizer->GetDepthBias();
+				auto slope = shadowRasterizer->GetSlopeBias();
+				auto clamp = shadowRasterizer->GetClamp();
+
+				bool biasChange = ImGui::SliderInt( "Pre Bias",&bias,0,100000 );
+				bool slopeChange = ImGui::SliderFloat( "Slope Bias",&slope,0.0f,100.0f,"%.4f",4.0f );
+				bool clampChange = ImGui::SliderFloat( "Clamp",&clamp,0.0001f,0.5f,"%.4f",2.5f );
+
+				if( biasChange || slopeChange || clampChange )
+				{
+					shadowRasterizer->ChangeDepthBiasParameters( gfx,bias,slope,clamp );
+				}
+			}
+		}
+		ImGui::End();
+	}
+
+	void BlurOutlineRenderGraph::RenderWaterWindow(Graphics& gfx)
+	{
+		if (ImGui::Begin("WaterWave"))
+		{
+			auto buf = waterFlowVS->GetBuffer();
+			namespace dx = DirectX;
+			float dirty = false;
+			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+			bool lDirty = false;
+
+			if (auto v = buf["amplitude"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("Amplitude", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["wavespeed"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("Wavespeed", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["wavelength"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("Wavelength", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["omega"]; v.Exists())
+			{
+				lDirty = ImGui::SliderFloat4("Omega", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f);
+				dcheck(lDirty);
+			}
+			if (auto v = buf["Q"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("Q", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["directionX"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("DirectionX", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["directionZ"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat4("DirectionY", reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v)), 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+
+			if (dirty)
+			{
+				if (lDirty)
+				{
+					dx::XMFLOAT4 wavelength = buf["wavelength"];
+					buf["omega"] = dx::XMFLOAT4{ 2 * PI / wavelength.x,2 * PI / wavelength.y,2 * PI / wavelength.z,2 * PI / wavelength.w };
+				}
+				waterFlowVS->SetBuffer(buf);
+				waterFlowDS->SetBuffer(buf);
+			}
+		}
+		ImGui::End();
+		if (ImGui::Begin("WaterRipple"))
+		{
+			auto buf = waterRipple->GetBuffer();
+			namespace dx = DirectX;
+			float dirty = false;
+			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+
+			if (auto v = buf["speed"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat("Speed", &v, 0.0f, 10.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["roughness"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat("Roughness", &v, 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["flatten1"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat("Flatten1", &v, 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["flatten2"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat("Flatten2", &v, 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["normalMappingEnabled"]; v.Exists())
+			{
+				dcheck(ImGui::Checkbox("Normal Map Enable", &v));
+			}
+
+			if (dirty)
+			{
+				waterRipple->SetBuffer(buf);
+			}
+		}
+		ImGui::End();
+	}
+
 	void Rgph::BlurOutlineRenderGraph::DumpShadowMap( Graphics & gfx,const std::string & path )
 	{
 		dynamic_cast<ShadowMappingPass&>(FindPassByName( "shadowMap" )).DumpShadowMap( gfx,path );

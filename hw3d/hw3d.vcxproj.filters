@@ -300,9 +300,6 @@
     <ClCompile Include="ShadowCameraCBuf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShadowSampler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Projection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -346,6 +343,12 @@
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="TransformCbufScaling.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowSampler.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowRasterizer.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
   </ItemGroup>
@@ -683,9 +686,6 @@
     <ClInclude Include="ShadowCameraCBuf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShadowSampler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Projection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -738,6 +738,12 @@
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="DomainShader.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowSampler.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowRasterizer.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
   </ItemGroup>
