@@ -6,7 +6,7 @@
 //	float3 direction;
 //};
 
-cbuffer CBufProperties : register(b5)
+cbuffer CBufProperties : register(b10)
 {
 	float4 A;
 	float4 S;
@@ -17,7 +17,7 @@ cbuffer CBufProperties : register(b5)
 	float4 Dz;
 };
 
-cbuffer CBufProperties2 : register(b10)
+cbuffer CBufProperties2 : register(b11)
 {
 	float depth;
 };

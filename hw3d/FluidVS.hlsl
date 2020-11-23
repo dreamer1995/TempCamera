@@ -1,6 +1,6 @@
 #include "Constants.hlsli"
 
-cbuffer ObjectCBuf : register(b5)
+cbuffer ObjectCBuf : register(b10)
 {
 	float4 A;
 	float4 S;
@@ -11,7 +11,7 @@ cbuffer ObjectCBuf : register(b5)
 	float4 Dz;
 };
 
-cbuffer ObjectCBuf2 : register(b10)
+cbuffer ObjectCBuf2 : register(b11)
 {
 	float3 color;
 	float3 attenuation;

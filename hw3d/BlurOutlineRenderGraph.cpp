@@ -65,11 +65,11 @@ namespace Rgph
 				buf["pcfLevel"] = 0;
 				buf["depthBias"] = 0.0005f;
 				buf["hwPcf"] = true;
-				shadowControl = std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,2 );
+				shadowControl = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 6u);
 				AddGlobalSource( DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make( "shadowControl",shadowControl ) );
 			}
 			{
-				shadowSampler = std::make_shared<Bind::ShadowSampler>( gfx );
+				shadowSampler = std::make_shared<Bind::ShadowSampler>(gfx, 2u);
 				AddGlobalSource( DirectBindableSource<Bind::ShadowSampler>::Make( "shadowSampler",shadowSampler ) );
 			}
 		}
@@ -112,8 +112,8 @@ namespace Rgph
 			buf["directionX"] = dx::XMFLOAT4{ 0.0f,0.113f,0.306f,0.281f };
 			buf["directionZ"] = dx::XMFLOAT4{ 0.629f,0.081f,0.484f,0.156f };
 			
-			waterFlowVS = std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 5u);
-			waterFlowDS = std::make_shared<Bind::CachingDomainConstantBufferEx>(gfx, buf, 5u);
+			waterFlowVS = std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 10u);
+			waterFlowDS = std::make_shared<Bind::CachingDomainConstantBufferEx>(gfx, buf, 10u);
 			AddGlobalSource(DirectBindableSource<Bind::CachingVertexConstantBufferEx>::Make("waterFlowVS", waterFlowVS));
 			AddGlobalSource(DirectBindableSource<Bind::CachingDomainConstantBufferEx>::Make("waterFlowDS", waterFlowDS));
 		}
@@ -130,7 +130,7 @@ namespace Rgph
 			buf["flatten1"] = 0.182f;
 			buf["flatten2"] = 0.0f;
 			buf["normalMappingEnabled"] = true;
-			waterRipple = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 5u);
+			waterRipple = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("waterRipple", waterRipple));
 		}
 		{

@@ -6,7 +6,7 @@ namespace Bind
 	class ShadowSampler : public Bindable
 	{
 	public:
-		ShadowSampler( Graphics& gfx );
+		ShadowSampler(Graphics& gfx, UINT slot = 0);
 		void Bind( Graphics& gfx ) noxnd override;
 		void SetBilinear( bool bilin );
 		void SetHwPcf( bool hwPcf );
@@ -16,6 +16,7 @@ namespace Bind
 		UINT GetCurrentSlot() const;
 		static size_t ShadowSamplerIndex( bool bilin,bool hwPcf );
 		static Microsoft::WRL::ComPtr<ID3D11SamplerState> MakeSampler( Graphics& gfx,bool bilin,bool hwPcf );
+		UINT slot;
 	protected:
 		size_t curSampler;
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> samplers[4];

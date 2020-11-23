@@ -1,7 +1,7 @@
 #include "Constants.hlsli"
 #include <PBRHeader.hlsli>
 
-cbuffer ObjectCBuf : register(b5)
+cbuffer ObjectCBuf : register(b10)
 {
 	float speed;
 	float roughness;

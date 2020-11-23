@@ -22,3 +22,37 @@ cbuffer Time : register(b2)//VS, DS, PS
 	float time;
 	matrix EVRotation;
 };
+
+cbuffer DirectionalLightCBuf : register(b3)//PS
+{
+	float3 direction;
+	float3 DdiffuseColor;
+	float DdiffuseIntensity;
+};
+
+cbuffer PointLightCBuf : register(b4)//PS
+{
+	float3 lightPos;
+	float3 ambient;
+	float3 diffuseColor;
+	float diffuseIntensity;
+	float attConst;
+	float attLin;
+	float attQuad;
+};
+
+cbuffer ShadowTransformCBuf : register(b5)//VS
+{
+	matrix shadowMatrix_VP;
+};
+
+cbuffer ShadowControl : register(b6)//PS
+{
+	int pcfLevel;
+	float depthBias;
+	bool hwPcf;
+}
+
+Texture2D smap : register(t14);//PS
+SamplerComparisonState ssamHw : register(s2);//PS
+SamplerState ssamSw : register(s3);//PS

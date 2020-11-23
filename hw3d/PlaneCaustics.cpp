@@ -58,7 +58,7 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 				lay.Add<Dcb::Float>("depth");
 				auto buf = Dcb::Buffer(std::move(lay));
 				buf["depth"] = 2.471f;
-				dmc = std::make_shared<Bind::CachingDomainConstantBufferEx>(gfx, buf, 10u);
+				dmc = std::make_shared<Bind::CachingDomainConstantBufferEx>(gfx, buf, 11u);
 				only.AddBindable(dmc);
 			}
 			

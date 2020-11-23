@@ -47,3 +47,54 @@ float3 Speculate(
     // viewing vector and reflection vector, narrow with power function
     return att * specularColor * specularIntensity * pow(max(0.0f, dot(normal, halfDir)), specularPower);
 }
+
+float4 ToShadowHomoSpace(const in float4 worldPos)
+{
+    const float4 shadowHomo = mul(worldPos, shadowMatrix_VP);
+    return shadowHomo * float4(0.5f, -0.5f, 1.0f, 1.0f) + float4(0.5f, 0.5f, 0.0f, 0.0f) * shadowHomo.w;
+}
+
+float ShadowLoop_(const in float3 spos, uniform int range)
+{    
+    float shadowLevel = 0.0f;
+    [unroll]
+    for (int x = -range; x <= range; x++)
+    {
+        [unroll]
+        for (int y = -range; y <= range; y++)
+        {
+            if( hwPcf )
+            {
+                shadowLevel += smap.SampleCmpLevelZero(ssamHw, spos.xy, spos.b - depthBias, int2(x, y));
+            }
+            else
+            {
+                shadowLevel += smap.Sample(ssamSw, spos.xy, int2(x, y)).r >= spos.b - depthBias ? 1.0f : 0.0f;
+            }
+        }
+    }
+    return shadowLevel / ((range * 2 + 1) * (range * 2 + 1));
+}
+
+float Shadow(const in float4 shadowHomoPos)
+{    
+    float shadowLevel = 0.0f;
+    const float3 spos = shadowHomoPos.xyz / shadowHomoPos.w;
+    
+    if( spos.z > 1.0f || spos.z < 0.0f )
+    {
+        shadowLevel = 1.0f;
+    }
+    else
+    {
+        [unroll]
+        for (int level = 0; level <= 4; level++)
+        {
+            if (level == pcfLevel)
+            {
+                shadowLevel = ShadowLoop_(spos, level);
+            }
+        }
+    }
+    return shadowLevel;
+}

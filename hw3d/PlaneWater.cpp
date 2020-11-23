@@ -56,7 +56,7 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 				buf["attenuation"] = dx::XMFLOAT3{ 5.0f,5.0f,5.0f };
 				buf["scatteringKd"] = dx::XMFLOAT3{ 1.0f,1.0f,1.0f };
 				buf["depth"] = 2.471f;
-				vmc = std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 10u);
+				vmc = std::make_shared<Bind::CachingVertexConstantBufferEx>(gfx, buf, 11u);
 				only.AddBindable(vmc);
 			}
 			{
@@ -68,7 +68,7 @@ PlaneWater::PlaneWater(Graphics& gfx, float size)
 				buf["metallic"] = 0.572f;
 				buf["tilling"] = 1.0f;
 				buf["_depth"] = 1.0f;
-				pmc = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+				pmc = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 11u);
 				only.AddBindable(pmc);
 			}
 

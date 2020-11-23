@@ -3,19 +3,20 @@
 #include "LightVectorData.hlsli"
 #include "Algorithms.hlsli"
 
-cbuffer ObjectCBuf : register(b10)
-{
-	float metallic;
-	float tilling;
-	float depth;
-};
-cbuffer ObjectCBuf2 : register(b5)
+cbuffer ObjectCBuf2 : register(b10)
 {
 	float speed;
 	float roughness;
 	float flatten1;
 	float flatten2;
 	bool normalMapEnabled;
+};
+
+cbuffer ObjectCBuf : register(b11)
+{
+	float metallic;
+	float tilling;
+	float depth;
 };
 
 Texture2D rmap;

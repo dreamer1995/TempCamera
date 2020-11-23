@@ -4,7 +4,9 @@
 
 namespace Bind
 {
-	ShadowSampler::ShadowSampler( Graphics& gfx )
+	ShadowSampler::ShadowSampler(Graphics& gfx, UINT slot)
+		:
+		slot(slot)
 	{
 		for( size_t i = 0; i < 4; i++ )
 		{
@@ -41,7 +43,7 @@ namespace Bind
 
 	UINT ShadowSampler::GetCurrentSlot() const
 	{
-		return GetHwPcf() ? 1 : 2;
+		return GetHwPcf() ? slot + 0 : slot + 1;
 	}
 
 	size_t ShadowSampler::ShadowSamplerIndex( bool bilin,bool hwPcf )

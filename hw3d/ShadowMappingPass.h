@@ -27,7 +27,7 @@ namespace Rgph
 			RenderQueuePass( std::move( name ) )
 		{
 			using namespace Bind;
-			depthStencil = std::make_unique<ShaderInputDepthStencil>( gfx,3,DepthStencil::Usage::ShadowDepth );
+			depthStencil = std::make_unique<ShaderInputDepthStencil>(gfx, 14u, DepthStencil::Usage::ShadowDepth);
 			AddBind( VertexShader::Resolve( gfx,"Solid_VS.cso" ) );
 			AddBind( NullPixelShader::Resolve( gfx ) );
 			AddBind( Stencil::Resolve( gfx,Stencil::Mode::Off ) );
