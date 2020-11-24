@@ -1,7 +1,7 @@
 #include "Constants.hlsli"
-
-#include "LightVectorData.hlsli"
 #include "Algorithms.hlsli"
+
+#define IsPhong
 
 cbuffer ObjectCBuf : register(b10)
 {
@@ -30,72 +30,60 @@ struct PSIn
     float4 shadowHomoPos : ShadowPosition;
 };
 
-float4 main(PSIn i) : SV_Target
+struct MaterialShadingParameters
 {
-    float3 diffuse;
-    float3 specularReflected;
+    uint shadingModelID;
+    float3 worldPos;
+    float3 baseColor;
+    float3 normal;
+    float3 specularColor;
+    float specularWeight;
+    float specularGloss;
+};
 
+void GetMaterialParameters(out MaterialShadingParameters matParams, PSIn IN)
+{
+    matParams.shadingModelID = ShadingModel_Phong;
+    matParams.worldPos = IN.worldPos;
     // sample diffuse texture
-    float4 dtex = tex.Sample(splr, i.tc);
+    float4 dtex = tex.Sample(splr, IN.tc);
+    matParams.baseColor = dtex.xyz;
     // normalize the mesh normal
-    float3 normal = normalize(i.normal);
+    float3 normal = normalize(IN.normal);
 #ifdef MASK_BOI
     // bail if highly translucent
     clip(dtex.a < 0.1f ? -1 : 1);
     // flip normal when backface
-    const float3 viewDir = normalize(cameraPos - i.worldPos);
-    if (dot(normal, viewDir) <= 0.0f)
+    if (dot(normal, normalize(cameraPos - IN.worldPos)) <= 0.0f)
     {
         normal = -normal;
     }
 #endif
-
-    const float shadowLevel = Shadow(i.shadowHomoPos);
-    if (shadowLevel != 0.0f)
+    // replace normal with mapped if normal mapping enabled
+    if (useNormalMap)
     {
-
-        // replace normal with mapped if normal mapping enabled
-        if (useNormalMap)
-        {
-            const float3 mappedNormal = MapNormal(normalize(i.tan), normalize(i.binor), normal, i.tc, nmap, splr);
-            normal = lerp(normal, mappedNormal, normalMapWeight);
-        }
-	    // fragment to light vector data
-        const LightVectorData lv = CalculateLightVectorData(lightPos, i.worldPos);
-        // specular parameter determination (mapped or uniform)
-        float3 specularReflectionColor;
-        float specularPowerLoaded = specularGloss;
-        const float4 specularSample = spec.Sample(splr, i.tc);
-        if( useSpecularMap )
-        {
-            specularReflectionColor = specularSample.rgb;
-        }
-        else
-        {
-            specularReflectionColor = specularColor;
-        }
-        if( useGlossAlpha )
-        {
-            specularPowerLoaded = pow(2.0f, specularSample.a * 13.0f);
-        }
-	    // attenuation
-        const float att = Attenuate(attConst, attLin, attQuad, lv.distToL);
-	    // diffuse light
-        diffuse = Diffuse(lv.irradiance, att, lv.dirToL, normal);
-        diffuse += Diffuse(DdiffuseColor * DdiffuseIntensity, 1.0f, direction, normal);
-        // specular reflected
-        specularReflected = Speculate(cameraPos, i.worldPos, lv.dirToL, lv.irradiance * specularReflectionColor,
-            specularWeight, normal, att, specularPowerLoaded);
-        specularReflected += Speculate(cameraPos, i.worldPos, direction, DdiffuseColor * DdiffuseIntensity * specularReflectionColor,
-            specularWeight, normal, 1.0f, specularPowerLoaded);
-        // scale by shadow level
-        diffuse *= shadowLevel;
-        specularReflected *= shadowLevel;
+        const float3 mappedNormal = MapNormal(normalize(IN.tan), normalize(IN.binor), normal, IN.tc, nmap, splr);
+        normal = lerp(normal, mappedNormal, normalMapWeight);
+    }
+    matParams.normal = normalize(normal);
+    float3 specularReflectionColor;
+    float specularPowerLoaded = specularGloss;
+    const float4 specularSample = spec.Sample(splr, IN.tc);
+    if( useSpecularMap )
+    {
+        specularReflectionColor = specularSample.rgb;
     }
     else
     {
-        diffuse = specularReflected = 0.0f;
+        specularReflectionColor = specularColor;
     }
-	// final color = attenuate diffuse & ambient by diffuse texture color and add specular reflected
-    return float4(saturate((diffuse + ambient) * dtex.rgb + specularReflected), 1.0f);
+    if( useGlossAlpha )
+    {
+        specularPowerLoaded = pow(2.0f, specularSample.a * 13.0f);
+    }
+    matParams.specularColor = specularReflectionColor;
+    matParams.specularWeight = specularWeight;
+    matParams.specularGloss = specularPowerLoaded;
 }
+
+#include "ForwardRenderingTrunk.hlsli"

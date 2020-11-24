@@ -1,12 +1,3 @@
-#include "Constants.hlsli"
-#include "Algorithms.hlsli"
-
-#define ShadingModel_UnLit 0
-#define ShadingModel_Phong 1
-#define ShadingModel_PBR 2
-#define ShadingModel_Liquid 3
-#define ShadingModel_Toon 4
-
 struct LightingResult
 {
 	float3 diffuseLighting;
@@ -16,11 +7,9 @@ struct LightingResult
 struct GBuffer
 {
 	uint shadingModelID;
+	float3 worldPos;
 	float3 baseColor;
 	float3 normal;
-#ifdef EnableAlpha;
-	float alpha;
-#endif
 #ifdef IsPhong
 	float3 specularColor;
 	float specularWeight;
@@ -42,7 +31,10 @@ struct LightData
 	float3 directionalIrradiance;
 	float3 directionalDirToL;
 };
-void BxDF(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
+
+#include "BxDF.hlsli"
+
+void BxDF(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V, const float shadowLevel)
 {
 	switch (gBuffer.shadingModelID)
 	{
@@ -53,7 +45,7 @@ void BxDF(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float
 		PBRShading(litRes, gBuffer, litData, V);
 		break;
 	case ShadingModel_Liquid:
-		phongShading(litRes, gBuffer, litData, V);
+		LiquidShading(litRes, gBuffer, litData, V);
 		break;
 	case ShadingModel_Toon:
 		ToonShading(litRes, gBuffer, litData, V);
@@ -61,26 +53,37 @@ void BxDF(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float
 	default:
 		litRes.diffuseLighting += 0;
 		litRes.specularLighting += 0;
+		break;
 	}
-
 }
 
-void PhongShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
+void EncodeLightData(out LightData litData, float3 worldPos)
 {
-
+	litData.pointIrradiance = diffuseColor * diffuseIntensity;
+	float3 vToL = lightPos - worldPos;
+	float distToL = length(vToL);
+	litData.pointDirToL = vToL / distToL;
+	// attenuation
+	litData.pointAtten = Attenuate(attConst, attLin, attQuad, distToL);
+	litData.directionalIrradiance = DdiffuseColor * DdiffuseIntensity;
+	litData.directionalDirToL = direction;
 }
 
-void PBRShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
+void DecodeGBuffer(MaterialShadingParameters matParams, out GBuffer gBuffer)
 {
-
-}
-
-void LiquidShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
-{
-
-}
-
-void ToonShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
-{
-
+	gBuffer.shadingModelID = matParams.shadingModelID;
+	gBuffer.worldPos = matParams.worldPos;
+	gBuffer.baseColor = matParams.baseColor;;
+	gBuffer.normal = matParams.normal;
+#ifdef IsPhong
+	gBuffer.specularColor = matParams.specularColor;
+	gBuffer.specularWeight = matParams.specularWeight;
+	gBuffer.specularGloss = matParams.specularGloss;
+#endif
+#ifdef IsPBR
+	gBuffer.roughness = matParams.roughness;
+	gBuffer.metallic = matParams.metallic;
+	gBuffer.AO = matParams.AO;
+	gBuffer.specular = matParams.specular;
+#endif
 }

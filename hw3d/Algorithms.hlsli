@@ -48,6 +48,19 @@ float3 Speculate(
     return att * specularColor * specularIntensity * pow(max(0.0f, dot(normal, halfDir)), specularPower);
 }
 
+float3 Speculate_New(
+    const float3 halfDir,
+    const in float3 specularColor,
+    uniform float specularIntensity,
+    const in float3 normal,
+    const in float att,
+    const in float specularPower)
+{
+    // calculate specular component color based on angle between
+    // viewing vector and reflection vector, narrow with power function
+    return att * specularColor * specularIntensity * pow(max(0.0f, dot(normal, halfDir)), specularPower);
+}
+
 float4 ToShadowHomoSpace(const in float4 worldPos)
 {
     const float4 shadowHomo = mul(worldPos, shadowMatrix_VP);

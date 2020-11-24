@@ -53,6 +53,12 @@ cbuffer ShadowControl : register(b6)//PS
 	bool hwPcf;
 }
 
+#define ShadingModel_UnLit 0
+#define ShadingModel_Phong 1
+#define ShadingModel_PBR 2
+#define ShadingModel_Liquid 3
+#define ShadingModel_Toon 4
+
 Texture2D smap : register(t14);//PS
 SamplerComparisonState ssamHw : register(s2);//PS
 SamplerState ssamSw : register(s3);//PS
