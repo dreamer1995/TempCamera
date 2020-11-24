@@ -779,6 +779,9 @@
     <None Include="ShadingModel.hlsli">
       <Filter>Shader\Common</Filter>
     </None>
+    <None Include="ForwardRenderingTrunk.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PhongDifMskSpcNrm_PS.hlsl">

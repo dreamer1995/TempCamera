@@ -1,6 +1,5 @@
 #include "Constants.hlsli"
 #include "Algorithms.hlsli"
-#include "LightVectorData.hlsli"
 
 #define ShadingModel_UnLit 0
 #define ShadingModel_Phong 1
@@ -19,6 +18,9 @@ struct GBuffer
 	uint shadingModelID;
 	float3 baseColor;
 	float3 normal;
+#ifdef EnableAlpha;
+	float alpha;
+#endif
 #ifdef IsPhong
 	float3 specularColor;
 	float specularWeight;
@@ -34,32 +36,27 @@ struct GBuffer
 
 struct LightData
 {
-	float3 pointPos;
-	float3 pointAmbient;
 	float3 pointIrradiance;
-	float pointAtt;
-	float3 directionalDirection;
+	float3 pointDirToL;
+	float pointAtten;
 	float3 directionalIrradiance;
-	float3 pointvToL;
-	float3 pointdirToL;
-	float pointdistToL;
 	float3 directionalDirToL;
 };
-void BxDF(inout LightingResult litRes, GBuffer gBuffer, LightData litData)
+void BxDF(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
 {
 	switch (gBuffer.shadingModelID)
 	{
 	case ShadingModel_Phong:
-		PhongShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData);
+		PhongShading(litRes, gBuffer, litData, V);
 		break;
 	case ShadingModel_PBR:
-		PBRShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData);
+		PBRShading(litRes, gBuffer, litData, V);
 		break;
 	case ShadingModel_Liquid:
-		phongShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData);
+		phongShading(litRes, gBuffer, litData, V);
 		break;
 	case ShadingModel_Toon:
-		ToonShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData);
+		ToonShading(litRes, gBuffer, litData, V);
 		break;
 	default:
 		litRes.diffuseLighting += 0;
@@ -68,22 +65,22 @@ void BxDF(inout LightingResult litRes, GBuffer gBuffer, LightData litData)
 
 }
 
-void PhongShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData)
+void PhongShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
 {
 
 }
 
-void PBRShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData)
+void PBRShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
 {
 
 }
 
-void LiquidShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData)
+void LiquidShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
 {
 
 }
 
-void ToonShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData)
+void ToonShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
 {
 
 }

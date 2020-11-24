@@ -596,6 +596,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
     <None Include="process.json" />
+    <None Include="ForwardRenderingTrunk.hlsli" />
     <None Include="ShadingModel.hlsli" />
   </ItemGroup>
   <ItemGroup>
