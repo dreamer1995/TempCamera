@@ -599,6 +599,7 @@
     <None Include="process.json" />
     <None Include="ForwardRenderingTrunk.hlsli" />
     <None Include="ShadingModel.hlsli" />
+    <None Include="VSTrunk.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PhongDifNrm_PS.hlsl">

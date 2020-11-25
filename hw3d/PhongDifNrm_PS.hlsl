@@ -42,8 +42,7 @@ void GetMaterialParameters(out MaterialShadingParameters matParams, PSIn IN)
     matParams.shadingModelID = ShadingModel_Phong;
     matParams.worldPos = IN.worldPos;
     // sample diffuse texture
-    float4 dtex = tex.Sample(splr, IN.tc);
-    matParams.baseColor = dtex.xyz;
+    matParams.baseColor = tex.Sample(splr, IN.tc).xyz;
     // normalize the mesh normal
     float3 normal = normalize(IN.normal);
     // replace normal with mapped if normal mapping enabled

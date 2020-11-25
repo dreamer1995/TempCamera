@@ -779,10 +779,13 @@
     <None Include="ShadingModel.hlsli">
       <Filter>Shader\Common</Filter>
     </None>
+    <None Include="BxDF.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
     <None Include="ForwardRenderingTrunk.hlsli">
       <Filter>Shader\Common</Filter>
     </None>
-    <None Include="BxDF.hlsli">
+    <None Include="VSTrunk.hlsli">
       <Filter>Shader\Common</Filter>
     </None>
   </ItemGroup>
