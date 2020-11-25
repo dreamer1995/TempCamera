@@ -67,7 +67,7 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 		AddTechnique(std::move(shade));
 	}
 	{
-		Technique outline("Outline", Chan::main);
+		Technique outline("Outline", Chan::main, false);
 		{
 			Step mask("outlineMask");
 

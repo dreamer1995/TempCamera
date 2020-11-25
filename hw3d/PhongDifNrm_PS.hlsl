@@ -20,9 +20,9 @@ struct PSIn
 {
     float3 worldPos : Position;
     float3 normal : Normal;
-    float3 tan : Tangent;
-    float3 binor : Binormal;
-    float2 tc : Texcoord;
+    float3 tangent : Tangent;
+    float3 binormal : Binormal;
+    float2 uv : Texcoord;
     float4 shadowHomoPos : ShadowPosition;
 };
 
@@ -42,13 +42,13 @@ void GetMaterialParameters(out MaterialShadingParameters matParams, PSIn IN)
     matParams.shadingModelID = ShadingModel_Phong;
     matParams.worldPos = IN.worldPos;
     // sample diffuse texture
-    matParams.baseColor = tex.Sample(splr, IN.tc).xyz;
+    matParams.baseColor = DecodeGamma(tex.Sample(splr, IN.uv).xyz);
     // normalize the mesh normal
     float3 normal = normalize(IN.normal);
     // replace normal with mapped if normal mapping enabled
     if (useNormalMap)
     {
-        const float3 mappedNormal = MapNormal(normalize(IN.tan), normalize(IN.binor), normal, IN.tc, nmap, splr);
+        const float3 mappedNormal = MapNormal(normalize(IN.tangent), normalize(IN.binormal), normal, IN.uv, nmap, splr);
         normal = lerp(normal, mappedNormal, normalMapWeight);
     }
     matParams.normal = normalize(normal);

@@ -21,7 +21,7 @@ struct PSIn
 {
     float3 worldPos : Position;
     float3 normal : Normal;
-    float2 tc : Texcoord;
+    float2 uv : Texcoord;
     float4 shadowHomoPos : ShadowPosition;
 };
 
@@ -41,15 +41,15 @@ void GetMaterialParameters(out MaterialShadingParameters matParams, PSIn IN)
     matParams.shadingModelID = ShadingModel_Phong;
     matParams.worldPos = IN.worldPos;
     // sample diffuse texture
-    matParams.baseColor = tex.Sample(splr, IN.tc).xyz;
+    matParams.baseColor = DecodeGamma(tex.Sample(splr, IN.uv).xyz);
     // normalize the mesh normal
     matParams.normal = normalize(IN.normal);
     float3 specularReflectionColor;
     float specularPowerLoaded = specularGloss;
-    const float4 specularSample = spec.Sample(splr, IN.tc);
+    const float4 specularSample = spec.Sample(splr, IN.uv);
     if( useSpecularMap )
     {
-        specularReflectionColor = specularSample.rgb;
+        specularReflectionColor = DecodeGamma(specularSample.rgb);
     }
     else
     {

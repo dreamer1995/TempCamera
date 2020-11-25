@@ -52,7 +52,7 @@ App::App( const std::string& commandLine )
 	nano.LinkTechniques( rg );
 	cube.LinkTechniques(rg);
 	cube2.LinkTechniques(rg);
-	//sphere.LinkTechniques(rg);
+	sphere.LinkTechniques(rg);
 	//water.LinkTechniquesEX(rg);
 
 	//wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,400.0f ) );
@@ -282,7 +282,7 @@ void App::DoFrame( float dt )
 	sponza.Submit(Chan::main);
 	gobber.Submit(Chan::main);
 	nano.Submit(Chan::main);
-	//sphere.Submit(Chan::main);
+	sphere.Submit(Chan::main);
 	//water.SubmitEX(Chan::waterPre, Chan::main);
 
 	sponza.Submit(Chan::shadow);
@@ -290,7 +290,7 @@ void App::DoFrame( float dt )
 	nano.Submit(Chan::shadow);
 	cube.Submit(Chan::shadow);
 	cube2.Submit(Chan::shadow);
-	//sphere.Submit(Chan::shadow);
+	sphere.Submit(Chan::shadow);
 
 	rg.Execute( wnd.Gfx() );
 	
@@ -315,7 +315,7 @@ void App::DoFrame( float dt )
 	nanoProbe.SpawnWindow(nano);
 	cube.SpawnControlWindow(wnd.Gfx(), "Cube 1");
 	cube2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
-	//sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
+	sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
 	//water.SpawnControlWindow(wnd.Gfx(), "Water");
 	rg.RenderWindows( wnd.Gfx() );
 

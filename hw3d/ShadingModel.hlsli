@@ -25,24 +25,27 @@ struct GBuffer
 
 struct LightData
 {
-	float3 pointIrradiance;
-	float3 pointDirToL;
-	float pointAtten;
-	float3 directionalIrradiance;
-	float3 directionalDirToL;
+	float3 irradiance;
+	float3 dirToL;
 };
 
 #include "BxDF.hlsli"
 
-void BxDF(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V, const float shadowLevel)
+void BxDF(out LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V, float shadowLevel)
 {
+	litRes.diffuseLighting = 0.0f;
+	litRes.specularLighting = 0.0f;
 	switch (gBuffer.shadingModelID)
 	{
 	case ShadingModel_Phong:
+#ifdef IsPhong
 		PhongShading(litRes, gBuffer, litData, V);
+#endif
 		break;
 	case ShadingModel_PBR:
+#ifdef IsPBR
 		PBRShading(litRes, gBuffer, litData, V);
+#endif
 		break;
 	case ShadingModel_Liquid:
 		LiquidShading(litRes, gBuffer, litData, V);
@@ -50,23 +53,41 @@ void BxDF(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float
 	case ShadingModel_Toon:
 		ToonShading(litRes, gBuffer, litData, V);
 		break;
-	default:
-		litRes.diffuseLighting += 0;
-		litRes.specularLighting += 0;
+	}
+}
+
+void BxDF_Ambient(out float3 ambientLighting, GBuffer gBuffer, float3 V)
+{
+	ambientLighting = 0.0f;
+	switch (gBuffer.shadingModelID)
+	{
+	case ShadingModel_Phong:
+#ifdef IsPhong
+		PhongAmbientShading(ambientLighting, gBuffer);
+#endif
+		break;
+	case ShadingModel_PBR:
+#ifdef IsPBR
+		PBRAmbientShading(ambientLighting, gBuffer, V);
+#endif
 		break;
 	}
 }
 
-void EncodeLightData(out LightData litData, float3 worldPos)
+void EncodeLightData(out LightData litData, float3 irradiance, float3 vToL, bool IsDirectional)
 {
-	litData.pointIrradiance = diffuseColor * diffuseIntensity;
-	float3 vToL = lightPos - worldPos;
-	float distToL = length(vToL);
-	litData.pointDirToL = vToL / distToL;
-	// attenuation
-	litData.pointAtten = Attenuate(attConst, attLin, attQuad, distToL);
-	litData.directionalIrradiance = DdiffuseColor * DdiffuseIntensity;
-	litData.directionalDirToL = direction;
+	litData.irradiance = irradiance;
+	if (IsDirectional)
+	{
+		litData.dirToL = vToL;
+	}
+	else
+	{
+		float distToL = length(vToL);
+		litData.dirToL = vToL / distToL;
+		// attenuation
+		litData.irradiance *= Attenuate(attConst, attLin, attQuad, distToL);
+	}
 }
 
 void DecodeGBuffer(MaterialShadingParameters matParams, out GBuffer gBuffer)

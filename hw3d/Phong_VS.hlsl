@@ -1,6 +1,9 @@
 #include "Constants.hlsli"
 #include "Algorithms.hlsli"
 
+#define NoTangent
+#define NoUV
+
 struct VSIn
 {
     float3 pos : Position;
@@ -15,13 +18,9 @@ struct VSOut
     float4 pos : SV_Position;
 };
 
-VSOut main(VSIn v)
+void GetVertexParameters(inout VSOut o, VSIn v)
 {
-    VSOut o;
-    o.pos = mul(float4(v.pos, 1.0f), matrix_MVP);
-    float4 worldPos = mul(float4(v.pos, 1.0f), matrix_M2W);
-    o.worldPos = (float3)worldPos;
-    o.normal = normalize(mul(v.n, (float3x3)matrix_M2W));
-    o.shadowHomoPos = ToShadowHomoSpace(worldPos);
-    return o;
+
 }
+
+#include "VSTrunk.hlsli"
