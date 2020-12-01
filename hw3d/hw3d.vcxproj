@@ -593,6 +593,7 @@
     <None Include="DXGetErrorString.inl" />
     <None Include="DXTrace.inl" />
     <None Include="BxDF.hlsli" />
+    <None Include="WaveCommon.hlsli" />
     <None Include="PBRHeader.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>

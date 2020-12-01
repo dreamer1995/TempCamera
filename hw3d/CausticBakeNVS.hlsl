@@ -1,4 +1,10 @@
 #include "Constants.hlsli"
+#include "Algorithms.hlsli"
+
+#define NoTangent
+#define NoNormal
+#define NoHPos
+#define NoShadow
 
 cbuffer ObjectCBuf : register(b10)
 {
@@ -11,12 +17,14 @@ cbuffer ObjectCBuf : register(b10)
 	float4 Dz;
 };
 
+#include "WaveCommon.hlsli"
+
 struct VSOut
 {
 	float3 worldPos : Position;
 	float3 normal : Normal;
 	float3 tangent : Tangent;
-	float3 bitangent : Binormal;
+	float3 binormal : Binormal;
 	float2 uv : Texcoord;
 	float4 pos : SV_Position;
 };
@@ -29,18 +37,8 @@ struct VSIn {
 	float2 uv : Texcoord;
 };
 
-float4 CalculatePhase(float3 worldPos);
-float3 CalculateWavesDisplacement(float3 worldPos, float4 sinp, float4 cosp);
-float3 CalculateTangent(float4 sinp, float4 cosp);
-float3 CalculateBinormal(float4 sinp, float4 cosp);
-
-VSOut main(VSIn v)
+void GetVertexParameters(inout VSOut o, VSIn v)
 {
-	VSOut o;
-
-	o.worldPos = (float3) mul(float4(v.pos, 1.0f), matrix_M2W);
-	o.uv = v.uv;
-
 	const float4 phase = CalculatePhase(o.worldPos);
 	float4 sinp, cosp;
 	sincos(phase, sinp, cosp);
@@ -53,45 +51,13 @@ VSOut main(VSIn v)
 	o.worldPos = o.worldPos + float3(disPos.x, disPos.y * depthmap, disPos.z);
 
 	o.tangent = normalize(CalculateTangent(sinp, cosp));
-	o.bitangent = -normalize(CalculateBinormal(sinp, cosp));
+	o.binormal = -normalize(CalculateBinormal(sinp, cosp));
 
 	o.tangent = normalize(lerp(normalize(mul(v.t, (float3x3)matrix_M2W)), o.tangent, depthmap));
-	o.bitangent = normalize(lerp(normalize(mul(v.b, (float3x3)matrix_M2W)), o.bitangent, depthmap));
-	o.normal = normalize(cross(o.tangent, o.bitangent));
+	o.binormal = normalize(lerp(normalize(mul(v.b, (float3x3)matrix_M2W)), o.binormal, depthmap));
+	o.normal = normalize(cross(o.tangent, o.binormal));
 
 	o.pos = float4(v.pos.xy * 0.2f, 0.0f, 1.0f);
-	return o;
 }
 
-float4 CalculatePhase(float3 worldPos)
-{
-	float4 psi = S * w;
-	return w * Dx * worldPos.x + w * Dz * worldPos.z + psi * time;
-}
-
-float3 CalculateWavesDisplacement(float3 worldPos, float4 sinp, float4 cosp)
-{
-	float3 Gpos;
-	Gpos.x = worldPos.x + dot(Q * A * Dx, cosp);
-	Gpos.z = worldPos.z + dot(Q * A * Dz, cosp);
-	Gpos.y = dot(A, sinp);
-	return Gpos;
-}
-
-float3 CalculateTangent(float4 sinp, float4 cosp)
-{
-	float3 Gtan;
-	Gtan.x = 1.0f - dot(Q * A * w * Dx * Dx, sinp);
-	Gtan.y = dot(A * w * Dx, cosp);
-	Gtan.z = -dot(Q * A * w * Dz * Dx, sinp);
-	return Gtan;
-}
-
-float3 CalculateBinormal(float4 sinp, float4 cosp)
-{
-	float3 GBin;
-	GBin.x = -dot(Q * A * w * Dz * Dx, sinp);
-	GBin.y = dot(A * w * Dz, cosp);
-	GBin.z = 1.0f - dot(Q * A * w * Dz * Dz, sinp);
-	return GBin;
-}
+#include "VSTrunk.hlsli"

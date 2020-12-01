@@ -788,6 +788,9 @@
     <None Include="VSTrunk.hlsli">
       <Filter>Shader\Common</Filter>
     </None>
+    <None Include="WaveCommon.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PhongDifMskSpcNrm_PS.hlsl">

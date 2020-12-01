@@ -27,7 +27,7 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 			Step only("environment");
 
 			//only.AddBindable(Texture::Resolve(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg"));
-			only.AddBindable(Sampler::Resolve(gfx));
+			only.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear));
 
 			auto pvs = VertexShader::Resolve(gfx, "SkyBoxVS.cso");
 			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *pvs));

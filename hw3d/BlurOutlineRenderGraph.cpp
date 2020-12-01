@@ -256,7 +256,7 @@ namespace Rgph
 	{
 		RenderShadowWindow( gfx );
 		RenderKernelWindow( gfx );
-		//RenderWaterWindow(gfx);
+		RenderWaterWindow(gfx);
 	}
 
 	void BlurOutlineRenderGraph::RenderKernelWindow( Graphics& gfx )

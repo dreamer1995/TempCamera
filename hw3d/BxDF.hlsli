@@ -38,7 +38,7 @@ void PBRShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData,
 
 	litRes.diffuseLighting = kD * gBuffer.baseColor / PI * litData.irradiance * NdotL;
 
-	litRes.specularLighting = numerator / denominator * litData.irradiance * NdotL;;
+	litRes.specularLighting = numerator / denominator * litData.irradiance * NdotL;
 }
 
 void PBRAmbientShading(out float3 ambientLighting, GBuffer gBuffer, float3 V)
@@ -62,12 +62,35 @@ void PBRAmbientShading(out float3 ambientLighting, GBuffer gBuffer, float3 V)
 
 	ambientLighting = (iKD * iDiffuse + iSpecular) * gBuffer.AO;
 }
-#endif
 
 void LiquidShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
 {
+	const float NdotV = max(dot(gBuffer.normal, V), 0.0f);
+	const float NdotL = max(dot(gBuffer.normal, litData.dirToL), 0.0f);
+	const float3 halfDir = normalize(litData.dirToL + V);
+	const float NdotH = max(dot(gBuffer.normal, halfDir), 0.0f);
 
+	float3 F0 = float3(0.04f, 0.04f, 0.04f);
+	F0 = lerp(F0, gBuffer.baseColor, gBuffer.metallic);
+
+	const float NDF = DistributionGGX(NdotH, gBuffer.roughness);
+	const float G = GeometrySmith(NdotV, NdotL, gBuffer.roughness);
+	const float3 F = FresnelSchlick(max(dot(halfDir, V), 0.0f), F0);
+
+	const float3 kS = F;
+	float3 kD = 1.0f - kS;
+	kD *= 1.0f - gBuffer.metallic;
+
+	const float3 numerator = NDF * G * F;
+	const float denominator = 4.0f * NdotV * NdotL + 0.001f;
+
+	litRes.diffuseLighting = kD * gBuffer.baseColor / PI * litData.irradiance * NdotL;
+
+	litRes.specularLighting = numerator / denominator * litData.irradiance * NdotL;
 }
+#endif
+
+
 
 void ToonShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData, float3 V)
 {

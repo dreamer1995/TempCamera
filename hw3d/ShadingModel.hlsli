@@ -48,7 +48,9 @@ void BxDF(out LightingResult litRes, GBuffer gBuffer, LightData litData, float3 
 #endif
 		break;
 	case ShadingModel_Liquid:
+#ifdef IsPBR
 		LiquidShading(litRes, gBuffer, litData, V);
+#endif
 		break;
 	case ShadingModel_Toon:
 		ToonShading(litRes, gBuffer, litData, V);
@@ -67,6 +69,7 @@ void BxDF_Ambient(out float3 ambientLighting, GBuffer gBuffer, float3 V)
 #endif
 		break;
 	case ShadingModel_PBR:
+	case ShadingModel_Liquid:
 #ifdef IsPBR
 		PBRAmbientShading(ambientLighting, gBuffer, V);
 #endif
