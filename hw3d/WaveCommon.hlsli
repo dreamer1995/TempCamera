@@ -88,5 +88,5 @@ float3 CalculateBinormal(float4 sinp, float4 cosp)
 float GenerateDepth(float worldPosZ)
 {
 	float linearPosZ = worldPosZ * 0.1f + 0.5f;
-	return linearPosZ * linearPosZ * linearPosZ;
+	return linearPosZ * linearPosZ;
 }

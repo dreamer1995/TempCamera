@@ -18,42 +18,42 @@ App::App( const std::string& commandLine )
 	wnd( 1280,720,"The Donkey Fart Box" ),
 	scriptCommander( TokenizeQuoted( commandLine ) ),
 	dLight(wnd.Gfx()),
-	pointLight( wnd.Gfx(),{ 16.5f, 3.0f, 1.5f }, 0.0f )
+	pointLight( wnd.Gfx(),{ 16.5f, 3.0f, 1.5f }, 1.0f )
 {
 	time = 0;
 	cVBuf = std::make_unique<Bind::VertexConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cPBuf = std::make_unique<Bind::PixelConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cDBuf = std::make_unique<Bind::DomainConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
-	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -12.2f,4.2f,-12.1f }, 27.0f * PI / 180.0f, 43.0f * PI / 180.0f));
+	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -7.2f,6.2f,5.9f }, -9.0f * PI / 180.0f, 105.0f * PI / 180.0f));
 	pCam = std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f,28.8f,-6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f);
 	cameras.AddCamera(pCam);
 	cameras.AddCamera( pointLight.ShareCamera() );
 
 	//D3DTestScratchPad( wnd );
 
-	//cube.SetPos( { 10.0f,5.0f,6.0f } );
-	//cube2.SetPos( { 10.0f,5.0f,14.0f } );
-	//nano.SetRootTransform(
-	//	dx::XMMatrixRotationY( PI / 2.f ) *
-	//	dx::XMMatrixTranslation( 27.f,-0.56f,1.7f )
-	//);
-	//gobber.SetRootTransform(
-	//	dx::XMMatrixRotationY( -PI / 2.f ) *
-	//	dx::XMMatrixTranslation( -8.f,10.f,0.f )
-	//);
+	cube.SetPos( { 10.0f,5.0f,6.0f } );
+	cube2.SetPos( { 10.0f,5.0f,14.0f } );
+	nano.SetRootTransform(
+		dx::XMMatrixRotationY( PI / 2.f ) *
+		dx::XMMatrixTranslation( 27.f,-0.56f,1.7f )
+	);
+	gobber.SetRootTransform(
+		dx::XMMatrixRotationY( -PI / 2.f ) *
+		dx::XMMatrixTranslation( -8.f,10.f,0.f )
+	);
 
 	skybox.LinkTechniques(rg);
 	cameras.LinkTechniques(rg);
 	pointLight.LinkTechniques( rg );
 	dLight.LinkTechniques(rg);
 
-	//sponza.LinkTechniques( rg );
-	//gobber.LinkTechniques( rg );
-	//nano.LinkTechniques( rg );
-	//cube.LinkTechniques(rg);
-	//cube2.LinkTechniques(rg);
-	//sphere.LinkTechniques(rg);
-	water.LinkTechniquesEX(rg);
+	sponza.LinkTechniques( rg );
+	gobber.LinkTechniques( rg );
+	nano.LinkTechniques( rg );
+	cube.LinkTechniques(rg);
+	cube2.LinkTechniques(rg);
+	sphere.LinkTechniques(rg);
+	// water.LinkTechniquesEX(rg);
 
 	//wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,400.0f ) );
 	rg.BindShadowCamera(*pointLight.ShareCamera());
@@ -277,20 +277,20 @@ void App::DoFrame( float dt )
 	dLight.Bind(wnd.Gfx());
 
 	cameras.Submit(Chan::main);
-	//cube.Submit(Chan::main);
-	//cube2.Submit(Chan::main);
-	//sponza.Submit(Chan::main);
-	//gobber.Submit(Chan::main);
-	//nano.Submit(Chan::main);
-	//sphere.Submit(Chan::main);
-	water.SubmitEX(Chan::waterPre, Chan::main);
+	cube.Submit(Chan::main);
+	cube2.Submit(Chan::main);
+	sponza.Submit(Chan::main);
+	gobber.Submit(Chan::main);
+	nano.Submit(Chan::main);
+	sphere.Submit(Chan::main);
+	// water.SubmitEX(Chan::waterPre, Chan::main);
 
-	//sponza.Submit(Chan::shadow);
-	//gobber.Submit(Chan::shadow);
-	//nano.Submit(Chan::shadow);
-	//cube.Submit(Chan::shadow);
-	//cube2.Submit(Chan::shadow);
-	//sphere.Submit(Chan::shadow);
+	sponza.Submit(Chan::shadow);
+	gobber.Submit(Chan::shadow);
+	nano.Submit(Chan::shadow);
+	cube.Submit(Chan::shadow);
+	cube2.Submit(Chan::shadow);
+	sphere.Submit(Chan::shadow);
 
 	rg.Execute( wnd.Gfx() );
 	
@@ -307,16 +307,16 @@ void App::DoFrame( float dt )
 	ShowImguiDemoWindow();
 	skybox.SpawnControlWindow(wnd.Gfx(), "SkyBox");
 
-	//static MP sponzeProbe{ "Sponza" };
-	//static MP gobberProbe{ "Gobber" };
-	//static MP nanoProbe{ "Nano" };
-	//sponzeProbe.SpawnWindow(sponza);
-	//gobberProbe.SpawnWindow(gobber);
-	//nanoProbe.SpawnWindow(nano);
-	//cube.SpawnControlWindow(wnd.Gfx(), "Cube 1");
-	//cube2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
-	//sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
-	water.SpawnControlWindow(wnd.Gfx(), "Water");
+	static MP sponzeProbe{ "Sponza" };
+	static MP gobberProbe{ "Gobber" };
+	static MP nanoProbe{ "Nano" };
+	sponzeProbe.SpawnWindow(sponza);
+	gobberProbe.SpawnWindow(gobber);
+	nanoProbe.SpawnWindow(nano);
+	cube.SpawnControlWindow(wnd.Gfx(), "Cube 1");
+	cube2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
+	sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
+	// water.SpawnControlWindow(wnd.Gfx(), "Water");
 	rg.RenderWindows( wnd.Gfx() );
 
 	if (ImGui::Begin("Delete"))
