@@ -4,12 +4,13 @@
 
 namespace Bind
 {
-	Sampler::Sampler(Graphics& gfx, Filter filter, Address address, UINT slot, UINT shaderIndex)
+	Sampler::Sampler(Graphics& gfx, Filter filter, Address address, UINT slot, UINT shaderIndex, float LODRange)
 		:
 		filter(filter),
 		address(address),
 		slot(slot),
-		shaderIndex(shaderIndex)
+		shaderIndex(shaderIndex),
+		LODRange(LODRange)
 	{
 		INFOMAN( gfx );
 
@@ -48,6 +49,9 @@ namespace Bind
 		}
 		}
 
+		samplerDesc.MinLOD = -LODRange;
+		samplerDesc.MaxLOD = LODRange;
+
 		GFX_THROW_INFO( GetDevice( gfx )->CreateSamplerState( &samplerDesc,&pSampler ) );
 	}
 
@@ -75,18 +79,18 @@ namespace Bind
 			}
 		}
 	}
-	std::shared_ptr<Sampler> Sampler::Resolve(Graphics& gfx, Filter filter, Address address, UINT slot, UINT shaderIndex)
+	std::shared_ptr<Sampler> Sampler::Resolve(Graphics& gfx, Filter filter, Address address, UINT slot, UINT shaderIndex, float LODRange)
 	{
-		return Codex::Resolve<Sampler>(gfx, filter, address, slot, shaderIndex);
+		return Codex::Resolve<Sampler>(gfx, filter, address, slot, shaderIndex, LODRange);
 	}
-	std::string Sampler::GenerateUID(Filter filter, Address address, UINT slot, UINT shaderIndex)
+	std::string Sampler::GenerateUID(Filter filter, Address address, UINT slot, UINT shaderIndex, float LODRange)
 	{
 		using namespace std::string_literals;
 		return typeid(Sampler).name() + "#"s + std::to_string( (int)filter) + std::to_string((int)address) + std::to_string((int)slot) +
-			std::to_string(shaderIndex);
+			std::to_string(shaderIndex) + std::to_string(LODRange);
 	}
 	std::string Sampler::GetUID() const noexcept
 	{
-		return GenerateUID(filter, address, slot, shaderIndex);
+		return GenerateUID(filter, address, slot, shaderIndex, LODRange);
 	}
 }

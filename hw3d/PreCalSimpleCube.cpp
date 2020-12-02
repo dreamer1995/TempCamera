@@ -17,7 +17,7 @@ namespace Rgph
 		AddBind(Texture::Resolve(gfx, "Images\\secluded_beach_4k.jpg"));
 		AddBind(PixelShader::Resolve(gfx, "SphereToCubePS.cso"));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
-		AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear));
+		AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Wrap, 0u, 0b1u, 0.0f));
 
 		pPreCalSimpleCube = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullHeight, fullHeight, 0u, ShaderInputRenderTarget::Type::PreCalSimpleCube);
 		renderTarget = pPreCalSimpleCube;

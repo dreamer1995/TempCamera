@@ -21,13 +21,13 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 
 	auto tcb = std::make_shared<TransformCbufScaling>(gfx);
 
-	{
+	{	
 		Technique shade("Shade1", { Chan::main });
 		{
 			Step only("environment");
 
 			//only.AddBindable(Texture::Resolve(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg"));
-			only.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear));
+			only.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Wrap, 0u, 0b1u));
 
 			auto pvs = VertexShader::Resolve(gfx, "SkyBoxVS.cso");
 			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *pvs));
