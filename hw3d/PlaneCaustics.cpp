@@ -41,7 +41,7 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 				Dcb::RawLayout lay;
 				lay.Add<Dcb::Float4>("color");
 				auto buf = Dcb::Buffer(std::move(lay));
-				buf["color"] = dx::XMFLOAT4{ 0.258823f,0.156862f,0.062745f,1.0f };
+				buf["color"] = dx::XMFLOAT4{ 0.0132813f,0.0132813f,0.0132813f,1.0f };
 				only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
 			}
 			

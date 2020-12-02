@@ -4,6 +4,7 @@
 #define NoTangent
 #define NoHPos
 #define NoNormal
+#define VerticesWave
 
 cbuffer ObjectCBuf : register(b10)
 {
@@ -59,7 +60,7 @@ void GetVertexParameters(inout VSOut o, VSIn v)
 	float3 disPos = CalculateWavesDisplacement(o.worldPos, sinp, cosp);
 
 	//float depthmap = hmap.SampleLevel(splr, v.uv, 0.0f).r;
-	float depthmap = (o.worldPos.z * 0.1f + 1.0f) * 0.5f;
+	const float depthmap = GenerateDepth(o.worldPos.z);
 
 	o.worldPos = o.worldPos + float3(disPos.x, disPos.y * depthmap, disPos.z);
 

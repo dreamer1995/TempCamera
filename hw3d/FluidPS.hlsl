@@ -3,6 +3,7 @@
 #include "Algorithms.hlsli"
 
 #define IsPBR
+#define PixelsWave
 
 cbuffer ObjectCBuf2 : register(b10)
 {
@@ -50,6 +51,7 @@ struct MaterialShadingParameters
 	float metallic;
 	float AO;
 	float specular;
+	float3 causticsColor;
 };
 
 void GetMaterialParameters(out MaterialShadingParameters matParams, PSIn IN)
@@ -90,7 +92,7 @@ void GetMaterialParameters(out MaterialShadingParameters matParams, PSIn IN)
 	//					 fresnel);
 
 	//const float3 statVDir = normalize(cameraPos - (float3)mul(float4(0.0f, 0.0f, 0.0f, 1.0f), matrix_M2W));
-	const float depthmap = (IN.worldPos.z * 0.1f + 1.0f) * 0.5f;
+	const float depthmap = GenerateDepth(IN.worldPos.z);
 
 	const float t = lerp(0.225f, 0.465f, max(dot(matParams.normal, -cameraDir), 0.0f));
 	const float3 Rv = lerp(cameraDir, -matParams.normal, t);
@@ -98,8 +100,9 @@ void GetMaterialParameters(out MaterialShadingParameters matParams, PSIn IN)
 	const float2 distUV = UVRefractionDistorted(Rv, IN.uv, depthR * depthmap);
 	const float2 subDistUV = UVRefractionDistorted(Rv, IN.uv, depthR * depthmap * 0.5f);
 	float3 albedo = DecodeGamma(gmap.Sample(splr, distUV).rgb);
-	albedo += caumap.Sample(splr, subDistUV * tilling).rgb * saturate(1 - depthR * depthmap);
-	matParams.baseColor = albedo * (IN.outScattering + IN.inScattering);
+	albedo *= IN.outScattering + IN.inScattering;
+	matParams.causticsColor = caumap.Sample(splrClamp, subDistUV * tilling).rgb * saturate(1 - depthR * depthmap);
+	matParams.baseColor = albedo;
 	
 	float3 F0 = float3(0.04f, 0.04f, 0.04f);
 	matParams.metallic = saturate(metallic * depthR * depthmap);

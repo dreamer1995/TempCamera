@@ -21,6 +21,7 @@ struct GBuffer
 	float AO;
 	float specular;
 #endif
+	float4 CustomData0;
 };
 
 struct LightData
@@ -110,4 +111,12 @@ void DecodeGBuffer(MaterialShadingParameters matParams, out GBuffer gBuffer)
 	gBuffer.AO = matParams.AO;
 	gBuffer.specular = matParams.specular;
 #endif
+	if (gBuffer.shadingModelID == ShadingModel_Liquid)
+	{
+#ifdef PixelsWave
+		gBuffer.CustomData0 = float4(matParams.causticsColor, 0.0f);
+#endif
+	}
+	else
+		gBuffer.CustomData0 = float4(0.0f, 0.0f, 0.0f, 0.0f);
 }

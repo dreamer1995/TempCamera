@@ -1,4 +1,5 @@
 #include <PBRHeader.hlsli>
+#include "Common.hlsli"
 
 TextureCube EnvMap;
 SamplerState basicSampler;
@@ -38,11 +39,12 @@ float4 main(float3 tc : Texcoord) : SV_TARGET
 
 			float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel);
 
-			PrefilteredColor += EnvMap.SampleLevel(basicSampler , lightDir, mipLevel).rgb * NdotL;
+			PrefilteredColor += DecodeGamma(EnvMap.SampleLevel(basicSampler , lightDir, mipLevel).rgb * NdotL);
 			totalWeight += NdotL;
 		}
 	}
 	PrefilteredColor /= totalWeight;
+	PrefilteredColor = EncodeGamma(PrefilteredColor);
 
 	return float4(PrefilteredColor, 1.0f);
 }

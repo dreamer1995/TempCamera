@@ -1,3 +1,5 @@
+#include "Common.hlsli"
+
 // External texture-related data
 TextureCube Sky;
 SamplerState splr;
@@ -26,11 +28,12 @@ float4 main(float3 tc : Texcoord) : SV_Target
 			float3 tangentSample = float3(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
 			float3 sampleVec = (tangentSample.x * right) + (tangentSample.y * up) + (tangentSample.z * normal);
 
-			irradiance += Sky.Sample(splr, sampleVec).rgb * cos(theta) * sin(theta);
+			irradiance += DecodeGamma(Sky.Sample(splr, sampleVec).rgb * cos(theta) * sin(theta));
 			nrSamples++;
 		}
 	}
 	irradiance = PI * irradiance * (1 / nrSamples);
+	irradiance = EncodeGamma(irradiance);
 
 	return float4(irradiance, 1.0f);
 	//return Sky.Sample(basicSampler, input.uvw);

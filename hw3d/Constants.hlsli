@@ -1,3 +1,5 @@
+#include "Common.hlsli"
+
 cbuffer TransformCBuf : register(b0)//VS, PS
 {
 	matrix matrix_MVP;
@@ -58,9 +60,6 @@ cbuffer ShadowControl : register(b6)//PS
 #define ShadingModel_PBR 2
 #define ShadingModel_Liquid 3
 #define ShadingModel_Toon 4
-
-#define DecodeGamma(x) pow(x, 2.2f)
-#define EncodeGamma(x) pow(x / (x + 1.0f), 1.0f / 2.2f)
 
 Texture2D smap : register(t14);//PS
 SamplerComparisonState ssamHw : register(s2);//PS

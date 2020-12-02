@@ -70,6 +70,30 @@
     <Filter Include="Header Files\Jobber\Passlib\Base">
       <UniqueIdentifier>{4e11c64f-ba48-46ac-823c-6ef765552a6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader\Phong">
+      <UniqueIdentifier>{a7bce2de-5a8a-458b-af43-7cdd5d44c80e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Env">
+      <UniqueIdentifier>{6716b46b-9114-43ee-b65e-d891ffbc0560}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Fluid">
+      <UniqueIdentifier>{5d12c759-d887-48c3-b6bd-3ecea6593865}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Miscellany">
+      <UniqueIdentifier>{38d8bff4-450c-4b65-b13e-5abc0dab7715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\PBR">
+      <UniqueIdentifier>{5639fe4a-01f6-4dc8-a6b2-86a75c2c70c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Jobber\Graphlib">
+      <UniqueIdentifier>{ec83c31f-95cc-4dbd-ac5d-dfee44f6eba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gizmo">
+      <UniqueIdentifier>{86e820e0-9472-4664-b6d8-3fb693de23eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Gizmo">
+      <UniqueIdentifier>{3828e089-cf78-4a64-a35b-62235a359003}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -129,9 +153,6 @@
     <ClCompile Include="Drawable.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="Surface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
@@ -159,17 +180,8 @@
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PointLight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SolidSphere.cpp">
       <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestPlane.cpp">
       <Filter>Source Files\Drawable</Filter>
@@ -193,12 +205,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ScriptCommander.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DynamicConstant.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LayoutCodex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Testing.cpp">
@@ -264,18 +270,6 @@
     <ClCompile Include="BufferClearPass.cpp">
       <Filter>Source Files\Jobber\Passlib</Filter>
     </ClCompile>
-    <ClCompile Include="ScaleOutlineRenderGraph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BlurOutlineRenderGraph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HorizontalBlurPass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VerticalBlurPass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sink.cpp">
       <Filter>Source Files\Jobber\Passlib</Filter>
     </ClCompile>
@@ -284,9 +278,6 @@
     </ClCompile>
     <ClCompile Include="SkyBox.cpp">
       <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectionalLight.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PhongSphere.cpp">
       <Filter>Source Files\Drawable</Filter>
@@ -297,14 +288,8 @@
     <ClCompile Include="Frustum.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="CameraContainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CameraIndicator.cpp">
       <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="PreCalculateRenderGraph.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PreCubeCalculatePass.cpp">
       <Filter>Source Files\Jobber\Passlib</Filter>
@@ -349,6 +334,45 @@
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="Projection.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="BlurOutlineRenderGraph.cpp">
+      <Filter>Source Files\Jobber\Graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="PreCalculateRenderGraph.cpp">
+      <Filter>Source Files\Jobber\Graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleOutlineRenderGraph.cpp">
+      <Filter>Source Files\Jobber\Graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="VerticalBlurPass.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
+    <ClCompile Include="HorizontalBlurPass.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraContainer.cpp">
+      <Filter>Source Files\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Source Files\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Source Files\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="Surface.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicConstant.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutCodex.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
   </ItemGroup>
@@ -434,9 +458,6 @@
     <ClInclude Include="ChiliMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Surface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
@@ -468,15 +489,6 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="ImguiManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PointLight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SolidSphere.h">
@@ -527,14 +539,8 @@
     <ClInclude Include="ScriptCommander.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicConstant.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ConstantBuffersEx.h">
       <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="LayoutCodex.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Testing.h">
       <Filter>Header Files</Filter>
@@ -659,9 +665,6 @@
     <ClInclude Include="SkyBox.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="DirectionalLight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PhongSphere.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
@@ -682,9 +685,6 @@
     </ClInclude>
     <ClInclude Include="ShadowMappingPass.h">
       <Filter>Header Files\Jobber\Passlib</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraContainer.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CameraIndicator.h">
       <Filter>Header Files\Drawable</Filter>
@@ -746,6 +746,30 @@
     <ClInclude Include="Projection.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Header Files\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Header Files\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraContainer.h">
+      <Filter>Header Files\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutCodex.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicConstant.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -791,136 +815,139 @@
     <None Include="WaveCommon.hlsli">
       <Filter>Shader\Common</Filter>
     </None>
+    <None Include="Common.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="PhongDifMskSpcNrm_PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongDifNrm_PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongDifNrm_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongDif_PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongDifSpcNrm_PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongDifSpc_PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongDif_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Phong_PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Phong_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Solid_PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Solid_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongDifMskSpcNrm_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongDifSpc_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongDifSpcNrm_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Offset_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Fullscreen_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Blur_PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="BlurOutline_PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongDifMskSpc_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongDifMskSpc_PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Test1_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Test2_VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Test_PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="SkyBoxPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="SkyBoxVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="SphereToCubePS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongPSDirectional.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongVSDirectional.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="SkyboxConvolutionPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PrefilterMapPixelShader.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="LightVectorData.hlsli">
       <Filter>Shader\Common</Filter>
-    </FxCompile>
-    <FxCompile Include="IntegrateBRDFPixelShader.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PBRVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PBRTexPS.hlsl">
-      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="PBRPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="CausticBakeNPS.hlsl">
-      <Filter>Shader</Filter>
+    <FxCompile Include="Phong_PS.hlsl">
+      <Filter>Shader\Phong</Filter>
     </FxCompile>
-    <FxCompile Include="CausticBakeNVS.hlsl">
-      <Filter>Shader</Filter>
+    <FxCompile Include="Phong_VS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDif_PS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDif_VS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifMskSpc_PS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifMskSpc_VS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifMskSpcNrm_PS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifMskSpcNrm_VS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifNrm_PS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifNrm_VS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifSpc_PS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifSpc_VS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifSpcNrm_PS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongDifSpcNrm_VS.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongPSDirectional.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongVSDirectional.hlsl">
+      <Filter>Shader\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyBoxVS.hlsl">
+      <Filter>Shader\Env</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyBoxPS.hlsl">
+      <Filter>Shader\Env</Filter>
     </FxCompile>
     <FxCompile Include="FluidPS.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\Fluid</Filter>
     </FxCompile>
     <FxCompile Include="FluidVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="CausticDS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="CausticHS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="CausticPS.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\Fluid</Filter>
     </FxCompile>
     <FxCompile Include="CausticVS.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\Fluid</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticDS.hlsl">
+      <Filter>Shader\Fluid</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticHS.hlsl">
+      <Filter>Shader\Fluid</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticPS.hlsl">
+      <Filter>Shader\Fluid</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticBakeNPS.hlsl">
+      <Filter>Shader\Fluid</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticBakeNVS.hlsl">
+      <Filter>Shader\Fluid</Filter>
+    </FxCompile>
+    <FxCompile Include="Blur_PS.hlsl">
+      <Filter>Shader\Miscellany</Filter>
+    </FxCompile>
+    <FxCompile Include="BlurOutline_PS.hlsl">
+      <Filter>Shader\Miscellany</Filter>
+    </FxCompile>
+    <FxCompile Include="Fullscreen_VS.hlsl">
+      <Filter>Shader\Miscellany</Filter>
+    </FxCompile>
+    <FxCompile Include="Offset_VS.hlsl">
+      <Filter>Shader\Miscellany</Filter>
+    </FxCompile>
+    <FxCompile Include="Test_PS.hlsl">
+      <Filter>Shader\Miscellany</Filter>
+    </FxCompile>
+    <FxCompile Include="Test1_VS.hlsl">
+      <Filter>Shader\Miscellany</Filter>
+    </FxCompile>
+    <FxCompile Include="Test2_VS.hlsl">
+      <Filter>Shader\Miscellany</Filter>
+    </FxCompile>
+    <FxCompile Include="Solid_PS.hlsl">
+      <Filter>Shader\Miscellany</Filter>
+    </FxCompile>
+    <FxCompile Include="Solid_VS.hlsl">
+      <Filter>Shader\Miscellany</Filter>
+    </FxCompile>
+    <FxCompile Include="IntegrateBRDFPixelShader.hlsl">
+      <Filter>Shader\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="PBRTexPS.hlsl">
+      <Filter>Shader\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="PBRVS.hlsl">
+      <Filter>Shader\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="PrefilterMapPixelShader.hlsl">
+      <Filter>Shader\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyboxConvolutionPS.hlsl">
+      <Filter>Shader\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="SphereToCubePS.hlsl">
+      <Filter>Shader\PBR</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

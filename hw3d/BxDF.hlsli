@@ -70,6 +70,8 @@ void LiquidShading(inout LightingResult litRes, GBuffer gBuffer, LightData litDa
 	const float3 halfDir = normalize(litData.dirToL + V);
 	const float NdotH = max(dot(gBuffer.normal, halfDir), 0.0f);
 
+	gBuffer.baseColor += gBuffer.CustomData0 * litData.irradiance;
+
 	float3 F0 = float3(0.04f, 0.04f, 0.04f);
 	F0 = lerp(F0, gBuffer.baseColor, gBuffer.metallic);
 

@@ -1,4 +1,4 @@
-#ifdef IsPBR
+#ifdef PixelsWave
 float Motion_4WayChaos(Texture2D textureIn, float2 uv, float speed)
 {
 	float2 offset[4] = { float2(0.000000f,0.000000f),
@@ -45,7 +45,7 @@ float2 UVRefractionDistorted(float3 Rv, float2 uv, float depth)
 }
 #endif
 
-#ifdef NoTangent
+#ifdef VerticesWave
 float4 CalculatePhase(float3 worldPos)
 {
 	float4 psi = S * w;
@@ -59,6 +59,11 @@ float3 CalculateWavesDisplacement(float3 worldPos, float4 sinp, float4 cosp)
 	Gpos.z = worldPos.z + dot(Q * A * Dz, cosp);
 	Gpos.y = dot(A, sinp);
 	return Gpos;
+}
+
+float CalculateWavesDisplacement(float4 sinp)
+{
+	return dot(A, sinp);
 }
 
 float3 CalculateTangent(float4 sinp, float4 cosp)
@@ -79,3 +84,9 @@ float3 CalculateBinormal(float4 sinp, float4 cosp)
 	return GBin;
 }
 #endif
+
+float GenerateDepth(float worldPosZ)
+{
+	float linearPosZ = worldPosZ * 0.1f + 0.5f;
+	return linearPosZ * linearPosZ * linearPosZ;
+}

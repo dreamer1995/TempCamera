@@ -1,3 +1,5 @@
+#include "Common.hlsli"
+
 cbuffer CBuf : register(b10)
 {
 	float4 materialColor;
@@ -8,7 +10,9 @@ SamplerState splr;
 
 float4 main(float3 tc : Texcoord) : SV_Target
 {
-	return SkyMap.Sample(splr, normalize(tc)) * materialColor;
+	float3 col = DecodeGamma(SkyMap.Sample(splr, normalize(tc))) * materialColor;
+	col = EncodeGamma(col);
+	return float4(col, 1.0f);
 }
 
 //RasterizerState MyCull {

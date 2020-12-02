@@ -1,6 +1,8 @@
 // A constant buffer that stores the three basic column-major matrices for composing geometry.
 #include "Constants.hlsli"
 
+#define VerticesWave
+
 //cbuffer CBufLight : register(b2)
 //{
 //	float3 direction;
@@ -25,6 +27,8 @@ cbuffer CBufProperties2 : register(b11)
 Texture2D hmap : register(t0);
 Texture2D nmap : register(t4);
 SamplerState splr;
+
+#include "WaveCommon.hlsli"
 
 struct DS_OUTPUT
 {
@@ -108,15 +112,4 @@ DS_OUTPUT main(
 	//o.pos = mul(float4(o.newPos, 1.0f), matrix_VP);
 
 	return o;
-}
-
-float4 CalculatePhase(float3 worldPos)
-{
-	float4 psi = S * w;
-	return w * Dx * worldPos.x + w * Dz * worldPos.z + psi * time;
-}
-
-float CalculateWavesDisplacement(float4 sinp)
-{
-	return dot(A, sinp);
 }

@@ -63,7 +63,7 @@ float4 main(PSIn IN) : SV_Target
     // final color = attenuate diffuse & ambient by diffuse texture color and add specular reflected
     outCol = diffuseLighting + specularLighting + ambientLighting;
 
-    outCol = EncodeGamma(outCol);
+    outCol = EncodeGammaWithAtten(outCol);
 
     return float4(outCol, 1.0f);
 }

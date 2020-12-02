@@ -5,6 +5,7 @@
 #define NoNormal
 #define NoHPos
 #define NoShadow
+#define VerticesWave
 
 cbuffer ObjectCBuf : register(b10)
 {
