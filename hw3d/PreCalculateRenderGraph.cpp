@@ -35,5 +35,6 @@ namespace Rgph
 		}
 		Finalize();
 		Execute(gfx);
+		dynamic_cast<PreCalSimpleCube&>(FindPassByName("preCalSimpleCube")).DumpShadowMap(gfx, "Images\\Env\\Test.jpg");
 	}
 }

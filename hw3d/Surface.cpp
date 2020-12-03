@@ -127,11 +127,11 @@ Surface Surface::FromFile( const std::string& name )
 	return Surface( std::move( scratch ) );
 }
 
-void Surface::Save( const std::string& filename ) const
+void Surface::Save(const std::string& filename, const std::string& suffix) const
 {
-	const auto GetCodecID = []( const std::string& filename ) {
-		const std::filesystem::path path = filename;
-		const auto ext = path.extension().string();
+	const std::filesystem::path path = filename;
+	const auto ext = path.extension().string();
+	const auto GetCodecID = [](const std::string& filename, const auto ext) {
 		if( ext == ".png" )
 		{
 			return DirectX::WIC_CODEC_PNG;
@@ -150,8 +150,8 @@ void Surface::Save( const std::string& filename ) const
 	HRESULT hr = DirectX::SaveToWICFile(
 		*scratch.GetImage( 0,0,0 ),
 		DirectX::WIC_FLAGS_NONE,
-		GetWICCodec( GetCodecID( filename ) ),
-		ToWide( filename ).c_str()
+		GetWICCodec( GetCodecID(filename, ext) ),
+		ToWide(path.parent_path().string() + "\\" + path.stem().string() + suffix + ext).c_str()
 	);
 	if( FAILED( hr ) )
 	{

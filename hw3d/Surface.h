@@ -132,7 +132,7 @@ public:
 	const Color* GetBufferPtr() const noexcept;
 	const Color* GetBufferPtrConst() const noexcept;
 	static Surface FromFile( const std::string& name );
-	void Save( const std::string& filename ) const;
+	void Save(const std::string& filename, const std::string& suffix = "") const;
 	bool AlphaLoaded() const noexcept;
 private:
 	Surface( DirectX::ScratchImage scratch ) noexcept;

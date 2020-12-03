@@ -50,6 +50,7 @@ namespace Bind
 		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type = Type::Default, UINT shaderIndex = 0b1u);
 		void Bind( Graphics& gfx ) noxnd override;
 		Surface ToSurface( Graphics& gfx ) const;
+		void ToCube(Graphics& gfx, const std::string& path) const;
 	private:
 		UINT slot;
 		UINT shaderIndex;

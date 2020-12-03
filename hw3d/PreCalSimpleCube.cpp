@@ -14,7 +14,7 @@ namespace Rgph
 		:
 		PreCubeCalculatePass(std::move(name), gfx)
 	{
-		AddBind(Texture::Resolve(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg"));
+		AddBind(Texture::Resolve(gfx, "Images\\secluded_beach_4k.jpg"));
 		AddBind(PixelShader::Resolve(gfx, "SphereToCubePS.cso"));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 		AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Wrap, 0u, 0b1u, 0.0f));
@@ -33,5 +33,10 @@ namespace Rgph
 			pPreCalSimpleCube->targetIndex = i;
 			PreCubeCalculatePass::Execute(gfx);
 		}
+	}
+
+	void PreCalSimpleCube::DumpShadowMap(Graphics& gfx, const std::string& path) const
+	{
+		pPreCalSimpleCube->ToCube(gfx, path);
 	}
 }
