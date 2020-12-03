@@ -2,6 +2,7 @@
 #include "GraphicsResource.h"
 #include <memory>
 #include <string>
+#include <filesystem>
 #include "ConditionalNoexcept.h"
 
 class Drawable;

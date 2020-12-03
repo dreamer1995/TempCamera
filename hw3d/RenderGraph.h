@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <filesystem>
 #include "ConditionalNoexcept.h"
 
 class Graphics;

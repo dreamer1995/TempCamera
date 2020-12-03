@@ -24,13 +24,13 @@ namespace Rgph
 {
 	BlurOutlineRenderGraph::BlurOutlineRenderGraph( Graphics& gfx )
 		:
-		RenderGraph( gfx ),
-		prg(gfx)
+		RenderGraph( gfx )
 	{
-		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMap", prg.pPreCalSimpleCube));
-		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMapBlur", prg.pPreCalBlurCube));
-		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMapMip", prg.pPreCalMipCube));
-		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("planeBRDFLUT", prg.pPreCalLUTPlane));
+		prg = std::make_unique<Rgph::PreCalculateRenderGraph>(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg");
+		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMap", prg->pPreCalSimpleCube));
+		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMapBlur", prg->pPreCalBlurCube));
+		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMapMip", prg->pPreCalMipCube));
+		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("planeBRDFLUT", prg->pPreCalLUTPlane));
 		{
 			auto pass = std::make_unique<BufferClearPass>( "clearRT" );
 			pass->SetSinkLinkage( "buffer","$.backbuffer" );

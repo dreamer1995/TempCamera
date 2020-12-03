@@ -46,7 +46,7 @@ namespace Rgph
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> shadowControl;
 		std::shared_ptr<Bind::ShadowSampler> shadowSampler;
 		std::shared_ptr<Bind::ShadowRasterizer> shadowRasterizer;
-		Rgph::PreCalculateRenderGraph prg;
+		std::unique_ptr<Rgph::PreCalculateRenderGraph> prg;
 		std::shared_ptr<Bind::CachingVertexConstantBufferEx> waterFlowVS;
 		std::shared_ptr<Bind::CachingDomainConstantBufferEx> waterFlowDS;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> waterRipple;

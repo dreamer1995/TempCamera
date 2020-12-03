@@ -21,4 +21,9 @@ namespace Rgph
 		pPreCalLUTPlane = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 13u, ShaderInputRenderTarget::Type::PreBRDFPlane);
 		renderTarget = pPreCalLUTPlane;
 	}
+
+	void PreCalLUTPlane::DumpShadowMap(Graphics& gfx, const std::string& path) const
+	{
+		pPreCalLUTPlane->ToSurface(gfx).Save(path);
+	}
 }

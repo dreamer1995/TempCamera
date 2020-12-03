@@ -15,7 +15,7 @@ namespace Rgph
 	class PreCalSimpleCube : public PreCubeCalculatePass
 	{
 	public:
-		PreCalSimpleCube(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight);
+		PreCalSimpleCube(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight, const std::string& path);
 		void Execute(Graphics& gfx) const noxnd override;
 		void DumpShadowMap(Graphics& gfx, const std::string& path) const;
 	public:

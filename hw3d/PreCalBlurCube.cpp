@@ -32,5 +32,10 @@ namespace Rgph
 			pPreCalBlurCube->targetIndex = i;
 			PreCubeCalculatePass::Execute(gfx);
 		}
+	}	
+	
+	void PreCalBlurCube::DumpShadowMap(Graphics& gfx, const std::string& path) const
+	{
+		pPreCalBlurCube->ToCube(gfx, path);
 	}
 }

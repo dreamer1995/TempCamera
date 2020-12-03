@@ -15,7 +15,7 @@ namespace Rgph
 	class PreCalculateRenderGraph : public RenderGraph
 	{
 	public:
-		PreCalculateRenderGraph(Graphics& gfx);
+		PreCalculateRenderGraph(Graphics& gfx, const std::filesystem::path& path);
 	public:
 		std::shared_ptr<Bind::RenderTarget> pPreCalSimpleCube;
 		std::shared_ptr<Bind::RenderTarget> pPreCalBlurCube;

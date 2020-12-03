@@ -16,6 +16,7 @@ namespace Rgph
 	{
 	public:
 		PreCalLUTPlane(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight);
+		void DumpShadowMap(Graphics& gfx, const std::string& path) const;
 	public:
 		std::shared_ptr<Bind::ShaderInputRenderTarget> pPreCalLUTPlane;
 	};

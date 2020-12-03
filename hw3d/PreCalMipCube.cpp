@@ -49,4 +49,9 @@ namespace Rgph
 			}
 		}
 	}
+
+	void PreCalMipCube::DumpShadowMap(Graphics& gfx, const std::string& path) const
+	{
+		pPreCalMipCube->ToMipCube(gfx, path);
+	}
 }

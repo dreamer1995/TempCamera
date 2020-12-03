@@ -10,11 +10,11 @@ using namespace Bind;
 
 namespace Rgph
 {
-	PreCalSimpleCube::PreCalSimpleCube(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight)
+	PreCalSimpleCube::PreCalSimpleCube(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight, const std::string& path)
 		:
 		PreCubeCalculatePass(std::move(name), gfx)
 	{
-		AddBind(Texture::Resolve(gfx, "Images\\secluded_beach_4k.jpg"));
+		AddBind(Texture::Resolve(gfx, path));
 		AddBind(PixelShader::Resolve(gfx, "SphereToCubePS.cso"));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 		AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Wrap, 0u, 0b1u, 0.0f));

@@ -51,6 +51,7 @@ namespace Bind
 		void Bind( Graphics& gfx ) noxnd override;
 		Surface ToSurface( Graphics& gfx ) const;
 		void ToCube(Graphics& gfx, const std::string& path) const;
+		void ToMipCube(Graphics& gfx, const std::string& path) const;
 	private:
 		UINT slot;
 		UINT shaderIndex;
