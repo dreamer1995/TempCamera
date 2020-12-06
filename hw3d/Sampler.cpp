@@ -59,7 +59,7 @@ namespace Bind
 	{
 		INFOMAN_NOHR( gfx );
 		assert(shaderIndex & 0b00001111);
-		for (UINT i = 0; i < 5; i++)
+		for (unsigned char i = 0; i < 5; i++)
 		{
 			if (shaderIndex & 0b00001000)
 			{

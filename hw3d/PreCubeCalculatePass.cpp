@@ -11,9 +11,10 @@ namespace Rgph
 	BindingPass(std::move(name))
 	{
 		pVcbuf = std::make_unique<Bind::VertexConstantBuffer<Transforms>>(gfx, 0u);
-		auto model = Cube::MakeIndependentSimple();
-		AddBind(Bind::VertexBuffer::Resolve(gfx, "$preskybox", model.vertices));
-		AddBind(Bind::IndexBuffer::Resolve(gfx, "$preskybox", model.indices));
+		auto model = Cube::MakePosOnly();
+		AddBind(Bind::VertexBuffer::Resolve(gfx, "$preskybox", std::move(model.vertices)));
+		count = (UINT)model.indices.size();
+		AddBind(Bind::IndexBuffer::Resolve(gfx, "$preskybox", std::move(model.indices)));
 		// setup other common fullscreen bindables
 		auto vs = Bind::VertexShader::Resolve(gfx, "SkyBoxVS.cso");
 		AddBind(Bind::InputLayout::Resolve(gfx, model.vertices.GetLayout(), *vs));
@@ -27,6 +28,6 @@ namespace Rgph
 		pVcbuf->Update(gfx, { DirectX::XMMatrixTranspose(gfx.GetProjection()) * DirectX::XMMatrixTranspose(gfx.GetCamera()) });
 		pVcbuf->Bind(gfx);
 		BindAll(gfx);
-		gfx.DrawIndexed(36u);
+		gfx.DrawIndexed(count);
 	}
 }

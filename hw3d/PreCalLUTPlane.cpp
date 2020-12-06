@@ -22,7 +22,7 @@ namespace Rgph
 		renderTarget = pPreCalLUTPlane;
 	}
 
-	void PreCalLUTPlane::DumpShadowMap(Graphics& gfx, const std::string& path) const
+	void PreCalLUTPlane::DumpLUTMap(Graphics& gfx, const std::string& path) const
 	{
 		pPreCalLUTPlane->ToSurface(gfx).Save(path);
 	}

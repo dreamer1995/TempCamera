@@ -17,3 +17,4 @@
 #include "HullShader.h"
 #include "DomainShader.h"
 #include "ConstantBuffersEX.h"
+#include "TextureCube.h"

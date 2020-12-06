@@ -375,6 +375,9 @@
     <ClCompile Include="LayoutCodex.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
+    <ClCompile Include="TextureCube.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -768,6 +771,9 @@
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="DynamicConstant.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureCube.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
   </ItemGroup>

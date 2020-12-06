@@ -24,5 +24,6 @@ namespace Rgph
 		};
 	private:
 		std::unique_ptr<Bind::VertexConstantBuffer<Transforms>> pVcbuf;
+		UINT count;
 	};
 }

@@ -44,6 +44,7 @@ namespace Bind
 			else if (mode == Mode::SkyBox)
 			{
 				dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+				dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 			}
 			else if( mode == Mode::DepthOff )
 			{

@@ -149,6 +149,7 @@
     <ClCompile Include="LayoutCodex.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="TextureCube.cpp" />
     <FxCompile Include="BlurOutline_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -578,6 +579,7 @@
     <ClInclude Include="WindowsMessageMap.h" />
     <ClInclude Include="WindowsThrowMacros.h" />
     <ClInclude Include="WireframePass.h" />
+    <ClInclude Include="TextureCube.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc" />

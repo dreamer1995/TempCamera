@@ -35,13 +35,13 @@ namespace Rgph
 		}
 		Finalize();
 		Execute(gfx);
-		dynamic_cast<PreCalSimpleCube&>(FindPassByName("preCalSimpleCube")).DumpShadowMap(gfx,
+		dynamic_cast<PreCalSimpleCube&>(FindPassByName("preCalSimpleCube")).DumpCubeMap(gfx,
 			"Images\\PreCal\\" + path.stem().string() + "#0" + path.extension().string());
-		dynamic_cast<PreCalBlurCube&>(FindPassByName("preCalBlurCube")).DumpShadowMap(gfx,
+		dynamic_cast<PreCalBlurCube&>(FindPassByName("preCalBlurCube")).DumpCubeMap(gfx,
 			"Images\\PreCal\\" + path.stem().string() + "#1" + path.extension().string());
-		//dynamic_cast<PreCalMipCube&>(FindPassByName("preCalMipCube")).DumpShadowMap(gfx,
-		//	"Images\\PreCal\\" + path.stem().string() + "#2" + path.extension().string());
-		dynamic_cast<PreCalLUTPlane&>(FindPassByName("preCalLUTPlane")).DumpShadowMap(gfx,
-			"Images\\PreCal\\IBLBRDFLUT.png");
+		dynamic_cast<PreCalMipCube&>(FindPassByName("preCalMipCube")).DumpCubeMap(gfx,
+			"Images\\PreCal\\" + path.stem().string() + "#2" + path.extension().string());
+		dynamic_cast<PreCalLUTPlane&>(FindPassByName("preCalLUTPlane")).DumpLUTMap(gfx,
+			"Images\\PreCal\\IBLBRDFLUT.bmp");
 	}
 }

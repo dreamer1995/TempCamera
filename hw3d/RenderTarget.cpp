@@ -74,7 +74,7 @@ namespace Bind
 		{
 			rtvDesc.Texture2DArray.ArraySize = 1;
 			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-			for (short int i = 0; i < 6; ++i)
+			for (unsigned char i = 0; i < 6; ++i)
 			{
 				// Create a render target view to the ith element.
 				rtvDesc.Texture2DArray.FirstArraySlice = i;
@@ -197,7 +197,7 @@ namespace Bind
 		rtvDesc.Texture2DArray.MipSlice = i;
 		wrl::ComPtr<ID3D11Resource> pRes;
 		pTargetCubeView[0]->GetResource(&pRes);
-		for (short int j = 0; j < 6; ++j)
+		for (unsigned char j = 0; j < 6; ++j)
 		{
 			// Create a render target view to the ith element.
 			rtvDesc.Texture2DArray.FirstArraySlice = j;
@@ -293,7 +293,16 @@ namespace Bind
 			auto pSrcRow = reinterpret_cast<const Surface::Color*>(pSrcBytes + msr.RowPitch * size_t( y ));
 			for( unsigned int x = 0; x < width; x++ )
 			{
-				s.PutPixel( x,y,*(pSrcRow + x) );
+				const auto raw = *reinterpret_cast<const float*>(pSrcRow + x);
+				if (textureDesc.Format == DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT)
+				{
+					const auto channel = unsigned char(raw * 255.0f);
+					s.PutPixel(x, y, { channel,channel,channel });
+				}
+				else
+				{
+					s.PutPixel( x,y,*(pSrcRow + x) );
+				}
 			}
 		}
 		GFX_THROW_INFO_ONLY( GetContext( gfx )->Unmap( pTexTemp.Get(),0 ) );
@@ -331,7 +340,7 @@ namespace Bind
 		D3D11_MAPPED_SUBRESOURCE msr = {};
 		GFX_THROW_INFO(GetContext(gfx)->Map(pTexTemp.Get(), 0, D3D11_MAP::D3D11_MAP_READ, 0, &msr));
 		auto pSrcBytes = static_cast<const char*>(msr.pData);
-		for (unsigned int z = 0; z < 6; z++)
+		for (unsigned char z = 0; z < 6; z++)
 		{
 			for (unsigned int y = 0; y < height; y++)
 			{
@@ -361,7 +370,7 @@ namespace Bind
 		textureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 		textureDesc.Usage = D3D11_USAGE_STAGING;
 		textureDesc.BindFlags = 0;
-		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 		wrl::ComPtr<ID3D11Texture2D> pTexTemp;
 		GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
 			&textureDesc, nullptr, &pTexTemp
@@ -373,21 +382,34 @@ namespace Bind
 		// create Surface and copy from temp texture to it
 		const auto width = GetWidth();
 		const auto height = GetHeight();
-		Surface s{ width,height };
 		D3D11_MAPPED_SUBRESOURCE msr = {};
 		GFX_THROW_INFO(GetContext(gfx)->Map(pTexTemp.Get(), 0, D3D11_MAP::D3D11_MAP_READ, 0, &msr));
 		auto pSrcBytes = static_cast<const char*>(msr.pData);
-		for (unsigned int z = 0; z < 6; z++)
+		unsigned int pRowBase = 0;
+		for (unsigned char z = 0; z < 6; z++)
 		{
-			for (unsigned int y = 0; y < height; y++)
+			for (unsigned char i = 0; i < 5; i++)
 			{
-				auto pSrcRow = reinterpret_cast<const Surface::Color*>(pSrcBytes + msr.RowPitch * size_t(y) + width * msr.RowPitch * z);
-				for (unsigned int x = 0; x < width; x++)
+				unsigned char scale = std::powf(2, i);
+				Surface s{ width / scale,height / scale };
+				unsigned int _width = width / scale;
+				unsigned int _height = height / scale;
+				UINT rowPitch = 0u;
+				if (i < 4)
+					rowPitch = msr.RowPitch / scale;
+				else
+					rowPitch = msr.RowPitch / scale * 2; // nimade weishenme???
+				for (unsigned int y = 0; y < _height; y++)
 				{
-					s.PutPixel(x, y, *(pSrcRow + x));
+					auto pSrcRow = reinterpret_cast<const Surface::Color*>(pSrcBytes + pRowBase + rowPitch * size_t(y));
+					for (unsigned int x = 0; x < _width; x++)
+					{
+						s.PutPixel(x, y, *(pSrcRow + x));
+					}
 				}
+				pRowBase += _height * rowPitch;
+				s.Save(path.c_str(), "#" + std::to_string(z) + "#" + std::to_string(i));
 			}
-			s.Save(path.c_str(), "#" + std::to_string(z));
 		}
 		GFX_THROW_INFO_ONLY(GetContext(gfx)->Unmap(pTexTemp.Get(), 0));
 	}
@@ -396,7 +418,7 @@ namespace Bind
 	{
 		INFOMAN_NOHR( gfx );
 		assert(shaderIndex & 0b00001111);
-		for (UINT i = 0; i < 5; i++)
+		for (unsigned char i = 0; i < 5; i++)
 		{
 			if (shaderIndex & 0b00001000)
 			{

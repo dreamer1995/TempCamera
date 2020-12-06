@@ -17,7 +17,7 @@ namespace Rgph
 	public:
 		PreCalSimpleCube(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight, const std::string& path);
 		void Execute(Graphics& gfx) const noxnd override;
-		void DumpShadowMap(Graphics& gfx, const std::string& path) const;
+		void DumpCubeMap(Graphics& gfx, const std::string& path) const;
 	public:
 		std::shared_ptr<Bind::ShaderInputRenderTarget> pPreCalSimpleCube;
 		dx::XMMATRIX viewmatrix[6] =

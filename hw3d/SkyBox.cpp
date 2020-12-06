@@ -13,13 +13,14 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 	using namespace Bind;
 	namespace dx = DirectX;
 
-	auto model = Cube::MakeIndependentSimple();
+	auto model = Cube::MakePosOnly();
 	const auto geometryTag = "$skybox." + std::to_string(size);
 	pVertices = VertexBuffer::Resolve(gfx, geometryTag, model.vertices);
 	pIndices = IndexBuffer::Resolve(gfx, geometryTag, model.indices);
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	auto tcb = std::make_shared<TransformCbufScaling>(gfx);
+	// auto tcb = std::make_shared<TransformCbufScaling>(gfx);
+	auto tcb = std::make_shared<TransformCbuf>(gfx);
 
 	{	
 		Technique shade("Shade1", { Chan::main });
@@ -51,10 +52,10 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 	}
 }
 
-void SkyBox::SetPos(DirectX::XMFLOAT3 pos) noexcept
-{
-	this->pos = pos;
-}
+//void SkyBox::SetPos(DirectX::XMFLOAT3 pos) noexcept
+//{
+//	this->pos = pos;
+//}
 
 void SkyBox::SetRotation(float roll, float pitch, float yaw) noexcept
 {
@@ -65,18 +66,19 @@ void SkyBox::SetRotation(float roll, float pitch, float yaw) noexcept
 
 DirectX::XMMATRIX SkyBox::GetTransformXM() const noexcept
 {
-	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
+	//return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
+	//	DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
+	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
 }
 
 void SkyBox::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 {
 	if (ImGui::Begin(name))
 	{
-		ImGui::Text("Position");
-		ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f, "%.1f");
-		ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f, "%.1f");
-		ImGui::SliderFloat("Z", &pos.z, -80.0f, 80.0f, "%.1f");
+		//ImGui::Text("Position");
+		//ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f, "%.1f");
+		//ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f, "%.1f");
+		//ImGui::SliderFloat("Z", &pos.z, -80.0f, 80.0f, "%.1f");
 		ImGui::Text("Orientation");
 		ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
 		ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
@@ -105,10 +107,10 @@ void SkyBox::SpawnControlWindow(Graphics& gfx, const char* name) noexcept
 					return tagScratch.c_str();
 				};
 
-				if (auto v = buf["scale"]; v.Exists())
-				{
-					dcheck(ImGui::SliderFloat(tag("Scale"), &v, 1.0f, 2.0f, "%.3f", 3.5f));
-				}
+				//if (auto v = buf["scale"]; v.Exists())
+				//{
+				//	dcheck(ImGui::SliderFloat(tag("Scale"), &v, 1.0f, 2.0f, "%.3f", 3.5f));
+				//}
 				if (auto v = buf["color"]; v.Exists())
 				{
 					dcheck(ImGui::ColorPicker4(tag("Color"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(v))));

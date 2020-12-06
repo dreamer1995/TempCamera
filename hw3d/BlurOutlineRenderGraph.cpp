@@ -26,10 +26,13 @@ namespace Rgph
 		:
 		RenderGraph( gfx )
 	{
+		std::shared_ptr<Bind::TextureCube> pPreCalSimpleCube = TextureCube::Resolve(gfx, "Images\\PreCal\\EpicQuadPanorama_CC+EV1#0");
+		std::shared_ptr<Bind::TextureCube> pPreCalBlurCube = TextureCube::Resolve(gfx, "Images\\PreCal\\EpicQuadPanorama_CC+EV1#1", 11u);
+		std::shared_ptr<Bind::TextureCube> pPreCalMipCube = TextureCube::Resolve(gfx, "Images\\PreCal\\EpicQuadPanorama_CC+EV1#2", 12u, true);
 		prg = std::make_unique<Rgph::PreCalculateRenderGraph>(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg");
-		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMap", prg->pPreCalSimpleCube));
-		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMapBlur", prg->pPreCalBlurCube));
-		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("cubeMapMip", prg->pPreCalMipCube));
+		AddGlobalSource(DirectBindableSource<Bind::TextureCube>::Make("cubeMap",      pPreCalSimpleCube));
+		AddGlobalSource(DirectBindableSource<Bind::TextureCube>::Make("cubeMapBlur",  pPreCalBlurCube));
+		AddGlobalSource(DirectBindableSource<Bind::TextureCube>::Make("cubeMapMip",   pPreCalMipCube));
 		AddGlobalSource(DirectBindableSource<Bind::RenderTarget>::Make("planeBRDFLUT", prg->pPreCalLUTPlane));
 		{
 			auto pass = std::make_unique<BufferClearPass>( "clearRT" );

@@ -27,11 +27,11 @@ namespace Rgph
 			AddBind( pShadowCBuf );
 			RegisterSink( DirectBufferSink<RenderTarget>::Make( "renderTarget",renderTarget ) );
 			RegisterSink( DirectBufferSink<DepthStencil>::Make( "depthStencil",depthStencil ) );
-			AddBindSink<Bind::Bindable>( "shadowMap" );
-			AddBindSink<Bind::Bindable>( "shadowControl" );
-			AddBindSink<Bind::Bindable>( "shadowSampler" );
-			AddBindSink<ShaderInputRenderTarget>("cubeMapBlurIn");
-			AddBindSink<ShaderInputRenderTarget>("cubeMapMipIn");
+			AddBindSink<Bindable>( "shadowMap" );
+			AddBindSink<Bindable>( "shadowControl" );
+			AddBindSink<Bindable>( "shadowSampler" );
+			AddBindSink<Bindable>("cubeMapBlurIn");
+			AddBindSink<Bindable>("cubeMapMipIn");
 			AddBindSink<ShaderInputRenderTarget>("planeBRDFLUTIn");
 			RegisterSource( DirectBufferSource<RenderTarget>::Make( "renderTarget",renderTarget ) );
 			RegisterSource( DirectBufferSource<DepthStencil>::Make( "depthStencil",depthStencil ) );

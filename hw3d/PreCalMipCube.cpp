@@ -31,7 +31,7 @@ namespace Rgph
 	// see the note on HorizontalBlurPass::Execute
 	void PreCalMipCube::Execute(Graphics& gfx) const noxnd
 	{
-		for (short int i = 0; i < 5; i++)
+		for (unsigned char i = 0; i < 5; i++)
 		{
 			if (i != 0)
 			{
@@ -41,7 +41,7 @@ namespace Rgph
 			auto k = roughness->GetBuffer();
 			k["roughness"] = i / 4.0f;
 			roughness->SetBuffer(k);
-			for (short int j = 0; j < 6; j++)
+			for (unsigned char j = 0; j < 6; j++)
 			{
 				gfx.SetCamera(viewmatrix[j]);
 				pPreCalMipCube->targetIndex = j;
@@ -50,7 +50,7 @@ namespace Rgph
 		}
 	}
 
-	void PreCalMipCube::DumpShadowMap(Graphics& gfx, const std::string& path) const
+	void PreCalMipCube::DumpCubeMap(Graphics& gfx, const std::string& path) const
 	{
 		pPreCalMipCube->ToMipCube(gfx, path);
 	}

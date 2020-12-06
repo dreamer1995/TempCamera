@@ -267,7 +267,7 @@ void App::DoFrame( float dt )
 	rg.BindMainCamera(cameras.GetActiveCamera());
 	cameras->Bind(wnd.Gfx());
 
-	skybox.SetPos({ cameras->pos });
+	//skybox.SetPos({ cameras->pos });
 	skybox.Submit(Chan::main);
 
 	pointLight.Submit(Chan::main);

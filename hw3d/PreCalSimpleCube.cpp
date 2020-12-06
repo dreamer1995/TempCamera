@@ -27,7 +27,7 @@ namespace Rgph
 	// see the note on HorizontalBlurPass::Execute
 	void PreCalSimpleCube::Execute(Graphics& gfx) const noxnd
 	{
-		for (short int i = 0; i < 6; i++)
+		for (unsigned char i = 0; i < 6; i++)
 		{
 			gfx.SetCamera(viewmatrix[i]);
 			pPreCalSimpleCube->targetIndex = i;
@@ -35,7 +35,7 @@ namespace Rgph
 		}
 	}
 
-	void PreCalSimpleCube::DumpShadowMap(Graphics& gfx, const std::string& path) const
+	void PreCalSimpleCube::DumpCubeMap(Graphics& gfx, const std::string& path) const
 	{
 		pPreCalSimpleCube->ToCube(gfx, path);
 	}
