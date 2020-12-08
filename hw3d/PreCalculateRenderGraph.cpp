@@ -42,6 +42,6 @@ namespace Rgph
 		dynamic_cast<PreCalMipCube&>(FindPassByName("preCalMipCube")).DumpCubeMap(gfx,
 			"Images\\PreCal\\" + path.stem().string() + "#2" + path.extension().string());
 		dynamic_cast<PreCalLUTPlane&>(FindPassByName("preCalLUTPlane")).DumpLUTMap(gfx,
-			"Images\\PreCal\\IBLBRDFLUT.bmp");
+			"Images\\PreCal\\IBLBRDFLUT.png");
 	}
 }

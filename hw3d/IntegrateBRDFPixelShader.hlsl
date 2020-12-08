@@ -6,7 +6,7 @@
 //	float2 uv           : TEXCOORD0;
 //};
 
-float4 main(float2 uv : Texcoord) : SV_TARGET
+float2 main(float2 uv : Texcoord) : SV_TARGET
 {
 	
 	float NdotV = uv.x;
@@ -46,7 +46,7 @@ float4 main(float2 uv : Texcoord) : SV_TARGET
 		}
 	}
 	
-	return float4(A, B, 0, 1) / numSamples;
+	return float2(A, B) / numSamples;
 
 	
 }
