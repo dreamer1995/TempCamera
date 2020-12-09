@@ -288,42 +288,50 @@ namespace Bind
 		D3D11_MAPPED_SUBRESOURCE msr = {};
 		GFX_THROW_INFO( GetContext( gfx )->Map( pTexTemp.Get(),0,D3D11_MAP::D3D11_MAP_READ,0,&msr ) );
 		auto pSrcBytes = static_cast<const char*>(msr.pData);
-		for( unsigned int y = 0; y < height; y++ )
+		if (textureDesc.Format == DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT)
 		{
-			struct Pixel
+			for (unsigned int y = 0; y < height; y++)
 			{
-				char data[8];
-			};
-			auto pSrcRow = reinterpret_cast<const Pixel*>(pSrcBytes + msr.RowPitch * size_t(y));
-			for( unsigned int x = 0; x < width; x++ )
-			{
-				//const auto rawR = *reinterpret_cast<const float*>(pSrcRow + x);
-				struct PixelF
+				struct Pixel
 				{
-					float color[2];
+					char data[8];
 				};
-				//const auto raw = *reinterpret_cast<const double*>(pSrcRow + x);
-				const auto raw = *reinterpret_cast<const PixelF*>(pSrcRow + x);
-				//const auto raw = 0xFFFFFFFF & *reinterpret_cast<const unsigned int*>(pSrcRow + x);
-				//const auto raw = *reinterpret_cast<const Float*>(pSrcRow + x);
-				//float rawG = raw;
-				//float rawR = raw / 3.40282e+038;
-				//const auto _rawG = raw >> 32;
-				//const auto rawG = *reinterpret_cast<const float*>(0x3f7d6bbc);
-				//const auto rawG = *reinterpret_cast<const unsigned long long*>(pSrcRow + x);
-				const auto rawR = raw.color[0];
-				const auto rawG = raw.color[1];
-				//const auto channelR = (float)_channelR / (float)0xFFFFFF;
-				if (textureDesc.Format == DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT)
+				auto pSrcRow = reinterpret_cast<const Pixel*>(pSrcBytes + msr.RowPitch * size_t(y));
+				for (unsigned int x = 0; x < width; x++)
 				{
+					//const auto rawR = *reinterpret_cast<const float*>(pSrcRow + x);
+					struct PixelF
+					{
+						float color[2];
+					};
+					//const auto raw = *reinterpret_cast<const double*>(pSrcRow + x);
+					const auto raw = *reinterpret_cast<const PixelF*>(pSrcRow + x);
+					//const auto raw = 0xFFFFFFFF & *reinterpret_cast<const unsigned int*>(pSrcRow + x);
+					//const auto raw = *reinterpret_cast<const Float*>(pSrcRow + x);
+					//float rawG = raw;
+					//float rawR = raw / 3.40282e+038;
+					//const auto _rawG = raw >> 32;
+					//const auto rawG = *reinterpret_cast<const float*>(0x3f7d6bbc);
+					//const auto rawG = *reinterpret_cast<const unsigned long long*>(pSrcRow + x);
+					const auto rawR = raw.color[0];
+					const auto rawG = raw.color[1];
+					//const auto channelR = (float)_channelR / (float)0xFFFFFF;
 					s.PutPixel(x, y, { unsigned char(rawR * 255.0f),unsigned char(rawG * 255.0f),0 });
-				}
-				else
-				{
-					//s.PutPixel( x,y,*(pSrcRow + x) );
 				}
 			}
 		}
+		else
+		{
+			for( unsigned int y = 0; y < height; y++ )
+			{
+				auto pSrcRow = reinterpret_cast<const Surface::Color*>(pSrcBytes + msr.RowPitch * size_t( y ));
+				for( unsigned int x = 0; x < width; x++ )
+				{
+					s.PutPixel( x,y,*(pSrcRow + x) );
+				}
+			}
+		}
+		
 		GFX_THROW_INFO_ONLY( GetContext( gfx )->Unmap( pTexTemp.Get(),0 ) );
 
 		return s;

@@ -15,7 +15,6 @@
 #include "ShadowSampler.h"
 #include "ShadowRasterizer.h"
 #include "EnvironmentPass.h"
-#include "PreCalSimpleCube.h"
 #include "WaterPre.h"
 #include "LambertianPass_Water.h"
 #include "WaterCaustics.h"
@@ -26,12 +25,13 @@ namespace Rgph
 		:
 		RenderGraph( gfx )
 	{
-		const std::filesystem::path path = "Images\\PreCal\\EpicQuadPanorama_CC+EV1#0#0.jpg";
-		if (!std::filesystem::exists(path))
-			prg = std::make_unique<Rgph::PreCalculateRenderGraph>(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg");
-		std::shared_ptr<Bind::TextureCube> pPreCalSimpleCube = TextureCube::Resolve(gfx, "Images\\PreCal\\EpicQuadPanorama_CC+EV1#0");
-		std::shared_ptr<Bind::TextureCube> pPreCalBlurCube = TextureCube::Resolve(gfx, "Images\\PreCal\\EpicQuadPanorama_CC+EV1#1", 11u);
-		std::shared_ptr<Bind::TextureCube> pPreCalMipCube = TextureCube::Resolve(gfx, "Images\\PreCal\\EpicQuadPanorama_CC+EV1#2", 12u, true);
+		const std::filesystem::path envFile = "Images\\EpicQuadPanorama_CC+EV1.jpg";;
+		unsigned char checkCode = PreCalculateRenderGraph::CheckPreMapAvailability(envFile);
+		if (checkCode > 0)
+			prg = std::make_unique<Rgph::PreCalculateRenderGraph>(gfx, envFile, checkCode);
+		std::shared_ptr<Bind::TextureCube> pPreCalSimpleCube = TextureCube::Resolve(gfx, "Images\\PreCal\\" + envFile.stem().string() + "#0");
+		std::shared_ptr<Bind::TextureCube> pPreCalBlurCube = TextureCube::Resolve(gfx, "Images\\PreCal\\" + envFile.stem().string() + "#1", 11u);
+		std::shared_ptr<Bind::TextureCube> pPreCalMipCube = TextureCube::Resolve(gfx, "Images\\PreCal\\" + envFile.stem().string() + "#2", 12u, true);
 		std::shared_ptr<Bind::Texture> pPreCalLUTPlane = Texture::Resolve(gfx, "Images\\PreCal\\IBLBRDFLUT.png", 13u);
 		AddGlobalSource(DirectBindableSource<Bind::TextureCube>::Make("cubeMap",      pPreCalSimpleCube));
 		AddGlobalSource(DirectBindableSource<Bind::TextureCube>::Make("cubeMapBlur",  pPreCalBlurCube));
@@ -100,6 +100,7 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
+			namespace dx = DirectX;
 			Dcb::RawLayout l;
 			l.Add<Dcb::Float4>("amplitude");
 			l.Add<Dcb::Float4>("wavespeed");

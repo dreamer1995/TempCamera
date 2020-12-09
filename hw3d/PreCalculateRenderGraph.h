@@ -15,7 +15,8 @@ namespace Rgph
 	class PreCalculateRenderGraph : public RenderGraph
 	{
 	public:
-		PreCalculateRenderGraph(Graphics& gfx, const std::filesystem::path& path);
+		PreCalculateRenderGraph(Graphics& gfx, const std::filesystem::path& path, unsigned char checkCode);
+		static unsigned char CheckPreMapAvailability(const std::filesystem::path& path);
 	public:
 		std::shared_ptr<Bind::RenderTarget> pPreCalSimpleCube;
 		std::shared_ptr<Bind::RenderTarget> pPreCalBlurCube;
