@@ -10,15 +10,15 @@ PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 pos, float radius)
 {
 	home = {
 		pos,
-		{ 0.0f,0.0f,0.0f },
-		{ 1.0f,1.0f,1.0f },
-		1.0f,
-		1.0f,
-		0.045f,
-		0.0075f,
+		{ 0.0f,0.0f,0.0f }, // Ambient
+		{ 1.0f,1.0f,1.0f }, // Color
+		1.0f, // Intensity
+		1.0f, // AttConst
+		0.045f, // Lin
+		0.0075f, // Quad
 	};
 	Reset();
-	pCamera = std::make_shared<Camera>(gfx, "Light", cbData.pos, 0.0f, PI / 2, true);
+	pCamera = std::make_shared<Camera>(gfx, "PointLight", cbData.pos, 0.0f, PI / 2, true);
 }
 
 void PointLight::SpawnControlWindow() noexcept

@@ -23,7 +23,7 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 	auto tcb = std::make_shared<TransformCbuf>(gfx);
 
 	{	
-		Technique shade("Shade1", { Chan::main });
+		Technique shade("Shade", { Chan::main });
 		{
 			Step only("environment");
 

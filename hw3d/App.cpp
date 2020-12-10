@@ -17,7 +17,7 @@ App::App( const std::string& commandLine )
 	commandLine( commandLine ),
 	wnd( 1280,720,"The Donkey Fart Box" ),
 	scriptCommander( TokenizeQuoted( commandLine ) ),
-	dLight(wnd.Gfx()),
+	dLight(wnd.Gfx(), { 10.0f,9.0f,2.5f }, 45.0f * PI / 180.0f, -45.0f * PI / 180.0f),
 	pointLight( wnd.Gfx(),{ 16.5f, 3.0f, 1.5f }, 1.0f )
 {
 	time = 0;
@@ -28,6 +28,7 @@ App::App( const std::string& commandLine )
 	pCam = std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f,28.8f,-6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f);
 	cameras.AddCamera(pCam);
 	cameras.AddCamera( pointLight.ShareCamera() );
+	cameras.AddCamera(dLight.ShareCamera());
 
 	//D3DTestScratchPad( wnd );
 

@@ -11,10 +11,13 @@ namespace Rgph
 	class RenderGraph;
 }
 
+class Camera;
+
 class DirectionalLight
 {
 public:
-	DirectionalLight(Graphics& gfx, float radius = 0.5f, float size = 1.0f);
+	DirectionalLight(Graphics& gfx, DirectX::XMFLOAT3 pos = { 0.0f,10.0f,0.0f }, float pitch = -PI / 4, float yaw = -PI / 4,
+		float radius = 0.5f, float size = 1.0f);
 	void SpawnControlWindow() noexcept;
 	void Reset() noexcept;
 	void Submit(size_t channels) const noxnd;
@@ -23,6 +26,7 @@ public:
 	DirectX::XMFLOAT3 GetPos() noexcept;
 	DirectX::XMFLOAT3 GetDirection() noexcept;
 	void Rotate(float dx, float dy) noexcept;
+	std::shared_ptr<Camera> ShareCamera() const noexcept;
 private:
 	struct DirectionalLightCBuf
 	{
@@ -32,15 +36,23 @@ private:
 		DirectX::XMMATRIX lightSpaceVP;
 		float padding[3];
 	};
+	struct DirectionalLightProperties
+	{
+		DirectionalLightCBuf cbData;
+		DirectX::XMFLOAT3 pos;
+		float pitch;
+		float yaw;
+		float length;
+	};
 private:
-	float length = 1.0f;
 	DirectionalLightCBuf cbData;
 	mutable PhongSphere mesh;
 	mutable SolidArrow arrow;
 	mutable Bind::PixelConstantBuffer<DirectionalLightCBuf> cbuf;
-	DirectX::XMFLOAT3 pos = { 0.0f,0.0f,0.0f };
-	float pitch = 0.0f;
-	float yaw = 0.0f;
-	float roll = 0.0f;
+	DirectX::XMFLOAT3 pos;
+	float pitch;
+	float yaw;
 	static constexpr float rotationSpeed = 0.004f;
+	DirectionalLightProperties home;
+	std::shared_ptr<Camera> pCamera;
 };

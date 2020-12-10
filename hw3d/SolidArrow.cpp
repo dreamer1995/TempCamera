@@ -6,7 +6,6 @@
 #include "Stencil.h"
 #include "DynamicConstant.h"
 #include "TechniqueProbe.h"
-#include "ConstantBuffersEx.h"
 #include "imgui/imgui.h"
 #include "Channels.h"
 
@@ -23,7 +22,7 @@ SolidArrow::SolidArrow(Graphics& gfx, float size)
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 	{
-		Technique solid{ Chan::main };
+		Technique solid{ "Arrow",Chan::main };
 		Step only("lambertian");
 
 		auto pvs = VertexShader::Resolve(gfx, "Solid_VS.cso");
@@ -34,10 +33,12 @@ SolidArrow::SolidArrow(Graphics& gfx, float size)
 
 		Dcb::RawLayout lay;
 		lay.Add<Dcb::Float3>("Color");
+		lay.Add<Dcb::Float>("length");
+		lay.Add<Dcb::Bool>("active");
 		auto buf = Dcb::Buffer(std::move(lay));
-		buf["Color"] = DirectX::XMFLOAT3{ 1.0f,0.0f,0.0f };
-		only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
-
+		buf["active"] = solid.IsActive();
+		cbuf = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+		only.AddBindable(cbuf);
 		only.AddBindable(std::make_shared<TransformCbuf>(gfx));
 
 		only.AddBindable(Rasterizer::Resolve(gfx, false));
@@ -47,19 +48,18 @@ SolidArrow::SolidArrow(Graphics& gfx, float size)
 	}
 }
 
-void SolidArrow::SetTransform(DirectX::XMFLOAT3 pos, float pitch, float yaw, float roll, float length) noexcept
+void SolidArrow::SetTransform(DirectX::XMFLOAT3 pos, float pitch, float yaw) noexcept
 {
 	this->pos = pos;
 	this->pitch = pitch;
 	this->yaw = yaw;
-	this->roll = roll;
-	this->length = length;
 }
 
 DirectX::XMMATRIX SolidArrow::GetTransformXM() const noexcept
 {
-	return DirectX::XMMatrixScaling(1.0f, length, 1.0f) *
-		DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
+	auto buf = cbuf->GetBuffer();
+	return DirectX::XMMatrixScaling(1.0f, buf["length"], 1.0f) *
+		DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f) *
 		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
@@ -72,9 +72,6 @@ void SolidArrow::ChangeArrowColor() noexcept
 		{
 			using namespace std::string_literals;
 			ImGui::TextColored({ 0.4f,1.0f,0.6f,1.0f }, pTech->GetName().c_str());
-			bool active = pTech->IsActive();
-			ImGui::Checkbox(("Tech Active##"s + std::to_string(techIdx)).c_str(), &active);
-			pTech->SetActiveState(active);
 		}
 		bool OnVisitBuffer(Dcb::Buffer& buf) override
 		{
@@ -87,15 +84,26 @@ void SolidArrow::ChangeArrowColor() noexcept
 				tagScratch = label + tagString;
 				return tagScratch.c_str();
 			};
-
-			if (auto v = buf["Color"]; v.Exists())
+			if (auto v = buf["active"]; v.Exists())
 			{
-				dcheck(ImGui::ColorPicker3(tag("ArrowColor"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
+				using namespace std::string_literals;
+				dcheck(ImGui::Checkbox("Tech Active##", &v));
+				pTech->SetActiveState(v);
+			}			
+			if (auto v = buf["length"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat(tag("Arrow Length"), &v, 0.0f, 5.0, "%.1f"));
 			}
-
 			return dirty;
 		}
 	} probe;
 
 	Accept(probe);
+}
+
+void SolidArrow::SetColor(DirectX::XMFLOAT3 diffuseColor) noexcept
+{
+	auto buf = cbuf->GetBuffer();
+	buf["Color"] = diffuseColor;
+	cbuf->SetBuffer(buf);
 }

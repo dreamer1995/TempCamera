@@ -14,11 +14,11 @@ public:
 		float expansion = 0.2;
 		Dvtx::VertexBuffer vb{ std::move(layout) };
 		vb.EmplaceBack(dx::XMFLOAT3{ 0.0f,0.0f, 0.0f });
-		vb.EmplaceBack(dx::XMFLOAT3{ 0.0f,-length, 0.0f });
-		vb.EmplaceBack(dx::XMFLOAT3{ 0.0f,-length + expansion, 0.0f - expansion });
-		vb.EmplaceBack(dx::XMFLOAT3{ 0.0f + expansion,-length + expansion, 0.0f });
-		vb.EmplaceBack(dx::XMFLOAT3{ 0.0f,-length + expansion, 0.0f + expansion });
-		vb.EmplaceBack(dx::XMFLOAT3{ 0.0f - expansion,-length + expansion, 0.0f });
+		vb.EmplaceBack(dx::XMFLOAT3{ 0.0f, 0.0f,length });
+		vb.EmplaceBack(dx::XMFLOAT3{ 0.0f, 0.0f + expansion,length - expansion });
+		vb.EmplaceBack(dx::XMFLOAT3{ 0.0f + expansion,0.0f,length - expansion });
+		vb.EmplaceBack(dx::XMFLOAT3{ 0.0f, 0.0f - expansion,length - expansion });
+		vb.EmplaceBack(dx::XMFLOAT3{ 0.0f - expansion,0.0f,length - expansion });
 
 		return{
 			std::move(vb),{

@@ -292,18 +292,14 @@ namespace Bind
 		{
 			for (unsigned int y = 0; y < height; y++)
 			{
-				struct Pixel
+				struct PixelF
 				{
-					char data[8];
+					float color[2];
 				};
-				auto pSrcRow = reinterpret_cast<const Pixel*>(pSrcBytes + msr.RowPitch * size_t(y));
+				auto pSrcRow = reinterpret_cast<const PixelF*>(pSrcBytes + msr.RowPitch * size_t(y));
 				for (unsigned int x = 0; x < width; x++)
 				{
 					//const auto rawR = *reinterpret_cast<const float*>(pSrcRow + x);
-					struct PixelF
-					{
-						float color[2];
-					};
 					//const auto raw = *reinterpret_cast<const double*>(pSrcRow + x);
 					const auto raw = *reinterpret_cast<const PixelF*>(pSrcRow + x);
 					//const auto raw = 0xFFFFFFFF & *reinterpret_cast<const unsigned int*>(pSrcRow + x);

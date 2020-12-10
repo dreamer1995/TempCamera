@@ -35,6 +35,7 @@ public:
 	void Bind(Graphics& gfx) const noexcept;
 	float yaw;
 	std::string name;
+	void SetRotation(float pitch, float yaw) noexcept;
 
 private:
 	struct CameraCBuf

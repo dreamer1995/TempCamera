@@ -88,6 +88,7 @@ const auto dcheck = []( bool d,bool& carry ) { carry = carry || d; };
 
 	if( rotDirty )
 	{
+		yaw_ = yaw;
 		const dx::XMFLOAT3 angles = { pitch,yaw,0.0f };
 		indicator.SetRotation( angles );
 		proj.SetRotation( angles );
@@ -112,7 +113,7 @@ void Camera::Reset( Graphics& gfx ) noexcept
 	}
 	pitch = homePitch;
 	yaw = homeYaw;
-	yaw_ = 0;
+	yaw_ = homeYaw;
 
 	const dx::XMFLOAT3 angles = { pitch,yaw,0.0f };
 	indicator.SetRotation( angles );
@@ -268,4 +269,14 @@ void Camera::Bind(Graphics& gfx) const noexcept
 	vCbuf.Bind(gfx);
 	pCbuf.Update(gfx, cbData);
 	pCbuf.Bind(gfx);
+}
+
+void Camera::SetRotation(float pitch, float yaw) noexcept
+{
+	this->pitch = pitch;
+	this->yaw = yaw;
+	yaw_ = yaw;
+	const dx::XMFLOAT3 angles = { pitch,yaw,0.0f };
+	indicator.SetRotation(angles);
+	proj.SetRotation(angles);
 }

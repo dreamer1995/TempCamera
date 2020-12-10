@@ -27,7 +27,7 @@ PhongSphere::PhongSphere(Graphics& gfx, float radius)
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	{
-		Technique solid{ Chan::main };
+		Technique solid{ "Sphere",Chan::main };
 		Step only("lambertian");
 
 		auto pvs = VertexShader::Resolve(gfx, "PhongVSDirectional.cso");
@@ -37,11 +37,9 @@ PhongSphere::PhongSphere(Graphics& gfx, float radius)
 		only.AddBindable(PixelShader::Resolve(gfx, "PhongPSDirectional.cso"));
 
 		Dcb::RawLayout lay;
-		lay.Add<Dcb::Float3>("color");
 		lay.Add<Dcb::Float>("specularWeight");
 		lay.Add<Dcb::Float>("specularGloss");
 		auto buf = Dcb::Buffer(std::move(lay));
-		buf["color"] = DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f };
 		buf["specularWeight"] = 0.3f;
 		buf["specularGloss"] = 30.0f;
 		only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
@@ -90,10 +88,6 @@ void PhongSphere::ChangeSphereMaterialState() noexcept
 				return tagScratch.c_str();
 			};
 
-			if (auto v = buf["color"]; v.Exists())
-			{
-				dcheck(ImGui::ColorPicker3(tag("Color"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
-			}
 			if (auto v = buf["specularWeight"]; v.Exists())
 			{
 				dcheck(ImGui::SliderFloat(tag("Spec. Intens."), &v, 0.0f, 1.0f));
