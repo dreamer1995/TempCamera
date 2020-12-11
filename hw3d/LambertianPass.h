@@ -20,14 +20,14 @@ namespace Rgph
 	public:
 		LambertianPass( Graphics& gfx,std::string name )
 			:
-			RenderQueuePass( std::move( name ) ),
-			pShadowCBuf{ std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u) }
+			RenderQueuePass( std::move( name ) )
 		{
 			using namespace Bind;
-			AddBind( pShadowCBuf );
+			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u);
+			AddBind(pDShadowCBuf);
+			AddBindSink<Bindable>("dShadowMap");
 			RegisterSink( DirectBufferSink<RenderTarget>::Make( "renderTarget",renderTarget ) );
 			RegisterSink( DirectBufferSink<DepthStencil>::Make( "depthStencil",depthStencil ) );
-			AddBindSink<Bindable>( "shadowMap" );
 			AddBindSink<Bindable>( "shadowControl" );
 			AddBindSink<Bindable>( "shadowSampler" );
 			AddBindSink<Bindable>("cubeMapBlurIn");
@@ -42,19 +42,30 @@ namespace Rgph
 		{
 			pMainCamera = &cam;
 		}
-		void BindShadowCamera( const Camera& cam ) noexcept
+		void BindShadowCamera(Graphics& gfx, const Camera& dCam, std::vector<std::shared_ptr<Camera>> pCams) noexcept
 		{
-			pShadowCBuf->SetCamera( &cam );
+			pDShadowCBuf->SetCamera(&dCam);
+			for (unsigned char i = 0; i < pCams.size(); i++)
+			{
+				//pPShadowCBufs.emplace_back(std::make_shared<Bind::ShadowCameraCBuf>(gfx, 7u + i));
+				//pPShadowCBufs[i]->SetCamera(&pCams[i]);
+				//AddBind(pPShadowCBufs[i]);
+				//AddBindSink<Bindable>("pShadowMap");
+			}
+			
 		}
 		void Execute( Graphics& gfx ) const noxnd override
 		{
 			assert( pMainCamera );
-			pShadowCBuf->Update( gfx );
 			pMainCamera->BindToGraphics( gfx );
+			pDShadowCBuf->Update(gfx);
+			for (unsigned char i = 0; i < pPShadowCBufs.size(); i++)
+				pPShadowCBufs[i]->Update(gfx);	
 			RenderQueuePass::Execute( gfx );
 		}
 	private:
-		std::shared_ptr<Bind::ShadowCameraCBuf> pShadowCBuf;
+		std::shared_ptr<Bind::ShadowCameraCBuf> pDShadowCBuf;
+		std::vector<std::shared_ptr<Bind::ShadowCameraCBuf>> pPShadowCBufs;
 		const Camera* pMainCamera = nullptr;
 	};
 }

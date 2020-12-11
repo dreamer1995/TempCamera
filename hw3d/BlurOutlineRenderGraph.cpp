@@ -82,7 +82,7 @@ namespace Rgph
 		
 		{
 			auto pass = std::make_unique<LambertianPass>( gfx,"lambertian" );
-			pass->SetSinkLinkage( "shadowMap","shadowMap.map" );
+			pass->SetSinkLinkage( "dShadowMap","shadowMap.dMap" );
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
@@ -156,7 +156,7 @@ namespace Rgph
 			auto pass = std::make_unique<LambertianPass_Water>(gfx, "water");
 			pass->SetSinkLinkage("waterFlow", "$.waterFlowVS");
 			pass->SetSinkLinkage("waterRipple", "$.waterRipple");
-			pass->SetSinkLinkage("shadowMap", "shadowMap.map");
+			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
@@ -454,10 +454,10 @@ namespace Rgph
 		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindMainCamera( cam );
 		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindMainCamera(cam);
 	}
-	void Rgph::BlurOutlineRenderGraph::BindShadowCamera( Camera& cam )
+	void Rgph::BlurOutlineRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<Camera>> pCams)
 	{
-		dynamic_cast<ShadowMappingPass&>(FindPassByName( "shadowMap" )).BindShadowCamera( cam );
-		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindShadowCamera( cam );
-		dynamic_cast<LambertianPass&>(FindPassByName("water")).BindShadowCamera(cam);
+		dynamic_cast<ShadowMappingPass&>(FindPassByName( "shadowMap" )).BindShadowCamera(dCam, pCams);
+		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindShadowCamera(gfx, dCam, pCams);
+		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindShadowCamera(gfx, dCam, pCams);
 	}
 }

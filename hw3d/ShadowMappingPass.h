@@ -18,9 +18,13 @@ namespace Rgph
 	class ShadowMappingPass : public RenderQueuePass
 	{
 	public:
-		void BindShadowCamera( const Camera& cam ) noexcept
+		void BindShadowCamera(const Camera& dCam, std::vector<std::shared_ptr<Camera>> pCams) noexcept
 		{
-			pShadowCamera = &cam;
+			pDShadowCamera = &dCam;
+			for (unsigned char i = 0; i < pCams.size(); i++)
+			{
+				pPShadowCameras.emplace_back(pCams[i]);
+			}
 		}
 		ShadowMappingPass( Graphics& gfx,std::string name )
 			:
@@ -33,12 +37,12 @@ namespace Rgph
 			AddBind( Stencil::Resolve( gfx,Stencil::Mode::Off ) );
 			AddBindSink<Bind::Bindable>( "shadowRasterizer" );
 			AddBind( Blender::Resolve( gfx,false ) );
-			RegisterSource( DirectBindableSource<Bind::DepthStencil>::Make( "map",depthStencil ) );
+			RegisterSource( DirectBindableSource<Bind::DepthStencil>::Make( "dMap",depthStencil ) );
 		}
 		void Execute( Graphics& gfx ) const noxnd override
 		{
 			depthStencil->Clear( gfx );
-			pShadowCamera->BindToGraphics( gfx );
+			pDShadowCamera->BindToGraphics( gfx );
 			RenderQueuePass::Execute( gfx );
 		}
 		void DumpShadowMap( Graphics& gfx,const std::string& path ) const
@@ -46,6 +50,8 @@ namespace Rgph
 			depthStencil->ToSurface( gfx ).Save( path );
 		}
 	private:
-		const Camera* pShadowCamera = nullptr;
+		const Camera* pDShadowCamera = nullptr;
+	public:
+		std::vector<std::shared_ptr<Camera>> pPShadowCameras;
 	};
 }

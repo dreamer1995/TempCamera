@@ -57,7 +57,9 @@ App::App( const std::string& commandLine )
 	// water.LinkTechniquesEX(rg);
 
 	//wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,400.0f ) );
-	rg.BindShadowCamera(*pointLight.ShareCamera());
+	std::vector<std::shared_ptr<Camera>> pCams;
+	pCams.emplace_back(pointLight.ShareCamera());
+	rg.BindShadowCamera(wnd.Gfx(), *dLight.ShareCamera(), pCams);
 }
 
 void App::HandleInput( float dt )
