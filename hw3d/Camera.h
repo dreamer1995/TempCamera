@@ -15,7 +15,8 @@ namespace Rgph
 class Camera
 {
 public:
-	Camera( Graphics& gfx,std::string name,DirectX::XMFLOAT3 homePos = {0.0f,0.0f,0.0f},float homePitch = 0.0f,float homeYaw = 0.0f,bool tethered = false ) noexcept;
+	Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos = { 0.0f,0.0f,0.0f }, float homePitch = 0.0f, float homeYaw = 0.0f,
+		bool tethered = false, bool isPerspective = true, float width = 1.0f, float hight = 9.0f / 16.0f) noexcept;
 	void BindToGraphics( Graphics& gfx ) const;
 	DirectX::XMMATRIX GetMatrix() const noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
@@ -61,4 +62,5 @@ private:
 	float yaw_;
 	mutable Bind::VertexConstantBuffer<CameraCBuf> vCbuf;
 	mutable Bind::PixelConstantBuffer<CameraCBuf> pCbuf;
+	bool isPerspective;
 };

@@ -26,6 +26,9 @@ namespace Rgph
 			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u);
 			AddBind(pDShadowCBuf);
 			AddBindSink<Bindable>("dShadowMap");
+			AddBindSink<Bindable>("pShadowMap0");
+			AddBindSink<Bindable>("pShadowMap1");
+			AddBindSink<Bindable>("pShadowMap2");
 			RegisterSink( DirectBufferSink<RenderTarget>::Make( "renderTarget",renderTarget ) );
 			RegisterSink( DirectBufferSink<DepthStencil>::Make( "depthStencil",depthStencil ) );
 			AddBindSink<Bindable>( "shadowControl" );

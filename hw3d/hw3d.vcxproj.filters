@@ -285,12 +285,6 @@
     <ClCompile Include="SolidArrow.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="Frustum.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraIndicator.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
     <ClCompile Include="PreCubeCalculatePass.cpp">
       <Filter>Source Files\Jobber\Passlib</Filter>
     </ClCompile>
@@ -377,6 +371,12 @@
     </ClCompile>
     <ClCompile Include="TextureCube.cpp">
       <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Source Files\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraIndicator.cpp">
+      <Filter>Source Files\Gizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -677,9 +677,6 @@
     <ClInclude Include="MiscShape.h">
       <Filter>Header Files\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="Frustum.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="WireframePass.h">
       <Filter>Header Files\Jobber\Passlib</Filter>
     </ClInclude>
@@ -688,9 +685,6 @@
     </ClInclude>
     <ClInclude Include="ShadowMappingPass.h">
       <Filter>Header Files\Jobber\Passlib</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraIndicator.h">
-      <Filter>Header Files\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="PreCalculateRenderGraph.h">
       <Filter>Header Files\Jobber\Graphlib</Filter>
@@ -775,6 +769,12 @@
     </ClInclude>
     <ClInclude Include="TextureCube.h">
       <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraIndicator.h">
+      <Filter>Header Files\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Header Files\Gizmo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

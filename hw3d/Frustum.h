@@ -4,7 +4,7 @@
 class Frustum : public Drawable
 {
 public:
-	Frustum( Graphics& gfx,float width,float height,float nearZ,float farZ );
+	Frustum(Graphics& gfx, float width, float height, float nearZ, float farZ, bool isPerspective);
 	void SetVertices( Graphics& gfx,float width,float height,float nearZ,float farZ );
 	void SetPos( DirectX::XMFLOAT3 pos ) noexcept;
 	void SetRotation( DirectX::XMFLOAT3 pos ) noexcept;
@@ -12,4 +12,5 @@ public:
 private:
 	DirectX::XMFLOAT3 pos = { 0.0f,0.0f,0.0f };
 	DirectX::XMFLOAT3 rot = { 0.0f,0.0f,0.0f };
+	bool isPerspective;
 };

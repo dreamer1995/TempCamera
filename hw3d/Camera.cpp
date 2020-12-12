@@ -4,17 +4,19 @@
 
 namespace dx = DirectX;
 
-Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float homePitch, float homeYaw, bool tethered) noexcept
+Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float homePitch, float homeYaw,
+	bool tethered, bool isPerspective, float width, float hight) noexcept
 	:
 	name( std::move( name ) ),
 	homePos( homePos ),
 	homePitch( homePitch ),
 	homeYaw( homeYaw ),
-	proj( gfx,1.0f,9.0f / 16.0f,0.5f,400.0f ),
+	proj(gfx, width, hight, 0.5f,400.0f, isPerspective),
 	indicator( gfx ),
 	tethered( tethered ),
 	vCbuf(gfx, 1u),
-	pCbuf(gfx, 1u)
+	pCbuf(gfx, 1u),
+	isPerspective(isPerspective)
 {
 	if( tethered )
 	{

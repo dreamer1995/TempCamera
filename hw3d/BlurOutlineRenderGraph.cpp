@@ -50,7 +50,7 @@ namespace Rgph
 
 		// setup shadow rasterizer
 		{
-			shadowRasterizer = std::make_shared<Bind::ShadowRasterizer>( gfx,10000,0.0005f,1.0f );
+			shadowRasterizer = std::make_shared<Bind::ShadowRasterizer>( gfx,10000,5.0f,1.0f );
 			AddGlobalSource( DirectBindableSource<Bind::ShadowRasterizer>::Make( "shadowRasterizer",shadowRasterizer ) );
 		}
 
@@ -68,7 +68,7 @@ namespace Rgph
 				l.Add<Dcb::Float>( "depthBias" );
 				l.Add<Dcb::Bool>( "hwPcf" );
 				Dcb::Buffer buf{ std::move( l ) };
-				buf["pcfLevel"] = 0;
+				buf["pcfLevel"] = 4;
 				buf["depthBias"] = 0.0005f;
 				buf["hwPcf"] = true;
 				shadowControl = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 6u);
@@ -83,6 +83,9 @@ namespace Rgph
 		{
 			auto pass = std::make_unique<LambertianPass>( gfx,"lambertian" );
 			pass->SetSinkLinkage( "dShadowMap","shadowMap.dMap" );
+			pass->SetSinkLinkage("pShadowMap0", "shadowMap.pMap0");
+			pass->SetSinkLinkage("pShadowMap1", "shadowMap.pMap1");
+			pass->SetSinkLinkage("pShadowMap2", "shadowMap.pMap2");
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
@@ -157,6 +160,9 @@ namespace Rgph
 			pass->SetSinkLinkage("waterFlow", "$.waterFlowVS");
 			pass->SetSinkLinkage("waterRipple", "$.waterRipple");
 			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
+			pass->SetSinkLinkage("pShadowMap0", "shadowMap.pMap0");
+			pass->SetSinkLinkage("pShadowMap1", "shadowMap.pMap1");
+			pass->SetSinkLinkage("pShadowMap2", "shadowMap.pMap2");
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
@@ -456,7 +462,7 @@ namespace Rgph
 	}
 	void Rgph::BlurOutlineRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<Camera>> pCams)
 	{
-		dynamic_cast<ShadowMappingPass&>(FindPassByName( "shadowMap" )).BindShadowCamera(dCam, pCams);
+		dynamic_cast<ShadowMappingPass&>(FindPassByName( "shadowMap" )).BindShadowCamera(gfx, dCam, pCams);
 		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindShadowCamera(gfx, dCam, pCams);
 		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindShadowCamera(gfx, dCam, pCams);
 	}

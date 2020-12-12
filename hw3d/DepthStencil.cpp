@@ -80,6 +80,14 @@ namespace Bind
 	void DepthStencil::BindAsBuffer( Graphics& gfx ) noxnd
 	{
 		INFOMAN_NOHR( gfx );
+		D3D11_VIEWPORT vp;
+		vp.Width = (float)width;
+		vp.Height = (float)height;
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		vp.TopLeftX = 0.0f;
+		vp.TopLeftY = 0.0f;
+		GFX_THROW_INFO_ONLY(GetContext(gfx)->RSSetViewports(1u, &vp));
 		GFX_THROW_INFO_ONLY( GetContext( gfx )->OMSetRenderTargets( 0,nullptr,pDepthStencilView.Get() ) );
 	}
 	

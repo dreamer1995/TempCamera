@@ -11,7 +11,7 @@ DirectionalLight::DirectionalLight(Graphics& gfx, DirectX::XMFLOAT3 pos, float p
 	cbData = {
 	{ 0.0f,-1.0f,0.0f },
 	{ 1.0f,1.0f,1.0f }, // Color
-	0.0f, // Intensity
+	1.0f, // Intensity
 	};
 	home = { cbData,
 		pos,
@@ -20,7 +20,8 @@ DirectionalLight::DirectionalLight(Graphics& gfx, DirectX::XMFLOAT3 pos, float p
 		1.0f // Arrow Length
 	};
 	Reset();
-	pCamera = std::make_shared<Camera>(gfx, "DirectionalLight", pos, pitch, yaw, true);
+	DirectX::XMFLOAT3 camPos = { pos.x,pos.y + 100.0f,pos.z };
+	pCamera = std::make_shared<Camera>(gfx, "DirectionalLight", camPos, pitch, yaw, true, false, 300.0f, 300.0f);
 }
 
 void DirectionalLight::SpawnControlWindow() noexcept
@@ -31,12 +32,12 @@ void DirectionalLight::SpawnControlWindow() noexcept
 		bool posDirty = false;
 		const auto dcheck = [](bool d, bool& carry) { carry = carry || d; };
 		ImGui::Text("Position");
-		dcheck(ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f, "%.1f"), posDirty);
-		dcheck(ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f, "%.1f"), posDirty);
-		dcheck(ImGui::SliderFloat("Z", &pos.z, -80.0f, 80.0f, "%.1f"), posDirty);
+		dcheck(ImGui::SliderFloat("X", &pos.x, -100.0f, 100.0f, "%.1f"), posDirty);
+		dcheck(ImGui::SliderFloat("Y", &pos.y, -100.0f, 100.0f, "%.1f"), posDirty);
+		dcheck(ImGui::SliderFloat("Z", &pos.z, -100.0f, 100.0f, "%.1f"), posDirty);
 		if (posDirty)
 		{
-			pCamera->SetPos(pos);
+			pCamera->SetPos({ pos.x,pos.y + 100.0f,pos.z });
 		}
 		ImGui::Text("Orientation");
 		dcheck(ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f), rotDirty);

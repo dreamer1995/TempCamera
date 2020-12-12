@@ -2,19 +2,23 @@
 #include "imgui/imgui.h"
 #include "Graphics.h"
 
-Projection::Projection( Graphics& gfx,float width,float height,float nearZ,float farZ )
+Projection::Projection(Graphics& gfx, float width, float height, float nearZ, float farZ, bool isPerspective)
 	:
 	width( width ),
 	height( height ),
 	nearZ( nearZ ),
 	farZ( farZ ),
-	frust( gfx,width,height,nearZ,farZ ),
-	homeWidth( width ),homeHeight( height ),homeNearZ( nearZ ),homeFarZ( farZ )
+	frust(gfx, width, height, nearZ, farZ, isPerspective),
+	homeWidth( width ),homeHeight( height ),homeNearZ( nearZ ),homeFarZ( farZ ),
+	isPerspective(isPerspective)
 {}
 
 DirectX::XMMATRIX Projection::GetMatrix() const
 {
-	return DirectX::XMMatrixPerspectiveLH( width,height,nearZ,farZ );
+	if(isPerspective)
+		return DirectX::XMMatrixPerspectiveLH( width,height,nearZ,farZ );
+	else
+		return DirectX::XMMatrixOrthographicLH(width, height, nearZ, farZ);
 }
 
 void Projection::RenderWidgets( Graphics& gfx )
@@ -22,11 +26,22 @@ void Projection::RenderWidgets( Graphics& gfx )
 	bool dirty = false;
 	const auto dcheck = [&dirty]( bool d ) { dirty = dirty || d; };
 
-	ImGui::Text( "Projection" );
-	dcheck( ImGui::SliderFloat( "Width",&width,0.01f,4.0f,"%.2f",1.5f ) );
-	dcheck( ImGui::SliderFloat( "Height",&height,0.01f,4.0f,"%.2f",1.5f ) );
-	dcheck( ImGui::SliderFloat( "Near Z",&nearZ,0.01f,farZ - 0.01f,"%.2f",4.0f ) );
-	dcheck( ImGui::SliderFloat( "Far Z",&farZ,nearZ + 0.01f,400.0f,"%.2f",4.0f ) );
+	if (isPerspective)
+	{
+		ImGui::Text("Projection");
+		dcheck(ImGui::SliderFloat("Width", &width, 0.01f, 4.0f, "%.2f", 1.5f));
+		dcheck(ImGui::SliderFloat("Height", &height, 0.01f, 4.0f, "%.2f", 1.5f));
+		dcheck(ImGui::SliderFloat("Near Z", &nearZ, 0.01f, farZ - 0.01f, "%.2f", 4.0f));
+		dcheck(ImGui::SliderFloat("Far Z", &farZ, nearZ + 0.01f, 400.0f, "%.2f", 4.0f));
+	}
+	else
+	{
+		ImGui::Text("Projection");
+		dcheck(ImGui::SliderFloat("Width", &width, 0.01f, 4096.f, "%.2f", 1.0f));
+		dcheck(ImGui::SliderFloat("Height", &height, 0.01f, 4096.0f, "%.2f", 1.0f));
+		dcheck(ImGui::SliderFloat("Near Z", &nearZ, 0.01f, farZ - 0.01f, "%.2f", 1.0f));
+		dcheck(ImGui::SliderFloat("Far Z", &farZ, nearZ + 0.01f, 400.0f, "%.2f", 1.0f));
+	}
 
 	if( dirty )
 	{

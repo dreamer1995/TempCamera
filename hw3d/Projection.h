@@ -11,7 +11,7 @@ namespace Rgph
 class Projection
 {
 public:
-	Projection( Graphics& gfx,float width,float height,float nearZ,float farZ );
+	Projection(Graphics& gfx, float width, float height, float nearZ, float farZ, bool isPerspective);
 	DirectX::XMMATRIX GetMatrix() const;
 	void RenderWidgets( Graphics& gfx );
 	void SetPos( DirectX::XMFLOAT3 );
@@ -30,4 +30,5 @@ private:
 	float homeNearZ;
 	float homeFarZ;
 	Frustum frust;
+	bool isPerspective;
 };

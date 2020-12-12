@@ -17,7 +17,7 @@ App::App( const std::string& commandLine )
 	commandLine( commandLine ),
 	wnd( 1280,720,"The Donkey Fart Box" ),
 	scriptCommander( TokenizeQuoted( commandLine ) ),
-	dLight(wnd.Gfx(), { 10.0f,9.0f,2.5f }, 45.0f * PI / 180.0f, -45.0f * PI / 180.0f),
+	dLight(wnd.Gfx(), { 10.0f,9.0f,2.5f }, 63.0f * PI / 180.0f, 84.0f * PI / 180.0f),
 	pointLight( wnd.Gfx(),{ 16.5f, 3.0f, 1.5f }, 1.0f )
 {
 	time = 0;
@@ -299,7 +299,7 @@ void App::DoFrame( float dt )
 	
 	if (savingDepth)
 	{
-		rg.DumpShadowMap(wnd.Gfx(), "shadow.png");
+		rg.DumpShadowMap(wnd.Gfx(), "Images\\shadow.png");
 		savingDepth = false;
 	}
 

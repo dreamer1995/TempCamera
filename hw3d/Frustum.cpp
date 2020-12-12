@@ -8,7 +8,9 @@
 
 namespace dx = DirectX;
 
-Frustum::Frustum( Graphics& gfx,float width,float height,float nearZ,float farZ )
+Frustum::Frustum(Graphics& gfx, float width, float height, float nearZ, float farZ, bool isPerspective)
+	:
+	isPerspective(isPerspective)
 {
 	using namespace Bind;
 
@@ -100,7 +102,11 @@ void Frustum::SetVertices( Graphics& gfx,float width,float height,float nearZ,fl
 	layout.Append( Dvtx::VertexLayout::Position3D );
 	Dvtx::VertexBuffer vertices{ std::move( layout ) };
 	{
-		const float zRatio = farZ / nearZ;
+		float zRatio;
+		if(isPerspective)
+			zRatio = farZ / nearZ;
+		else
+			zRatio = 1.0;
 		const float nearX = width / 2.0f;
 		const float nearY = height / 2.0f;
 		const float farX = nearX * zRatio;

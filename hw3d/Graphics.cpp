@@ -125,7 +125,7 @@ void Graphics::BeginFrame( float red,float green,float blue ) noexcept
 	}
 	// clearing shader inputs to prevent simultaneous in/out bind carried over from prev frame
 	
-	UINT index[] = { 0u,4u,5u,14u };
+	UINT index[] = { 0u,4u,5u,14u,15u,16u,17u };
 	for (auto &c : index)
 	{
 		ClearShaderResources(c);

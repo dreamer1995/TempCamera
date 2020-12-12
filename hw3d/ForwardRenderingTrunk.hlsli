@@ -25,7 +25,7 @@ float4 main(PSIn IN) : SV_Target
     LightingResult litRes;
     LightData litData;
     EncodeLightData(litData, diffuseColor * diffuseIntensity, lightPos - gBuffer.worldPos, false);
-    float shadowLevel = Shadow(IN.shadowHomoPos);
+    float shadowLevel = 1.0f;
     if (shadowLevel != 0.0f)
     {
         BxDF(litRes, gBuffer, litData, V, shadowLevel);
@@ -41,7 +41,7 @@ float4 main(PSIn IN) : SV_Target
     specularLighting += litRes.specularLighting;
 
     EncodeLightData(litData, DdiffuseColor * DdiffuseIntensity, direction, true);
-    shadowLevel = 1.0f;
+    shadowLevel = Shadow(IN.shadowHomoPos);
     if (shadowLevel != 0.0f)
     {
         BxDF(litRes, gBuffer, litData, V, shadowLevel);
