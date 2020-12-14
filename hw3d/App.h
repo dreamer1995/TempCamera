@@ -60,12 +60,12 @@ private:
 	Model nano{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj",2.0f };
 	SkyBox skybox{ wnd.Gfx(),4.0f };
 	DirectionalLight dLight;
-	bool savingDepth = false;
+	//bool savingDepth = false;
 	//std::shared_ptr<Camera> pCam;
 	TestSphere sphere{ wnd.Gfx(),4.0f };
-	// PlaneWater water{ wnd.Gfx() ,5.0f };
-	float rotateSpeed = 2.5f;
-	float flickerSpeed = 0.4f;
-	float scanSpeed = 0.4f;
-	float extentSpeed = 1.7f;
+	//PlaneWater water{ wnd.Gfx() ,5.0f };
+	//float rotateSpeed = 2.5f;
+	//float flickerSpeed = 0.4f;
+	//float scanSpeed = 0.4f;
+	//float extentSpeed = 1.7f;
 };

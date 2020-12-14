@@ -17,8 +17,9 @@ App::App( const std::string& commandLine )
 	commandLine( commandLine ),
 	wnd( 1280,720,"The Donkey Fart Box" ),
 	scriptCommander( TokenizeQuoted( commandLine ) ),
-	dLight(wnd.Gfx(), { 10.0f,9.0f,2.5f }, 0.0f * PI / 180.0f, 30.0f * PI / 180.0f)
+	dLight(wnd.Gfx(), { 10.0f,9.0f,2.5f }, 63.0f * PI / 180.0f, 84.0f * PI / 180.0f)
 {
+	//pointLight = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 16.5f, 3.0f, 1.5f }, 1.0f, 4u);
 	pointLight = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{  27.f + 9 * 0.666666f, 20.0f, 1.7f }, 1.0f, 4u);
 	pointLight2 = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 27.f - 9 * 0.333333f, 20.0f, 1.7f + 9 * 0.577350f }, 1.0f, 7u);
 	pointLight3 = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 27.f - 9 * 0.333333f, 20.0f, 1.7f - 9 * 0.577350f }, 1.0f, 8u);
@@ -101,7 +102,7 @@ void App::DoFrame( float dt )
 	gobber.Submit(Chan::main);
 	nano.Submit(Chan::main);
 	sphere.Submit(Chan::main);
-	// water.SubmitEX(Chan::waterPre, Chan::main);
+	//water.SubmitEX(Chan::waterPre, Chan::main);
 
 	sponza.Submit(Chan::shadow);
 	gobber.Submit(Chan::shadow);
@@ -136,9 +137,9 @@ void App::DoFrame( float dt )
 	cube.SpawnControlWindow(wnd.Gfx(), "Cube 1");
 	cube2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
 	sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
-	// water.SpawnControlWindow(wnd.Gfx(), "Water");
+	//water.SpawnControlWindow(wnd.Gfx(), "Water");
 	rg.RenderWindows( wnd.Gfx() );
-	RenderMainWindows(wnd.Gfx());
+	//RenderMainWindows(wnd.Gfx());
 
 	//if (ImGui::Begin("Delete"))
 	//{
@@ -393,45 +394,45 @@ std::unique_ptr<Bind::VertexConstantBuffer<App::CommonVar>> App::cVBuf;
 std::unique_ptr<Bind::PixelConstantBuffer<App::CommonVar>> App::cPBuf;
 std::unique_ptr<Bind::DomainConstantBuffer<App::CommonVar>> App::cDBuf;
 
-void App::RenderMainWindows(Graphics& gfx)
-{
-	if (ImGui::Begin("Íæ"))
-	{
-		ImGui::SliderFloat("X", &rotateSpeed, 0.0f, 5.0f, "%.001f");
-		ImGui::SliderFloat("Y", &flickerSpeed, 0.0f, 5.0f, "%.1f");
-		ImGui::SliderFloat("Z", &scanSpeed, 0.0f, 1.0f, "%.1f");
-		ImGui::SliderFloat("W", &extentSpeed, 0.0f, 2.0f, "%.1f");
-	}
-	ImGui::End();
-}
+//void App::RenderMainWindows(Graphics& gfx)
+//{
+//	if (ImGui::Begin("Íæ"))
+//	{
+//		ImGui::SliderFloat("X", &rotateSpeed, 0.0f, 5.0f, "%.001f");
+//		ImGui::SliderFloat("Y", &flickerSpeed, 0.0f, 5.0f, "%.1f");
+//		ImGui::SliderFloat("Z", &scanSpeed, 0.0f, 1.0f, "%.1f");
+//		ImGui::SliderFloat("W", &extentSpeed, 0.0f, 2.0f, "%.1f");
+//	}
+//	ImGui::End();
+//}
 
 void App::GameLogic(float dt, float time)
 {
-	pointLight->RotateAround(dt, 0.0f, { 27.f, -0.56f, 1.7f }, rotateSpeed);
-	pointLight2->RotateAround(dt, 0.0f, { 27.f, -0.56f, 1.7f }, rotateSpeed);
-	pointLight3->RotateAround(dt, 0.0f, { 27.f, -0.56f, 1.7f }, rotateSpeed);
+	//pointLight->RotateAround(dt, 0.0f, { 27.f, -0.56f, 1.7f }, rotateSpeed);
+	//pointLight2->RotateAround(dt, 0.0f, { 27.f, -0.56f, 1.7f }, rotateSpeed);
+	//pointLight3->RotateAround(dt, 0.0f, { 27.f, -0.56f, 1.7f }, rotateSpeed);
 
-	auto r = std::lerp(5.0, 12.0, std::sin(time * extentSpeed) / 2 + 0.5);
-	auto x = pointLight->cbData.pos.x - 27.f;
-	auto y = pointLight->cbData.pos.z - 1.7f;
-	auto length = std::sqrt(x * x + y * y);
-	pointLight->cbData.pos.x = 27.f + x / length * r;
-	pointLight->cbData.pos.z = 1.7f + y / length * r;
-	x = pointLight2->cbData.pos.x - 27.f;
-	y = pointLight2->cbData.pos.z - 1.7f;
-	length = std::sqrt(x * x + y * y);
-	pointLight2->cbData.pos.x = 27.f + x / length * r;
-	pointLight2->cbData.pos.z = 1.7f + y / length * r;
-	x = pointLight3->cbData.pos.x - 27.f;
-	y = pointLight3->cbData.pos.z - 1.7f;
-	length = std::sqrt(x * x + y * y);
-	pointLight3->cbData.pos.x = 27.f + x / length * r;
-	pointLight3->cbData.pos.z = 1.7f + y / length * r;
+	//auto r = std::lerp(5.0, 12.0, std::sin(time * extentSpeed) / 2 + 0.5);
+	//auto x = pointLight->cbData.pos.x - 27.f;
+	//auto y = pointLight->cbData.pos.z - 1.7f;
+	//auto length = std::sqrt(x * x + y * y);
+	//pointLight->cbData.pos.x = 27.f + x / length * r;
+	//pointLight->cbData.pos.z = 1.7f + y / length * r;
+	//x = pointLight2->cbData.pos.x - 27.f;
+	//y = pointLight2->cbData.pos.z - 1.7f;
+	//length = std::sqrt(x * x + y * y);
+	//pointLight2->cbData.pos.x = 27.f + x / length * r;
+	//pointLight2->cbData.pos.z = 1.7f + y / length * r;
+	//x = pointLight3->cbData.pos.x - 27.f;
+	//y = pointLight3->cbData.pos.z - 1.7f;
+	//length = std::sqrt(x * x + y * y);
+	//pointLight3->cbData.pos.x = 27.f + x / length * r;
+	//pointLight3->cbData.pos.z = 1.7f + y / length * r;
 
-	auto b = std::lerp(0.0, 0.2, std::sin(time * flickerSpeed) / 2 + 0.5);
-	pointLight->cbData.diffuseIntensity = b;
-	pointLight2->cbData.diffuseIntensity = b;
-	pointLight3->cbData.diffuseIntensity = b;
-	dLight.pitch = std::lerp(60.0 * PI / 180.0, 120.0 * PI / 180.0, std::sin(time * scanSpeed) / 2 + 0.5);
-	dLight.pCamera->SetRotation(dLight.pitch, dLight.yaw);
+	//auto b = std::lerp(0.0, 0.2, std::sin(time * flickerSpeed) / 2 + 0.5);
+	//pointLight->cbData.diffuseIntensity = b;
+	//pointLight2->cbData.diffuseIntensity = b;
+	//pointLight3->cbData.diffuseIntensity = b;
+	//dLight.pitch = std::lerp(60.0 * PI / 180.0, 120.0 * PI / 180.0, std::sin(time * scanSpeed) / 2 + 0.5);
+	//dLight.pCamera->SetRotation(dLight.pitch, dLight.yaw);
 }

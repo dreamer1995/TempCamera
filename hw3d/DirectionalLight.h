@@ -44,7 +44,7 @@ private:
 		float yaw;
 		float length;
 	};
-public:
+private:
 	DirectionalLightCBuf cbData;
 	mutable PhongSphere mesh;
 	mutable SolidArrow arrow;
