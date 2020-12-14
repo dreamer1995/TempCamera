@@ -4,6 +4,7 @@
 #include "ConstantBuffersEx.h"
 #include "RenderTarget.h"
 #include "PreCalculateRenderGraph.h"
+#include "PointLight.h"
 
 class Graphics;
 class Camera;
@@ -24,7 +25,8 @@ namespace Rgph
 		void RenderWindows( Graphics& gfx );
 		void DumpShadowMap( Graphics& gfx,const std::string& path );
 		void BindMainCamera( Camera& cam );
-		void BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<Camera>> pCams);
+		void BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams);
+		void StoreDepth( Graphics& gfx,const std::string& path );
 	private:
 		// private functions
 		void RenderKernelWindow( Graphics& gfx );

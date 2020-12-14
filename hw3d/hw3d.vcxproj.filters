@@ -378,6 +378,9 @@
     <ClCompile Include="CameraIndicator.cpp">
       <Filter>Source Files\Gizmo</Filter>
     </ClCompile>
+    <ClCompile Include="cnpy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -776,6 +779,12 @@
     <ClInclude Include="Frustum.h">
       <Filter>Header Files\Gizmo</Filter>
     </ClInclude>
+    <ClInclude Include="cnpy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Viewport.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -822,6 +831,12 @@
       <Filter>Shader\Common</Filter>
     </None>
     <None Include="Common.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
+    <None Include="ConstantsPS.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
+    <None Include="ConstantsVS.hlsli">
       <Filter>Shader\Common</Filter>
     </None>
   </ItemGroup>
@@ -954,6 +969,12 @@
     </FxCompile>
     <FxCompile Include="SphereToCubePS.hlsl">
       <Filter>Shader\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Shadow_PS.hlsl">
+      <Filter>Shader\Miscellany</Filter>
+    </FxCompile>
+    <FxCompile Include="Shadow_VS.hlsl">
+      <Filter>Shader\Miscellany</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

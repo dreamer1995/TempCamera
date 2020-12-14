@@ -38,7 +38,10 @@ struct PSIn {
 	float2 uv : Texcoord;
 	float3 outScattering : Position1;
 	float3 inScattering : Position2;
-	float4 shadowHomoPos : ShadowPosition;
+	float4 shadowHomoPos : ShadowPosition0;
+	float4 shadowCubeWorldPos0 : ShadowPosition1;
+	float4 shadowCubeWorldPos1 : ShadowPosition2;
+	float4 shadowCubeWorldPos2 : ShadowPosition3;
 };
 
 struct MaterialShadingParameters

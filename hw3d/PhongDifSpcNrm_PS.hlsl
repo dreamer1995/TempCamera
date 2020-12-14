@@ -27,7 +27,10 @@ struct PSIn
     float3 tangent : Tangent;
     float3 binormal : Binormal;
     float2 uv : Texcoord;
-    float4 shadowHomoPos : ShadowPosition;
+    float4 shadowHomoPos : ShadowPosition0;
+    float4 shadowCubeWorldPos0 : ShadowPosition1;
+    float4 shadowCubeWorldPos1 : ShadowPosition2;
+    float4 shadowCubeWorldPos2 : ShadowPosition3;
 };
 
 struct MaterialShadingParameters

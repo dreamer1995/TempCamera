@@ -86,7 +86,7 @@ namespace Bind
 	std::string Sampler::GenerateUID(Filter filter, Address address, UINT slot, UINT shaderIndex, float LODRange)
 	{
 		using namespace std::string_literals;
-		return typeid(Sampler).name() + "#"s + std::to_string( (int)filter) + std::to_string((int)address) + std::to_string((int)slot) +
+		return typeid(Sampler).name() + "#"s + std::to_string( (int)filter) + std::to_string((int)address) + "@"s + std::to_string((int)slot) +
 			std::to_string(shaderIndex) + std::to_string(LODRange);
 	}
 	std::string Sampler::GetUID() const noexcept

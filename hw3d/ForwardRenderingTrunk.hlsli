@@ -1,4 +1,5 @@
 #include "ShadingModel.hlsli"
+#include "ConstantsPS.hlsli"
 
 float4 main(PSIn IN) : SV_Target
 {
@@ -24,8 +25,10 @@ float4 main(PSIn IN) : SV_Target
 
     LightingResult litRes;
     LightData litData;
-    EncodeLightData(litData, diffuseColor * diffuseIntensity, lightPos - gBuffer.worldPos, false);
     float shadowLevel = 1.0f;
+
+    EncodePLightData(litData, diffuseColor * diffuseIntensity, lightPos - gBuffer.worldPos, attConst, attLin, attQuad);
+    shadowLevel = CubeShadow(IN.shadowCubeWorldPos0, smap0);
     if (shadowLevel != 0.0f)
     {
         BxDF(litRes, gBuffer, litData, V, shadowLevel);
@@ -40,8 +43,40 @@ float4 main(PSIn IN) : SV_Target
     diffuseLighting += litRes.diffuseLighting;
     specularLighting += litRes.specularLighting;
 
-    EncodeLightData(litData, DdiffuseColor * DdiffuseIntensity, direction, true);
-    shadowLevel = Shadow(IN.shadowHomoPos);
+    EncodePLightData(litData, diffuseColor2* diffuseIntensity2, lightPos2 - gBuffer.worldPos, attConst2, attLin2, attQuad2);
+    shadowLevel = CubeShadow(IN.shadowCubeWorldPos1, smap1);
+    if (shadowLevel != 0.0f)
+    {
+        BxDF(litRes, gBuffer, litData, V, shadowLevel);
+        // scale by shadow level
+        litRes.diffuseLighting *= shadowLevel;
+        litRes.specularLighting *= shadowLevel;
+    }
+    else
+    {
+        litRes.diffuseLighting = litRes.specularLighting = 0.0f;
+    }
+    diffuseLighting += litRes.diffuseLighting;
+    specularLighting += litRes.specularLighting;
+
+    EncodePLightData(litData, diffuseColor3 * diffuseIntensity3, lightPos3 - gBuffer.worldPos, attConst3, attLin3, attQuad3);
+    shadowLevel = CubeShadow(IN.shadowCubeWorldPos2, smap2);
+    if (shadowLevel != 0.0f)
+    {
+        BxDF(litRes, gBuffer, litData, V, shadowLevel);
+        // scale by shadow level
+        litRes.diffuseLighting *= shadowLevel;
+        litRes.specularLighting *= shadowLevel;
+    }
+    else
+    {
+        litRes.diffuseLighting = litRes.specularLighting = 0.0f;
+    }
+    diffuseLighting += litRes.diffuseLighting;
+    specularLighting += litRes.specularLighting;
+
+    EncodeDLightData(litData, DdiffuseColor * DdiffuseIntensity, direction);
+    shadowLevel = Shadow(IN.shadowHomoPos, smap);
     if (shadowLevel != 0.0f)
     {
         BxDF(litRes, gBuffer, litData, V, shadowLevel);
@@ -58,7 +93,7 @@ float4 main(PSIn IN) : SV_Target
 
     // Ambient Lighting
     float3 ambientLighting;
-    BxDF_Ambient(ambientLighting, gBuffer, V);
+    BxDF_Ambient(ambientLighting, gBuffer, V, ambient);
 
     // final color = attenuate diffuse & ambient by diffuse texture color and add specular reflected
     outCol = diffuseLighting + specularLighting + ambientLighting;

@@ -4,6 +4,7 @@
 #include "GraphicsThrowMacros.h"
 #include <stdexcept>
 #include "Surface.h"
+#include "cnpy.h"
 
 namespace wrl = Microsoft::WRL;
 
@@ -45,10 +46,11 @@ namespace Bind
 		throw std::runtime_error{ "Base usage for Colored format map in DepthStencil." };
 	}
 
-	DepthStencil::DepthStencil( Graphics& gfx,UINT width,UINT height,bool canBindShaderInput,Usage usage )
+	DepthStencil::DepthStencil(Graphics& gfx, UINT width, UINT height, bool canBindShaderInput, Usage usage, Type type)
 		:
 		width( width ),
-		height( height )
+		height( height ),
+		type(type)
 	{
 		INFOMAN( gfx );
 
@@ -58,22 +60,81 @@ namespace Bind
 		descDepth.Width = width;
 		descDepth.Height = height;
 		descDepth.MipLevels = 1u;
-		descDepth.ArraySize = 1u;
 		descDepth.Format = MapUsageTypeless( usage );
 		descDepth.SampleDesc.Count = 1u;
 		descDepth.SampleDesc.Quality = 0u;
 		descDepth.Usage = D3D11_USAGE_DEFAULT;
 		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | (canBindShaderInput ? D3D11_BIND_SHADER_RESOURCE : 0);
+
+		switch (type)
+		{
+		case Type::Cube:
+		{
+			descDepth.ArraySize = 6;
+			descDepth.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+			break;
+		}
+		default:
+		{
+			descDepth.ArraySize = 1;
+		}
+		}
+
 		GFX_THROW_INFO( GetDevice( gfx )->CreateTexture2D( &descDepth,nullptr,&pDepthStencil ) );
 
 		// create target view of depth stensil texture
 		D3D11_DEPTH_STENCIL_VIEW_DESC descView = {};
 		descView.Format = MapUsageTyped( usage );
 		descView.Flags = 0;
-		descView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-		descView.Texture2D.MipSlice = 0;
+		descView.Texture2D.MipSlice = 0;	
+
+		switch (type)
+		{
+		case Type::Cube:
+		{
+			descView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+			descView.Texture2DArray.MipSlice = 0;
+			descView.Texture2DArray.ArraySize = 1;
+			for (unsigned char i = 0; i < 6; ++i)
+			{
+				descView.Texture2DArray.FirstArraySlice = i;
+				GFX_THROW_INFO(GetDevice(gfx)->CreateDepthStencilView(
+					pDepthStencil.Get(), &descView, &pDepthStencilCubeView[i]
+				));
+			}
+			break;
+		}
+		default:
+		{
+			descView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+			GFX_THROW_INFO( GetDevice( gfx )->CreateDepthStencilView(
+				pDepthStencil.Get(),&descView,&pDepthStencilView
+			) );
+		}
+		}
+
+		
+	}
+
+	DepthStencil::DepthStencil( Graphics& gfx,wrl::ComPtr<ID3D11Texture2D> pTexture,UINT face )
+	{
+		INFOMAN( gfx );
+
+		D3D11_TEXTURE2D_DESC descTex = {};
+		pTexture->GetDesc( &descTex );
+		width = descTex.Width;
+		height = descTex.Height;
+
+		// create target view of depth stensil texture
+		D3D11_DEPTH_STENCIL_VIEW_DESC descView = {};
+		descView.Format = DXGI_FORMAT_D32_FLOAT;
+		descView.Flags = 0;
+		descView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+		descView.Texture2DArray.MipSlice = 0;
+		descView.Texture2DArray.ArraySize = 1;
+		descView.Texture2DArray.FirstArraySlice = face;
 		GFX_THROW_INFO( GetDevice( gfx )->CreateDepthStencilView(
-			pDepthStencil.Get(),&descView,&pDepthStencilView
+			pTexture.Get(),&descView,&pDepthStencilView
 		) );
 	}
 
@@ -88,7 +149,16 @@ namespace Bind
 		vp.TopLeftX = 0.0f;
 		vp.TopLeftY = 0.0f;
 		GFX_THROW_INFO_ONLY(GetContext(gfx)->RSSetViewports(1u, &vp));
-		GFX_THROW_INFO_ONLY( GetContext( gfx )->OMSetRenderTargets( 0,nullptr,pDepthStencilView.Get() ) );
+		switch (type)
+		{
+		case Type::Cube:
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->OMSetRenderTargets(0, nullptr, pDepthStencilCubeView[targetIndex].Get()));
+			break;
+		}
+		default:
+			GFX_THROW_INFO_ONLY( GetContext( gfx )->OMSetRenderTargets( 0,nullptr,pDepthStencilView.Get() ) );
+		}
 	}
 	
 	void DepthStencil::BindAsBuffer( Graphics& gfx,BufferResource* renderTarget ) noxnd
@@ -104,9 +174,61 @@ namespace Bind
 
 	void DepthStencil::Clear( Graphics& gfx ) noxnd
 	{
-		GetContext( gfx )->ClearDepthStencilView( pDepthStencilView.Get(),D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1.0f,0u );
+		INFOMAN_NOHR(gfx);
+		switch (type)
+		{
+		case Type::Cube:
+		{
+			for (unsigned char i = 0; i < 6; i++)
+				GetContext(gfx)->ClearDepthStencilView(pDepthStencilCubeView[i].Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
+			break;
+		}
+		default:
+			GetContext( gfx )->ClearDepthStencilView( pDepthStencilView.Get(),D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1.0f,0u );
+		}
+		
 	}
 
+	std::pair<Microsoft::WRL::ComPtr<ID3D11Texture2D>,D3D11_TEXTURE2D_DESC> DepthStencil::MakeStaging( Graphics& gfx ) const
+	{
+		INFOMAN( gfx );
+
+		// get info about the stencil view
+		D3D11_DEPTH_STENCIL_VIEW_DESC srcViewDesc{};
+		pDepthStencilView->GetDesc( &srcViewDesc );
+		// creating a temp texture compatible with the source, but with CPU read access
+		wrl::ComPtr<ID3D11Resource> pResSource;
+		pDepthStencilView->GetResource( &pResSource );
+		wrl::ComPtr<ID3D11Texture2D> pTexSource;
+		pResSource.As( &pTexSource );
+		D3D11_TEXTURE2D_DESC srcTextureDesc{};
+		pTexSource->GetDesc( &srcTextureDesc );
+		D3D11_TEXTURE2D_DESC tmpTextureDesc = srcTextureDesc;
+		tmpTextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		tmpTextureDesc.Usage = D3D11_USAGE_STAGING;
+		tmpTextureDesc.BindFlags = 0;
+		tmpTextureDesc.MiscFlags = 0;
+		tmpTextureDesc.ArraySize = 1;
+		wrl::ComPtr<ID3D11Texture2D> pTexTemp;
+		GFX_THROW_INFO( GetDevice( gfx )->CreateTexture2D(
+			&tmpTextureDesc,nullptr,&pTexTemp
+		) );
+
+		// copy texture contents
+		if( srcViewDesc.ViewDimension == D3D11_DSV_DIMENSION::D3D11_DSV_DIMENSION_TEXTURE2DARRAY )
+		{
+			// source is actually inside a cubemap texture, use view info to find the correct slice and copy subresource
+			GFX_THROW_INFO_ONLY( GetContext( gfx )->CopySubresourceRegion( pTexTemp.Get(),0,0,0,0,pTexSource.Get(),srcViewDesc.Texture2DArray.FirstArraySlice,nullptr ) );
+		}
+		else
+		{
+			GFX_THROW_INFO_ONLY( GetContext( gfx )->CopyResource( pTexTemp.Get(),pTexSource.Get() ) );
+		}
+
+		return { std::move( pTexTemp ),srcTextureDesc };
+	}
+
+	//Surface Bind::DepthStencil::ToSurface( Graphics& gfx,bool linearlize ) const
 	Surface Bind::DepthStencil::ToSurface( Graphics& gfx,bool linearlize ) const
 	{
 		INFOMAN( gfx );
@@ -129,6 +251,9 @@ namespace Bind
 
 		// copy texture contents
 		GFX_THROW_INFO_ONLY( GetContext( gfx )->CopyResource( pTexTemp.Get(),pTexSource.Get() ) );
+
+		// copy from resource to staging
+		//auto [pTexTemp,srcTextureDesc] = MakeStaging( gfx );
 
 		// create Surface and copy from temp texture to it
 		const auto width = GetWidth();
@@ -188,6 +313,41 @@ namespace Bind
 		return s;
 	}
 
+	void Bind::DepthStencil::Dumpy( Graphics& gfx,const std::string& path ) const
+	{
+		INFOMAN( gfx );
+		// copy from resource to staging
+		auto [pTexTemp,srcTextureDesc] = MakeStaging( gfx );
+
+		// create Surface and copy from temp texture to it
+		const auto width = GetWidth();
+		const auto height = GetHeight();
+		std::vector<float> arr;
+		arr.reserve( width * height );
+		D3D11_MAPPED_SUBRESOURCE msr = {};
+		GFX_THROW_INFO( GetContext( gfx )->Map( pTexTemp.Get(),0,D3D11_MAP::D3D11_MAP_READ,0,&msr ) );
+		auto pSrcBytes = static_cast<const char*>(msr.pData);
+
+		if( srcTextureDesc.Format != DXGI_FORMAT::DXGI_FORMAT_R32_TYPELESS )
+		{
+			throw std::runtime_error{ "Bad format in Depth Stencil for dumpy" };
+		}
+
+		// flatten texture elements
+		for( unsigned int y = 0; y < height; y++ )
+		{
+			auto pSrcRow = reinterpret_cast<const float*>(pSrcBytes + msr.RowPitch * size_t( y ));
+			for( unsigned int x = 0; x < width; x++ )
+			{
+				arr.push_back( pSrcRow[x] );
+			}
+		}
+		GFX_THROW_INFO_ONLY( GetContext( gfx )->Unmap( pTexTemp.Get(),0 ) );
+
+		// dump to numpy array
+		cnpy::npy_save( path,arr.data(),{ height,width } );
+	}
+
 	unsigned int Bind::DepthStencil::GetWidth() const
 	{
 		return width;
@@ -198,26 +358,41 @@ namespace Bind
 		return height;
 	}
 
-	ShaderInputDepthStencil::ShaderInputDepthStencil( Graphics& gfx,UINT slot,Usage usage )
+	ShaderInputDepthStencil::ShaderInputDepthStencil(Graphics& gfx, UINT slot, Usage usage, Type type)
 		:
-		ShaderInputDepthStencil( gfx,gfx.GetWidth(),gfx.GetHeight(),slot,usage )
+		ShaderInputDepthStencil(gfx, gfx.GetWidth(), gfx.GetHeight(), slot, usage, type)
 	{}
 
-	ShaderInputDepthStencil::ShaderInputDepthStencil( Graphics& gfx,UINT width,UINT height,UINT slot,Usage usage )
+	ShaderInputDepthStencil::ShaderInputDepthStencil(Graphics& gfx, UINT width, UINT height, UINT slot, Usage usage, Type type)
 		:
-		DepthStencil( gfx,width,height,true,usage ),
-		slot( slot )
+		DepthStencil(gfx, width, height, true, usage, type),
+		slot(slot)
 	{
-		INFOMAN( gfx );
+		INFOMAN(gfx);
 
 		wrl::ComPtr<ID3D11Resource> pRes;
-		pDepthStencilView->GetResource( &pRes );
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = MapUsageColored( usage );
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
-		srvDesc.Texture2D.MipLevels = 1;
+
+		switch (type)
+		{
+		case Type::Cube:
+		{
+			srvDesc.TextureCube.MipLevels = 1;
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+			pDepthStencilCubeView[0]->GetResource(&pRes);
+			break;
+		}
+		default:
+		{
+			srvDesc.Texture2D.MipLevels = 1;
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			pDepthStencilView->GetResource( &pRes );
+		}
+		}
+
 		GFX_THROW_INFO( GetDevice( gfx )->CreateShaderResourceView(
 			pRes.Get(),&srvDesc,&pShaderResourceView
 		) );
@@ -238,6 +413,11 @@ namespace Bind
 	OutputOnlyDepthStencil::OutputOnlyDepthStencil( Graphics& gfx,UINT width,UINT height )
 		:
 		DepthStencil( gfx,width,height,false,Usage::DepthStencil )
+	{}
+
+	OutputOnlyDepthStencil::OutputOnlyDepthStencil( Graphics& gfx,wrl::ComPtr<ID3D11Texture2D> pTexture,UINT face )
+	:
+	DepthStencil( gfx,std::move( pTexture ),face )
 	{}
 
 	void OutputOnlyDepthStencil::Bind( Graphics& gfx ) noxnd

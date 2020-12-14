@@ -8,7 +8,7 @@ void PhongShading(inout LightingResult litRes, GBuffer gBuffer, LightData litDat
 		gBuffer.specularWeight, gBuffer.normal, gBuffer.specularGloss);
 }
 
-void PhongAmbientShading(out float3 ambientLighting, GBuffer gBuffer)
+void PhongAmbientShading(out float3 ambientLighting, GBuffer gBuffer, float3 ambient)
 {
 	ambientLighting = ambient * gBuffer.baseColor;
 }

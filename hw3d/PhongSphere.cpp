@@ -9,6 +9,7 @@
 #include "ConstantBuffersEx.h"
 #include "imgui/imgui.h"
 #include "Channels.h"
+#include "TransformCbufScaling.h"
 
 PhongSphere::PhongSphere(Graphics& gfx, float radius)
 {
@@ -26,6 +27,7 @@ PhongSphere::PhongSphere(Graphics& gfx, float radius)
 	pIndices = IndexBuffer::Resolve(gfx, geometryTag, model.indices);
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	auto tcb = std::make_shared<TransformCbufScaling>(gfx);
 	{
 		Technique solid{ "Sphere",Chan::main };
 		Step only("lambertian");
@@ -44,7 +46,7 @@ PhongSphere::PhongSphere(Graphics& gfx, float radius)
 		buf["specularGloss"] = 30.0f;
 		only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
 
-		only.AddBindable(std::make_shared<TransformCbuf>(gfx));
+		only.AddBindable(tcb);
 
 		only.AddBindable(Rasterizer::Resolve(gfx, false));
 
@@ -88,6 +90,10 @@ void PhongSphere::ChangeSphereMaterialState() noexcept
 				return tagScratch.c_str();
 			};
 
+			if (auto v = buf["scale"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat(tag("Scale"), &v, 0.0f, 2.0f, "%.3f", 1.0f));
+			}
 			if (auto v = buf["specularWeight"]; v.Exists())
 			{
 				dcheck(ImGui::SliderFloat(tag("Spec. Intens."), &v, 0.0f, 1.0f));

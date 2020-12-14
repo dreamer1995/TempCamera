@@ -10,6 +10,7 @@
 #include "ShadowCameraCBuf.h"
 #include "ShadowSampler.h"
 #include "Blender.h"
+#include "Sampler.h"
 
 class Graphics;
 
@@ -33,6 +34,7 @@ namespace Rgph
 			RegisterSink( DirectBufferSink<DepthStencil>::Make( "depthStencil",depthStencil ) );
 			AddBindSink<Bindable>( "shadowControl" );
 			AddBindSink<Bindable>( "shadowSampler" );
+			//AddBind( std::make_shared<Bind::Sampler>( gfx,Bind::Sampler::Type::Anisotropic,false,2 ) );
 			AddBindSink<Bindable>("cubeMapBlurIn");
 			AddBindSink<Bindable>("cubeMapMipIn");
 			AddBindSink<Bindable>("planeBRDFLUTIn");
@@ -45,15 +47,14 @@ namespace Rgph
 		{
 			pMainCamera = &cam;
 		}
-		void BindShadowCamera(Graphics& gfx, const Camera& dCam, std::vector<std::shared_ptr<Camera>> pCams) noexcept
+		void BindShadowCamera(Graphics& gfx, const Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams) noexcept
 		{
 			pDShadowCBuf->SetCamera(&dCam);
 			for (unsigned char i = 0; i < pCams.size(); i++)
 			{
-				//pPShadowCBufs.emplace_back(std::make_shared<Bind::ShadowCameraCBuf>(gfx, 7u + i));
-				//pPShadowCBufs[i]->SetCamera(&pCams[i]);
-				//AddBind(pPShadowCBufs[i]);
-				//AddBindSink<Bindable>("pShadowMap");
+				pPShadowCBufs.emplace_back(std::make_shared<Bind::ShadowCameraCBuf>(gfx, 7u + i));
+				pPShadowCBufs[i]->SetPointLight(pCams[i]);
+				AddBind(pPShadowCBufs[i]);
 			}
 			
 		}
@@ -63,7 +64,7 @@ namespace Rgph
 			pMainCamera->BindToGraphics( gfx );
 			pDShadowCBuf->Update(gfx);
 			for (unsigned char i = 0; i < pPShadowCBufs.size(); i++)
-				pPShadowCBufs[i]->Update(gfx);	
+				pPShadowCBufs[i]->UpdatePointLight(gfx);
 			RenderQueuePass::Execute( gfx );
 		}
 	private:

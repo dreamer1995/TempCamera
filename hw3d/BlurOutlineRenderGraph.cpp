@@ -67,10 +67,12 @@ namespace Rgph
 				l.Add<Dcb::Integer>( "pcfLevel" );
 				l.Add<Dcb::Float>( "depthBias" );
 				l.Add<Dcb::Bool>( "hwPcf" );
+				l.Add<Dcb::Float>("cubeShadowBaseOffset");
 				Dcb::Buffer buf{ std::move( l ) };
 				buf["pcfLevel"] = 4;
 				buf["depthBias"] = 0.0005f;
 				buf["hwPcf"] = true;
+				buf["cubeShadowBaseOffset"] = 0.036252f;
 				shadowControl = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 6u);
 				AddGlobalSource( DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make( "shadowControl",shadowControl ) );
 			}
@@ -334,9 +336,10 @@ namespace Rgph
 			bool pcfChange = ImGui::SliderInt( "PCF Level",&ctrl["pcfLevel"],0,4 );
 			bool biasChange = ImGui::SliderFloat( "Post Bias",&ctrl["depthBias"],0.0f,0.1f,"%.6f",3.6f );
 			bool hwPcfChange = ImGui::Checkbox( "HW PCF",&ctrl["hwPcf"] );
+			bool offsetChange = ImGui::SliderFloat("Base Offset", &ctrl["cubeShadowBaseOffset"], 0.0f, 0.1f, "%.6f", 3.6f);
 			ImGui::Checkbox( "Bilinear",&bilin );
 
-			if( pcfChange || biasChange || hwPcfChange )
+			if (pcfChange || biasChange || hwPcfChange || offsetChange)
 			{
 				shadowControl->SetBuffer( ctrl );
 			}
@@ -357,6 +360,11 @@ namespace Rgph
 				{
 					shadowRasterizer->ChangeDepthBiasParameters( gfx,bias,slope,clamp );
 				}
+			}
+
+			if (ImGui::Button("Dump Cubemap"))
+			{
+				DumpShadowMap(gfx, "Dumps\\shadow_");
 			}
 		}
 		ImGui::End();
@@ -460,7 +468,7 @@ namespace Rgph
 		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindMainCamera( cam );
 		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindMainCamera(cam);
 	}
-	void Rgph::BlurOutlineRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<Camera>> pCams)
+	void Rgph::BlurOutlineRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams)
 	{
 		dynamic_cast<ShadowMappingPass&>(FindPassByName( "shadowMap" )).BindShadowCamera(gfx, dCam, pCams);
 		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindShadowCamera(gfx, dCam, pCams);

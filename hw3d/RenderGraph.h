@@ -42,6 +42,8 @@ namespace Rgph
 		void Finalize();
 		void AppendPass( std::unique_ptr<Pass> pass );
 		Pass& FindPassByName( const std::string& name );
+		std::shared_ptr<Bind::RenderTarget> backBufferTarget;
+		std::shared_ptr<Bind::DepthStencil> masterDepth;
 	private:
 		void LinkSinks( Pass& pass );
 		void LinkGlobalSinks();
@@ -49,8 +51,6 @@ namespace Rgph
 		std::vector<std::unique_ptr<Pass>> passes;
 		std::vector<std::unique_ptr<Source>> globalSources;
 		std::vector<std::unique_ptr<Sink>> globalSinks;
-		std::shared_ptr<Bind::RenderTarget> backBufferTarget;
-		std::shared_ptr<Bind::DepthStencil> masterDepth;
 		bool finalized = false;
 	};
 }

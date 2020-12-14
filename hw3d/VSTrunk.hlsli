@@ -1,3 +1,5 @@
+#include "ConstantsVS.hlsli"
+
 VSOut main(VSIn v)
 {
     VSOut o;
@@ -23,7 +25,10 @@ VSOut main(VSIn v)
 #endif
 
 #ifndef NoShadow
-    o.shadowHomoPos = ToShadowHomoSpace(worldPos);
+    o.shadowHomoPos = ToShadowHomoSpace(worldPos, shadowMatrix_VP);
+    o.shadowCubeWorldPos0 = ToCubeShadowWorldSpace(worldPos, shadowMatrix_M0);
+    o.shadowCubeWorldPos1 = ToCubeShadowWorldSpace(worldPos, shadowMatrix_M1);
+    o.shadowCubeWorldPos2 = ToCubeShadowWorldSpace(worldPos, shadowMatrix_M2);
 #endif
 
     GetVertexParameters(o, v);

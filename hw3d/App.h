@@ -25,11 +25,11 @@ public:
 private:
 	struct CommonVar
 	{
-		float time;
+		double time;
 		DirectX::XMMATRIX EVRotation;
 		float padding[3];
 	};
-	float time;
+	double time;
 	static std::unique_ptr<Bind::VertexConstantBuffer<CommonVar>> cVBuf;
 	static std::unique_ptr<Bind::PixelConstantBuffer<CommonVar>> cPBuf;
 	static std::unique_ptr<Bind::DomainConstantBuffer<CommonVar>> cDBuf;
@@ -38,6 +38,8 @@ private:
 	void HandleInput( float dt );
 	void ShowImguiDemoWindow();
 	void UpdateCommonVar(Graphics& gfx, const CommonVar& cvar) noxnd;
+	void GameLogic(float dt, float time);
+	void RenderMainWindows(Graphics& gfx);
 private:
 	std::string commandLine;
 	bool showDemoWindow = false;
@@ -48,7 +50,9 @@ private:
 	ChiliTimer timer;
 	float speed_factor = 1.0f;
 	CameraContainer cameras;
-	PointLight pointLight;
+	std::shared_ptr<PointLight> pointLight;
+	std::shared_ptr<PointLight> pointLight2;
+	std::shared_ptr<PointLight> pointLight3;
 	TestCube cube{ wnd.Gfx(),4.0f };
 	TestCube cube2{ wnd.Gfx(),4.0f };
 	Model sponza{ wnd.Gfx(),"Models\\sponza\\sponza.obj",1.0f / 20.0f };
@@ -57,7 +61,11 @@ private:
 	SkyBox skybox{ wnd.Gfx(),4.0f };
 	DirectionalLight dLight;
 	bool savingDepth = false;
-	std::shared_ptr<Camera> pCam;
+	//std::shared_ptr<Camera> pCam;
 	TestSphere sphere{ wnd.Gfx(),4.0f };
 	// PlaneWater water{ wnd.Gfx() ,5.0f };
+	float rotateSpeed = 2.5f;
+	float flickerSpeed = 0.4f;
+	float scanSpeed = 0.4f;
+	float extentSpeed = 1.7f;
 };

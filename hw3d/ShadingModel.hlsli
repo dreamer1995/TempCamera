@@ -59,14 +59,14 @@ void BxDF(out LightingResult litRes, GBuffer gBuffer, LightData litData, float3 
 	}
 }
 
-void BxDF_Ambient(out float3 ambientLighting, GBuffer gBuffer, float3 V)
+void BxDF_Ambient(out float3 ambientLighting, GBuffer gBuffer, float3 V, float3 ambient)
 {
 	ambientLighting = 0.0f;
 	switch (gBuffer.shadingModelID)
 	{
 	case ShadingModel_Phong:
 #ifdef IsPhong
-		PhongAmbientShading(ambientLighting, gBuffer);
+		PhongAmbientShading(ambientLighting, gBuffer, ambient);
 #endif
 		break;
 	case ShadingModel_PBR:
@@ -78,20 +78,19 @@ void BxDF_Ambient(out float3 ambientLighting, GBuffer gBuffer, float3 V)
 	}
 }
 
-void EncodeLightData(out LightData litData, float3 irradiance, float3 vToL, bool IsDirectional)
+void EncodeDLightData(out LightData litData, float3 irradiance, float3 vToL)
 {
 	litData.irradiance = irradiance;
-	if (IsDirectional)
-	{
-		litData.dirToL = vToL;
-	}
-	else
-	{
-		float distToL = length(vToL);
-		litData.dirToL = vToL / distToL;
-		// attenuation
-		litData.irradiance *= Attenuate(attConst, attLin, attQuad, distToL);
-	}
+	litData.dirToL = vToL;
+}
+
+void EncodePLightData(out LightData litData, float3 irradiance, float3 vToL, float attConst, float attLin, float attQuad)
+{
+	litData.irradiance = irradiance;
+	float distToL = length(vToL);
+	litData.dirToL = vToL / distToL;
+	// attenuation
+	litData.irradiance *= Attenuate(attConst, attLin, attQuad, distToL);
 }
 
 void DecodeGBuffer(MaterialShadingParameters matParams, out GBuffer gBuffer)

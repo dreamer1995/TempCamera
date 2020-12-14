@@ -32,7 +32,7 @@ SolidArrow::SolidArrow(Graphics& gfx, float size)
 		only.AddBindable(PixelShader::Resolve(gfx, "Solid_PS.cso"));
 
 		Dcb::RawLayout lay;
-		lay.Add<Dcb::Float3>("Color");
+		lay.Add<Dcb::Float3>("color");
 		lay.Add<Dcb::Float>("length");
 		lay.Add<Dcb::Bool>("active");
 		auto buf = Dcb::Buffer(std::move(lay));
@@ -58,7 +58,7 @@ void SolidArrow::SetTransform(DirectX::XMFLOAT3 pos, float pitch, float yaw) noe
 DirectX::XMMATRIX SolidArrow::GetTransformXM() const noexcept
 {
 	auto buf = cbuf->GetBuffer();
-	return DirectX::XMMatrixScaling(1.0f, buf["length"], 1.0f) *
+	return DirectX::XMMatrixScaling(1.0f, 1.0f, buf["length"]) *
 		DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f) *
 		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
@@ -104,6 +104,6 @@ void SolidArrow::ChangeArrowColor() noexcept
 void SolidArrow::SetColor(DirectX::XMFLOAT3 diffuseColor) noexcept
 {
 	auto buf = cbuf->GetBuffer();
-	buf["Color"] = diffuseColor;
+	buf["color"] = diffuseColor;
 	cbuf->SetBuffer(buf);
 }

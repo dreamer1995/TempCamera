@@ -1,8 +1,6 @@
 #pragma once
 #include "PreCubeCalculatePass.h"
 
-namespace dx = DirectX;
-
 class Graphics;
 namespace Bind
 {
@@ -20,14 +18,5 @@ namespace Rgph
 		void DumpCubeMap(Graphics& gfx, const std::string& path) const;
 	public:
 		std::shared_ptr<Bind::ShaderInputRenderTarget> pPreCalBlurCube;
-		dx::XMMATRIX viewmatrix[6] =
-		{
-			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }),
-			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { -1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }),
-			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }, { 0.0f,0.0f,-1.0f }),
-			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,-1.0f,0.0f }, { 0.0f,0.0f,1.0f }),
-			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,1.0f }, { 0.0f,1.0f,0.0f }),
-			dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-1.0f }, { 0.0f,1.0f,0.0f })
-		};
 	};
 }

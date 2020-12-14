@@ -1,6 +1,7 @@
 #pragma once
 #include "Bindable.h"
 #include "BufferResource.h"
+#include <optional>
 
 class Graphics;
 class Surface;
@@ -28,18 +29,21 @@ namespace Bind
 		UINT GetWidth() const noexcept;
 		UINT GetHeight() const noexcept;
 		void ChangeMipSlice(Graphics& gfx, UINT i) noxnd;
+		Surface ToSurface( Graphics& gfx ) const;
+		void Dumpy( Graphics& gfx,const std::string& path ) const;
 	private:
+		std::pair<Microsoft::WRL::ComPtr<ID3D11Texture2D>,D3D11_TEXTURE2D_DESC> MakeStaging( Graphics& gfx ) const;
 		void BindAsBuffer( Graphics& gfx,ID3D11DepthStencilView* pDepthStencilView ) noxnd;
 	protected:
-		RenderTarget( Graphics& gfx,ID3D11Texture2D* pTexture );
+		RenderTarget( Graphics& gfx,ID3D11Texture2D* pTexture,std::optional<UINT> face );
 		RenderTarget(Graphics& gfx, UINT width, UINT height, Type type = Type::Default);
 		UINT width;
 		UINT height;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetView;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetCubeView[6];
 		Type type;
 	public:
 		UINT targetIndex = 0;
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetView;
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetCubeView[6];
 		float _width = 256.0f;
 		float _height = 256.0f;
 	};
@@ -62,10 +66,8 @@ namespace Bind
 	// RT for Graphics to create RenderTarget for the back buffer
 	class OutputOnlyRenderTarget : public RenderTarget
 	{
-		friend Graphics;
 	public:
 		void Bind( Graphics& gfx ) noxnd override;
-	private:
-		OutputOnlyRenderTarget( Graphics& gfx,ID3D11Texture2D* pTexture );
+		OutputOnlyRenderTarget( Graphics& gfx,ID3D11Texture2D* pTexture,std::optional<UINT> face = {} );
 	};
 }
