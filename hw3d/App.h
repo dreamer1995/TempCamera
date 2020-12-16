@@ -27,7 +27,8 @@ private:
 	{
 		double time;
 		DirectX::XMMATRIX EVRotation;
-		float padding[3];
+		unsigned int lightCount;
+		float padding[2];
 	};
 	double time;
 	static std::unique_ptr<Bind::VertexConstantBuffer<CommonVar>> cVBuf;
@@ -51,8 +52,8 @@ private:
 	float speed_factor = 1.0f;
 	CameraContainer cameras;
 	std::shared_ptr<PointLight> pointLight;
-	std::shared_ptr<PointLight> pointLight2;
-	std::shared_ptr<PointLight> pointLight3;
+	//std::shared_ptr<PointLight> pointLight2;
+	//std::shared_ptr<PointLight> pointLight3;
 	TestCube cube{ wnd.Gfx(),4.0f };
 	TestCube cube2{ wnd.Gfx(),4.0f };
 	Model sponza{ wnd.Gfx(),"Models\\sponza\\sponza.obj",1.0f / 20.0f };
@@ -68,4 +69,5 @@ private:
 	//float flickerSpeed = 0.4f;
 	//float scanSpeed = 0.4f;
 	//float extentSpeed = 1.7f;
+	std::vector<std::shared_ptr<PointLight>> pCams;
 };

@@ -27,58 +27,67 @@ float4 main(PSIn IN) : SV_Target
     LightData litData;
     float shadowLevel = 1.0f;
 
-    EncodePLightData(litData, diffuseColor * diffuseIntensity, lightPos - gBuffer.worldPos, attConst, attLin, attQuad);
-    shadowLevel = CubeShadow(IN.shadowCubeWorldPos0, smap0);
-    if (shadowLevel != 0.0f)
+    if (lightCount > 0u)
     {
-        BxDF(litRes, gBuffer, litData, V, shadowLevel);
-        // scale by shadow level
-        litRes.diffuseLighting *= shadowLevel;
-        litRes.specularLighting *= shadowLevel;
+        shadowLevel = CubeShadow(IN.shadowCubeWorldPos0, smap0);
+        if (shadowLevel != 0.0f)
+        {
+            EncodePLightData(litData, diffuseColor * diffuseIntensity, lightPos - gBuffer.worldPos, attConst, attLin, attQuad);
+            BxDF(litRes, gBuffer, litData, V, shadowLevel);
+            // scale by shadow level
+            litRes.diffuseLighting *= shadowLevel;
+            litRes.specularLighting *= shadowLevel;
+        }
+        else
+        {
+            litRes.diffuseLighting = litRes.specularLighting = 0.0f;
+        }
+        diffuseLighting += litRes.diffuseLighting;
+        specularLighting += litRes.specularLighting;
     }
-    else
+    
+    if (lightCount > 1u)
     {
-        litRes.diffuseLighting = litRes.specularLighting = 0.0f;
+        shadowLevel = CubeShadow(IN.shadowCubeWorldPos1, smap1);
+        if (shadowLevel != 0.0f)
+        {
+            EncodePLightData(litData, diffuseColor2 * diffuseIntensity2, lightPos2 - gBuffer.worldPos, attConst2, attLin2, attQuad2);
+            BxDF(litRes, gBuffer, litData, V, shadowLevel);
+            // scale by shadow level
+            litRes.diffuseLighting *= shadowLevel;
+            litRes.specularLighting *= shadowLevel;
+        }
+        else
+        {
+            litRes.diffuseLighting = litRes.specularLighting = 0.0f;
+        }
+        diffuseLighting += litRes.diffuseLighting;
+        specularLighting += litRes.specularLighting;
     }
-    diffuseLighting += litRes.diffuseLighting;
-    specularLighting += litRes.specularLighting;
+    
+    if (lightCount > 2u)
+    {
+        shadowLevel = CubeShadow(IN.shadowCubeWorldPos2, smap2);
+        if (shadowLevel != 0.0f)
+        {
+            EncodePLightData(litData, diffuseColor3 * diffuseIntensity3, lightPos3 - gBuffer.worldPos, attConst3, attLin3, attQuad3);
+            BxDF(litRes, gBuffer, litData, V, shadowLevel);
+            // scale by shadow level
+            litRes.diffuseLighting *= shadowLevel;
+            litRes.specularLighting *= shadowLevel;
+        }
+        else
+        {
+            litRes.diffuseLighting = litRes.specularLighting = 0.0f;
+        }
+        diffuseLighting += litRes.diffuseLighting;
+        specularLighting += litRes.specularLighting;
+    }
 
-    EncodePLightData(litData, diffuseColor2* diffuseIntensity2, lightPos2 - gBuffer.worldPos, attConst2, attLin2, attQuad2);
-    shadowLevel = CubeShadow(IN.shadowCubeWorldPos1, smap1);
-    if (shadowLevel != 0.0f)
-    {
-        BxDF(litRes, gBuffer, litData, V, shadowLevel);
-        // scale by shadow level
-        litRes.diffuseLighting *= shadowLevel;
-        litRes.specularLighting *= shadowLevel;
-    }
-    else
-    {
-        litRes.diffuseLighting = litRes.specularLighting = 0.0f;
-    }
-    diffuseLighting += litRes.diffuseLighting;
-    specularLighting += litRes.specularLighting;
-
-    EncodePLightData(litData, diffuseColor3 * diffuseIntensity3, lightPos3 - gBuffer.worldPos, attConst3, attLin3, attQuad3);
-    shadowLevel = CubeShadow(IN.shadowCubeWorldPos2, smap2);
-    if (shadowLevel != 0.0f)
-    {
-        BxDF(litRes, gBuffer, litData, V, shadowLevel);
-        // scale by shadow level
-        litRes.diffuseLighting *= shadowLevel;
-        litRes.specularLighting *= shadowLevel;
-    }
-    else
-    {
-        litRes.diffuseLighting = litRes.specularLighting = 0.0f;
-    }
-    diffuseLighting += litRes.diffuseLighting;
-    specularLighting += litRes.specularLighting;
-
-    EncodeDLightData(litData, DdiffuseColor * DdiffuseIntensity, direction);
     shadowLevel = Shadow(IN.shadowHomoPos, smap);
     if (shadowLevel != 0.0f)
     {
+        EncodeDLightData(litData, DdiffuseColor * DdiffuseIntensity, direction);
         BxDF(litRes, gBuffer, litData, V, shadowLevel);
         // scale by shadow level
         litRes.diffuseLighting *= shadowLevel;

@@ -44,7 +44,7 @@ namespace Rgph
 			RegisterSource(DirectBindableSource<ShaderInputDepthStencil>::Make("dMap", shadowDepthStencil));
 			for (unsigned char i = 0; i < 3; i++)
 			{
-				if (i < 3)
+				if (i < 1)
 					shadowDepthStencils[i] = std::make_unique<ShaderInputDepthStencil>
 					(gfx, 1000u, 1000u, 15u + i, DepthStencil::Usage::ShadowDepth, DepthStencil::Type::Cube);
 				else

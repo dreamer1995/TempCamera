@@ -48,7 +48,7 @@ void DirectionalLight::SpawnControlWindow() noexcept
 		}
 
 		ImGui::Text("Intensity/Color");
-		ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.01f, 2.0f, "%.2f", 2);
+		ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.0f, 2.0f, "%.2f", 2);
 		ImGui::ColorPicker3("Diffuse Color", &cbData.diffuseColor.x);
 
 		if (ImGui::Button("Reset"))

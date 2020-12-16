@@ -21,8 +21,9 @@ App::App( const std::string& commandLine )
 {
 	//pointLight = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 16.5f, 3.0f, 1.5f }, 1.0f, 4u);
 	pointLight = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{  27.f + 9 * 0.666666f, 20.0f, 1.7f }, 1.0f, 4u);
-	pointLight2 = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 27.f - 9 * 0.333333f, 20.0f, 1.7f + 9 * 0.577350f }, 1.0f, 7u);
-	pointLight3 = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 27.f - 9 * 0.333333f, 20.0f, 1.7f - 9 * 0.577350f }, 1.0f, 8u);
+	//pointLight2 = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 27.f - 9 * 0.333333f, 20.0f, 1.7f + 9 * 0.577350f }, 1.0f, 7u);
+	//pointLight3 = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 27.f - 9 * 0.333333f, 20.0f, 1.7f - 9 * 0.577350f }, 1.0f, 8u);
+
 	time = 0;
 	cVBuf = std::make_unique<Bind::VertexConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cPBuf = std::make_unique<Bind::PixelConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
@@ -50,8 +51,8 @@ App::App( const std::string& commandLine )
 	skybox.LinkTechniques(rg);
 	cameras.LinkTechniques(rg);
 	pointLight->LinkTechniques( rg );
-	pointLight2->LinkTechniques(rg);
-	pointLight3->LinkTechniques(rg);
+	//pointLight2->LinkTechniques(rg);
+	//pointLight3->LinkTechniques(rg);
 	dLight.LinkTechniques(rg);
 
 	sponza.LinkTechniques( rg );
@@ -63,17 +64,16 @@ App::App( const std::string& commandLine )
 	// water.LinkTechniquesEX(rg);
 
 	//wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,400.0f ) );
-	std::vector<std::shared_ptr<PointLight>> pCams;
 	pCams.emplace_back(pointLight);
-	pCams.emplace_back(pointLight2);
-	pCams.emplace_back(pointLight3);
+	//pCams.emplace_back(pointLight2);
+	//pCams.emplace_back(pointLight3);
 	rg.BindShadowCamera(wnd.Gfx(), *dLight.ShareCamera(), pCams);
 }
 
 void App::DoFrame( float dt )
 {
 	time += dt;
-	UpdateCommonVar(wnd.Gfx(), { time,DirectX::XMMatrixRotationRollPitchYaw(skybox.pitch, skybox.yaw, skybox.roll) });
+	UpdateCommonVar(wnd.Gfx(), { time,DirectX::XMMatrixRotationRollPitchYaw(skybox.pitch, skybox.yaw, skybox.roll),(unsigned int)pCams.size() });
 	//wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().BeginFrame(0.1f, 0.1f, 0.1f);
 	//wnd.Gfx().SetCamera(cameras->GetMatrix() );
@@ -87,10 +87,10 @@ void App::DoFrame( float dt )
 
 	pointLight->Submit(Chan::main);
 	pointLight->Bind(wnd.Gfx());
-	pointLight2->Submit(Chan::main);
-	pointLight2->Bind(wnd.Gfx());
-	pointLight3->Submit(Chan::main);
-	pointLight3->Bind(wnd.Gfx());
+	//pointLight2->Submit(Chan::main);
+	//pointLight2->Bind(wnd.Gfx());
+	//pointLight3->Submit(Chan::main);
+	//pointLight3->Bind(wnd.Gfx());
 
 	dLight.Submit(Chan::main);
 	dLight.Bind(wnd.Gfx());
@@ -122,8 +122,8 @@ void App::DoFrame( float dt )
 	// imgui windows
 	cameras.SpawnWindow( wnd.Gfx() );
 	pointLight->SpawnControlWindow("PointLight");
-	pointLight2->SpawnControlWindow("PointLight2");
-	pointLight3->SpawnControlWindow("PointLight3");
+	//pointLight2->SpawnControlWindow("PointLight2");
+	//pointLight3->SpawnControlWindow("PointLight3");
 	dLight.SpawnControlWindow();
 	ShowImguiDemoWindow();
 	skybox.SpawnControlWindow(wnd.Gfx(), "SkyBox");

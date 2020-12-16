@@ -23,6 +23,7 @@ cbuffer Time : register(b2)//VS, DS, PS
 {
 	double time;
 	matrix EVRotation;
+	uint lightCount;
 };
 
 cbuffer DirectionalLightCBuf : register(b3)//PS
