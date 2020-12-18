@@ -29,7 +29,8 @@ float4 main(PSIn IN) : SV_Target
 
     if (lightCount > 0u)
     {
-        shadowLevel = CubeShadow(IN.shadowCubeWorldPos0, smap0);
+        //shadowLevel = CubeShadow(IN.shadowCubeWorldPos0, smap0);
+        shadowLevel = 1.0f;
         if (shadowLevel != 0.0f)
         {
             EncodePLightData(litData, diffuseColor * diffuseIntensity, lightPos - gBuffer.worldPos, attConst, attLin, attQuad);
@@ -84,7 +85,8 @@ float4 main(PSIn IN) : SV_Target
         specularLighting += litRes.specularLighting;
     }
 
-    shadowLevel = Shadow(IN.shadowHomoPos, smap);
+    //shadowLevel = Shadow(IN.shadowHomoPos, smap);
+    shadowLevel = 1.0f;
     if (shadowLevel != 0.0f)
     {
         EncodeDLightData(litData, DdiffuseColor * DdiffuseIntensity, direction);
@@ -107,7 +109,7 @@ float4 main(PSIn IN) : SV_Target
     // final color = attenuate diffuse & ambient by diffuse texture color and add specular reflected
     outCol = diffuseLighting + specularLighting + ambientLighting;
 
-    outCol = EncodeGammaWithAtten(outCol);
+    outCol = EncodeGamma(outCol);
 
     return float4(outCol, 1.0f);
 }
