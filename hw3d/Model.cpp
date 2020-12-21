@@ -10,7 +10,7 @@
 
 namespace dx = DirectX;
 
-Model::Model( Graphics& gfx,const std::string& pathString,const float scale )
+Model::Model(Graphics& gfx, const std::string& pathString, const float scale, bool IsPBR)
 {
 	Assimp::Importer imp;
 	const auto pScene = imp.ReadFile( pathString.c_str(),
@@ -31,7 +31,7 @@ Model::Model( Graphics& gfx,const std::string& pathString,const float scale )
 	materials.reserve( pScene->mNumMaterials );
 	for( size_t i = 0; i < pScene->mNumMaterials; i++ )
 	{
-		materials.emplace_back( gfx,*pScene->mMaterials[i],pathString );
+		materials.emplace_back(gfx, *pScene->mMaterials[i], pathString, IsPBR);
 	}
 
 	for( size_t i = 0; i < pScene->mNumMeshes; i++ )

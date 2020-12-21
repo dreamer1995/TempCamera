@@ -7,7 +7,7 @@
 #include <filesystem>
 #include "Channels.h"
 
-Material::Material( Graphics& gfx,const aiMaterial& material,const std::filesystem::path& path ) noxnd
+Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesystem::path& path, bool IsPBR) noxnd
 	:
 	modelPath( path.string() )
 {
@@ -18,6 +18,7 @@ Material::Material( Graphics& gfx,const aiMaterial& material,const std::filesyst
 		material.Get( AI_MATKEY_NAME,tempName );
 		name = tempName.C_Str();
 	}
+	if (!IsPBR)
 	// phong technique
 	{
 		Technique phong{ "Phong",Chan::main };
@@ -125,6 +126,94 @@ Material::Material( Graphics& gfx,const aiMaterial& material,const std::filesyst
 		}
 		phong.AddStep( std::move( step ) );
 		techniques.push_back( std::move( phong ) );
+	}
+	else
+	// PBR technique
+	{
+		Technique pbr{ "Phong",Chan::main };
+		Step step( "lambertian" );
+		std::string shaderCode = "PBR";
+		aiString texFileName;
+
+		// common (pre)
+		vtxLayout.Append( Dvtx::VertexLayout::Position3D );
+		vtxLayout.Append( Dvtx::VertexLayout::Normal );
+		Dcb::RawLayout pscLayout;
+
+		// diffuse
+		{
+			bool hasAlpha = false;
+			if( material.GetTexture( aiTextureType_DIFFUSE,0,&texFileName ) == aiReturn_SUCCESS )
+			{
+				vtxLayout.Append( Dvtx::VertexLayout::Texture2D );
+				auto tex = Texture::Resolve( gfx,rootPath + texFileName.C_Str() );
+				if( tex->HasAlpha() )
+				{
+					hasAlpha = true;
+					shaderCode += "Msk";
+				}
+				step.AddBindable( std::move( tex ) );
+				pscLayout.Add<Dcb::Bool>("useDiffuseMap");
+			}
+			pscLayout.Add<Dcb::Float3>( "materialColor" );
+			step.AddBindable( Rasterizer::Resolve( gfx,hasAlpha ) );
+		}
+		// specular
+		{
+			if( material.GetTexture( aiTextureType_SPECULAR,0,&texFileName ) == aiReturn_SUCCESS )
+			{
+				hasTexture = true;
+				vtxLayout.Append( Dvtx::VertexLayout::Texture2D );
+				auto tex = Texture::Resolve( gfx,rootPath + texFileName.C_Str(),1 );
+				//hasGlossAlpha = tex->HasAlpha();
+				step.AddBindable( std::move( tex ) );
+				pscLayout.Add<Dcb::Bool>( "useMetallicMap" );
+				pscLayout.Add<Dcb::Bool>( "useRoughnessMap" );
+			}
+			pscLayout.Add<Dcb::Float>( "metallic" );
+			pscLayout.Add<Dcb::Float>( "roughness" );
+		}
+		// normal
+		{
+			if( material.GetTexture( aiTextureType_NORMALS,0,&texFileName ) == aiReturn_SUCCESS )
+			{
+				hasTexture = true;
+				vtxLayout.Append( Dvtx::VertexLayout::Texture2D );
+				vtxLayout.Append( Dvtx::VertexLayout::Tangent );
+				vtxLayout.Append( Dvtx::VertexLayout::Binormal );
+				step.AddBindable( Texture::Resolve( gfx,rootPath + texFileName.C_Str(),2 ) );
+				pscLayout.Add<Dcb::Bool>( "useNormalMap" );
+				pscLayout.Add<Dcb::Float>( "normalMapWeight" );
+			}
+		}
+		// common (post)
+		{
+			step.AddBindable( std::make_shared<TransformCbuf>( gfx,0u ) );
+			auto pvs = VertexShader::Resolve( gfx,shaderCode + "_VS.cso" );
+			step.AddBindable( InputLayout::Resolve( gfx,vtxLayout,*pvs ) );
+			step.AddBindable( std::move( pvs ) );
+			step.AddBindable( PixelShader::Resolve( gfx,shaderCode + "_PS.cso" ) );
+			if( hasTexture )
+			{
+				step.AddBindable( Bind::Sampler::Resolve( gfx ) );
+			}
+			// PS material params (cbuf)
+			Dcb::Buffer buf{ std::move( pscLayout ) };
+			buf["materialColor"] = DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f };
+
+			buf["useMetallicMap"].SetIfExists( true );
+			buf["useRoughnessMap"].SetIfExists(true);
+
+			buf["metallic"] = 1.0f;
+			buf["roughness"] = 1.0f;
+
+			buf["useNormalMap"].SetIfExists( true );
+
+			buf["normalMapWeight"].SetIfExists( 1.0f );
+			step.AddBindable( std::make_unique<Bind::CachingPixelConstantBufferEx>( gfx,std::move( buf ),10u ) );
+		}
+		pbr.AddStep( std::move( step ) );
+		techniques.push_back( std::move(pbr) );
 	}
 	// outline technique
 	{
