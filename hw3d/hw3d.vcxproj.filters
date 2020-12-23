@@ -844,9 +844,6 @@
     <FxCompile Include="LightVectorData.hlsli">
       <Filter>Shader\Common</Filter>
     </FxCompile>
-    <FxCompile Include="PBRPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Phong_PS.hlsl">
       <Filter>Shader\Phong</Filter>
     </FxCompile>
@@ -958,9 +955,6 @@
     <FxCompile Include="PBRTexPS.hlsl">
       <Filter>Shader\PBR</Filter>
     </FxCompile>
-    <FxCompile Include="PBRVS.hlsl">
-      <Filter>Shader\PBR</Filter>
-    </FxCompile>
     <FxCompile Include="PrefilterMapPixelShader.hlsl">
       <Filter>Shader\PBR</Filter>
     </FxCompile>
@@ -975,6 +969,24 @@
     </FxCompile>
     <FxCompile Include="Shadow_VS.hlsl">
       <Filter>Shader\Miscellany</Filter>
+    </FxCompile>
+    <FxCompile Include="PBRPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PBR_PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PBR_VS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PBRMsk_PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PBRMsk_VS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PBRVS.hlsl">
+      <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

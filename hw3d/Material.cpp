@@ -130,7 +130,7 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 	else
 	// PBR technique
 	{
-		Technique pbr{ "Phong",Chan::main };
+		Technique pbr{ "PBR",Chan::main };
 		Step step( "lambertian" );
 		std::string shaderCode = "PBR";
 		aiString texFileName;
@@ -138,14 +138,23 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 		// common (pre)
 		vtxLayout.Append( Dvtx::VertexLayout::Position3D );
 		vtxLayout.Append( Dvtx::VertexLayout::Normal );
+		vtxLayout.Append(Dvtx::VertexLayout::Texture2D);
+		vtxLayout.Append(Dvtx::VertexLayout::Tangent);
+		vtxLayout.Append(Dvtx::VertexLayout::Binormal);
 		Dcb::RawLayout pscLayout;
 
+		pscLayout.Add<Dcb::Bool>("enableAbedoMap");
+		pscLayout.Add<Dcb::Bool>("enableMRAMap");
+		pscLayout.Add<Dcb::Bool>("enableNormalMap");
+		bool enableAbedoMap = false;
+		bool enableMRAMap = false;
+		bool enableNormalMap = false;
 		// diffuse
 		{
 			bool hasAlpha = false;
 			if( material.GetTexture( aiTextureType_DIFFUSE,0,&texFileName ) == aiReturn_SUCCESS )
 			{
-				vtxLayout.Append( Dvtx::VertexLayout::Texture2D );
+				enableAbedoMap = true;
 				auto tex = Texture::Resolve( gfx,rootPath + texFileName.C_Str() );
 				if( tex->HasAlpha() )
 				{
@@ -153,7 +162,7 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 					shaderCode += "Msk";
 				}
 				step.AddBindable( std::move( tex ) );
-				pscLayout.Add<Dcb::Bool>("useDiffuseMap");
+				pscLayout.Add<Dcb::Bool>("useAbedoMap");
 			}
 			pscLayout.Add<Dcb::Float3>( "materialColor" );
 			step.AddBindable( Rasterizer::Resolve( gfx,hasAlpha ) );
@@ -162,8 +171,7 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 		{
 			if( material.GetTexture( aiTextureType_SPECULAR,0,&texFileName ) == aiReturn_SUCCESS )
 			{
-				hasTexture = true;
-				vtxLayout.Append( Dvtx::VertexLayout::Texture2D );
+				enableMRAMap = true;
 				auto tex = Texture::Resolve( gfx,rootPath + texFileName.C_Str(),1 );
 				//hasGlossAlpha = tex->HasAlpha();
 				step.AddBindable( std::move( tex ) );
@@ -177,10 +185,7 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 		{
 			if( material.GetTexture( aiTextureType_NORMALS,0,&texFileName ) == aiReturn_SUCCESS )
 			{
-				hasTexture = true;
-				vtxLayout.Append( Dvtx::VertexLayout::Texture2D );
-				vtxLayout.Append( Dvtx::VertexLayout::Tangent );
-				vtxLayout.Append( Dvtx::VertexLayout::Binormal );
+				enableNormalMap = true;
 				step.AddBindable( Texture::Resolve( gfx,rootPath + texFileName.C_Str(),2 ) );
 				pscLayout.Add<Dcb::Bool>( "useNormalMap" );
 				pscLayout.Add<Dcb::Float>( "normalMapWeight" );
@@ -193,12 +198,16 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 			step.AddBindable( InputLayout::Resolve( gfx,vtxLayout,*pvs ) );
 			step.AddBindable( std::move( pvs ) );
 			step.AddBindable( PixelShader::Resolve( gfx,shaderCode + "_PS.cso" ) );
-			if( hasTexture )
-			{
-				step.AddBindable( Bind::Sampler::Resolve( gfx ) );
-			}
+			step.AddBindable( Bind::Sampler::Resolve( gfx ) );
+			step.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 1u));
 			// PS material params (cbuf)
 			Dcb::Buffer buf{ std::move( pscLayout ) };
+
+			buf["enableAbedoMap"] = enableAbedoMap;
+			buf["enableMRAMap"] = enableMRAMap;
+			buf["enableNormalMap"] = enableNormalMap;
+
+			buf["useAbedoMap"].SetIfExists(true);
 			buf["materialColor"] = DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f };
 
 			buf["useMetallicMap"].SetIfExists( true );
@@ -208,8 +217,8 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 			buf["roughness"] = 1.0f;
 
 			buf["useNormalMap"].SetIfExists( true );
-
 			buf["normalMapWeight"].SetIfExists( 1.0f );
+
 			step.AddBindable( std::make_unique<Bind::CachingPixelConstantBufferEx>( gfx,std::move( buf ),10u ) );
 		}
 		pbr.AddStep( std::move( step ) );
@@ -235,9 +244,9 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 
 			{
 				Dcb::RawLayout lay;
-				lay.Add<Dcb::Float3>( "materialColor" );
+				lay.Add<Dcb::Float3>( "outlineColor" );
 				auto buf = Dcb::Buffer( std::move( lay ) );
-				buf["materialColor"] = DirectX::XMFLOAT3{ 1.0f,0.4f,0.4f };
+				buf["outlineColor"] = DirectX::XMFLOAT3{ 1.0f,0.4f,0.4f };
 				draw.AddBindable( std::make_shared<Bind::CachingPixelConstantBufferEx>( gfx,buf,10u ) );
 			}
 

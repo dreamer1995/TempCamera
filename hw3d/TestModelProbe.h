@@ -45,9 +45,30 @@ public:
 		{
 			dcheck( ImGui::SliderFloat( tag( "offset" ),&v,0.0f,1.0f,"%.3f",2.5f ) );
 		}
+
 		if( auto v = buf["materialColor"]; v.Exists() )
 		{
 			dcheck( ImGui::ColorPicker3( tag( "Color" ),reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v)) ) );
+		}
+		if (auto v = buf["useAbedoMap"]; v.Exists())
+		{
+			dcheck(ImGui::Checkbox(tag("Abedo Map Enable"), &v));
+		}
+		if (auto v = buf["useMetallicMap"]; v.Exists())
+		{
+			dcheck(ImGui::Checkbox(tag("Metal. Map Enable"), &v));
+		}
+		if (auto v = buf["metallic"]; v.Exists())
+		{
+			dcheck(ImGui::SliderFloat(tag("Metallic"), &v, 0.0f, 1.0f, "%.3f", 1.0f));
+		}
+		if (auto v = buf["useRoughnessMap"]; v.Exists())
+		{
+			dcheck(ImGui::Checkbox(tag("Rough. Map Enable"), &v));
+		}
+		if (auto v = buf["roughness"]; v.Exists())
+		{
+			dcheck(ImGui::SliderFloat(tag("Roughness"), &v, 0.0f, 1.0f, "%.3f", 1.0f));
 		}
 		if( auto v = buf["specularColor"]; v.Exists() )
 		{
@@ -72,6 +93,11 @@ public:
 		if( auto v = buf["normalMapWeight"]; v.Exists() )
 		{
 			dcheck( ImGui::SliderFloat( tag( "Normal Map Weight" ),&v,0.0f,2.0f ) );
+		}
+
+		if (auto v = buf["outLineColor"]; v.Exists())
+		{
+			dcheck(ImGui::ColorPicker3(tag("OutLine Color"), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT3&>(v))));
 		}
 		return dirty;
 	}
