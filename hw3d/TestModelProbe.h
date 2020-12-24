@@ -60,7 +60,7 @@ public:
 		}
 		if (auto v = buf["metallic"]; v.Exists())
 		{
-			dcheck(ImGui::SliderFloat(tag("Metallic"), &v, 0.0f, 1.0f, "%.3f", 1.0f));
+			dcheck(ImGui::SliderFloat(tag("Metallic"), &v, 0.0f, 10.0f, "%.3f", 5.0f));
 		}
 		if (auto v = buf["useRoughnessMap"]; v.Exists())
 		{
@@ -68,7 +68,7 @@ public:
 		}
 		if (auto v = buf["roughness"]; v.Exists())
 		{
-			dcheck(ImGui::SliderFloat(tag("Roughness"), &v, 0.0f, 1.0f, "%.3f", 1.0f));
+			dcheck(ImGui::SliderFloat(tag("Roughness"), &v, 0.0f, 10.0f, "%.3f", 5.0f));
 		}
 		if( auto v = buf["specularColor"]; v.Exists() )
 		{

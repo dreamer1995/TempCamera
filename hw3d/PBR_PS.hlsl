@@ -17,8 +17,8 @@ cbuffer ObjectCBuf : register(b10)
 	float3 materialColor;
 	bool useMetallicMap;
 	bool useRoughnessMap;
-	float roughness;
 	float metallic;
+	float roughness;
 	bool useNormalMap;
 	float normalMapWeight;
 };

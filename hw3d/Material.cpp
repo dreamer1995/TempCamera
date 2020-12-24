@@ -162,8 +162,8 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 					shaderCode += "Msk";
 				}
 				step.AddBindable( std::move( tex ) );
-				pscLayout.Add<Dcb::Bool>("useAbedoMap");
 			}
+			pscLayout.Add<Dcb::Bool>("useAbedoMap");
 			pscLayout.Add<Dcb::Float3>( "materialColor" );
 			step.AddBindable( Rasterizer::Resolve( gfx,hasAlpha ) );
 		}
@@ -175,9 +175,9 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 				auto tex = Texture::Resolve( gfx,rootPath + texFileName.C_Str(),1 );
 				//hasGlossAlpha = tex->HasAlpha();
 				step.AddBindable( std::move( tex ) );
-				pscLayout.Add<Dcb::Bool>( "useMetallicMap" );
-				pscLayout.Add<Dcb::Bool>( "useRoughnessMap" );
 			}
+			pscLayout.Add<Dcb::Bool>("useMetallicMap");
+			pscLayout.Add<Dcb::Bool>("useRoughnessMap");
 			pscLayout.Add<Dcb::Float>( "metallic" );
 			pscLayout.Add<Dcb::Float>( "roughness" );
 		}
@@ -187,9 +187,9 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 			{
 				enableNormalMap = true;
 				step.AddBindable( Texture::Resolve( gfx,rootPath + texFileName.C_Str(),2 ) );
-				pscLayout.Add<Dcb::Bool>( "useNormalMap" );
-				pscLayout.Add<Dcb::Float>( "normalMapWeight" );
 			}
+			pscLayout.Add<Dcb::Bool>("useNormalMap");
+			pscLayout.Add<Dcb::Float>("normalMapWeight");
 		}
 		// common (post)
 		{
@@ -207,17 +207,17 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 			buf["enableMRAMap"] = enableMRAMap;
 			buf["enableNormalMap"] = enableNormalMap;
 
-			buf["useAbedoMap"].SetIfExists(true);
+			buf["useAbedoMap"] = enableAbedoMap;
 			buf["materialColor"] = DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f };
 
-			buf["useMetallicMap"].SetIfExists( true );
-			buf["useRoughnessMap"].SetIfExists(true);
+			buf["useMetallicMap"] = enableMRAMap;
+			buf["useRoughnessMap"] = enableMRAMap;
 
 			buf["metallic"] = 1.0f;
 			buf["roughness"] = 1.0f;
 
-			buf["useNormalMap"].SetIfExists( true );
-			buf["normalMapWeight"].SetIfExists( 1.0f );
+			buf["useNormalMap"] = enableNormalMap;
+			buf["normalMapWeight"] = 1.0f;
 
 			step.AddBindable( std::make_unique<Bind::CachingPixelConstantBufferEx>( gfx,std::move( buf ),10u ) );
 		}

@@ -19,8 +19,8 @@ App::App( const std::string& commandLine )
 	scriptCommander( TokenizeQuoted( commandLine ) ),
 	dLight(wnd.Gfx(), { 10.0f,9.0f,2.5f }, 63.0f * PI / 180.0f, 84.0f * PI / 180.0f)
 {
-	//pointLight = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 16.5f, 3.0f, 1.5f }, 1.0f, 4u);
-	pointLight = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{  27.f + 9 * 0.666666f, 20.0f, 1.7f }, 1.0f, 4u);
+	pointLight = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 16.5f, 9.0f, 1.5f }, 1.0f, 4u);
+	//pointLight = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{  27.f + 9 * 0.666666f, 20.0f, 1.7f }, 1.0f, 4u);
 	//pointLight2 = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 27.f - 9 * 0.333333f, 20.0f, 1.7f + 9 * 0.577350f }, 1.0f, 7u);
 	//pointLight3 = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 27.f - 9 * 0.333333f, 20.0f, 1.7f - 9 * 0.577350f }, 1.0f, 8u);
 

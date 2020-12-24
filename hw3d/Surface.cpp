@@ -104,7 +104,12 @@ const Surface::Color* Surface::GetBufferPtrConst() const noexcept
 Surface Surface::FromFile( const std::string& name )
 {
 	DirectX::ScratchImage scratch;
-	HRESULT hr = DirectX::LoadFromWICFile( ToWide( name ).c_str(),DirectX::WIC_FLAGS_IGNORE_SRGB,nullptr,scratch );
+	const std::filesystem::path path = name;
+	HRESULT hr;
+	if (path.extension().string() == ".tga")
+		hr = DirectX::LoadFromTGAFile(ToWide(name).c_str(), nullptr, scratch);
+	else
+		hr = DirectX::LoadFromWICFile( ToWide( name ).c_str(),DirectX::WIC_FLAGS_IGNORE_SRGB,nullptr,scratch );
 	if( FAILED( hr ) )
 	{
 		throw Surface::Exception( __LINE__,__FILE__,name,"Failed to load image",hr );
