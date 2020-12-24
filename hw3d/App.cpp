@@ -96,6 +96,7 @@ void App::DoFrame( float dt )
 	dLight.Bind(wnd.Gfx());
 
 	cameras.Submit(Chan::main);
+
 	cube.Submit(Chan::main);
 	cube2.Submit(Chan::main);
 	sponza.Submit(Chan::main);
