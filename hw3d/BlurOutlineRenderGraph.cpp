@@ -25,7 +25,7 @@ namespace Rgph
 		:
 		RenderGraph( gfx )
 	{
-		const std::filesystem::path envFile = "Images\\EpicQuadPanorama_CC+EV1.jpg";;
+		const std::filesystem::path envFile = "Images\\secluded_beach_4k.jpg";;
 		unsigned char checkCode = PreCalculateRenderGraph::CheckPreMapAvailability(envFile);
 		if (checkCode > 0)
 			prg = std::make_unique<Rgph::PreCalculateRenderGraph>(gfx, envFile, checkCode);
