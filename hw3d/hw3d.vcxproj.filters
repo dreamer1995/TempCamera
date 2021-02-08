@@ -381,6 +381,12 @@
     <ClCompile Include="cnpy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DeferredRenderGraph.cpp">
+      <Filter>Source Files\Jobber\Graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="GbufferPass.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -784,6 +790,12 @@
     </ClInclude>
     <ClInclude Include="Viewport.h">
       <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredRenderGraph.h">
+      <Filter>Header Files\Jobber\Graphlib</Filter>
+    </ClInclude>
+    <ClInclude Include="GbufferPass.h">
+      <Filter>Header Files\Jobber\Passlib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

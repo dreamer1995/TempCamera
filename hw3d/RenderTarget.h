@@ -18,7 +18,8 @@ namespace Bind
 			Default,
 			PreCalSimpleCube,
 			PreCalMipCube,
-			PreBRDFPlane
+			PreBRDFPlane,
+			GBuffer
 		};
 	public:
 		void BindAsBuffer( Graphics& gfx ) noxnd override;
@@ -41,6 +42,7 @@ namespace Bind
 		UINT height;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetView;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetCubeView[6];
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetGBufferView[8];
 		Type type;
 	public:
 		UINT targetIndex = 0;
@@ -61,6 +63,7 @@ namespace Bind
 		UINT shaderIndex;
 	public:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceGBufferViews[8];
 	};
 
 	// RT for Graphics to create RenderTarget for the back buffer

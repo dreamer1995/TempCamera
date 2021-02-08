@@ -23,7 +23,8 @@ namespace Bind
 		D3D11_TEXTURE2D_DESC textureDesc = {};
 		textureDesc.Width = s.GetWidth();
 		textureDesc.Height = s.GetHeight();
-		textureDesc.MipLevels = 0;
+		textureDesc.MipLevels
+			= 0;
 		textureDesc.ArraySize = 1;
 		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		textureDesc.SampleDesc.Count = 1;
@@ -67,24 +68,21 @@ namespace Bind
 	{
 		INFOMAN_NOHR( gfx );
 		assert(shaderIndex & 0b00001111);
-		for (unsigned char i = 0; i < 5; i++)
+		if (shaderIndex & 0b00001000)
 		{
-			if (shaderIndex & 0b00001000)
-			{
-				GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
-			}
-			if (shaderIndex & 0b00000100)
-			{
-				GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
-			}
-			if (shaderIndex & 0b00000010)
-			{
-				GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
-			}
-			if (shaderIndex & 0b00000001)
-			{
-				GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
-			}
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000100)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000010)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000001)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
 		}
 	}
 	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::string& path, UINT slot, UINT shaderIndex)

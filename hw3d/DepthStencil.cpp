@@ -180,11 +180,14 @@ namespace Bind
 		case Type::Cube:
 		{
 			for (unsigned char i = 0; i < 6; i++)
-				GetContext(gfx)->ClearDepthStencilView(pDepthStencilCubeView[i].Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
+			{
+				GFX_THROW_INFO_ONLY(
+					GetContext(gfx)->ClearDepthStencilView(pDepthStencilCubeView[i].Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u));
+			}		
 			break;
 		}
 		default:
-			GetContext( gfx )->ClearDepthStencilView( pDepthStencilView.Get(),D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1.0f,0u );
+			GFX_THROW_INFO_ONLY(GetContext( gfx )->ClearDepthStencilView( pDepthStencilView.Get(),D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1.0f,0u ));
 		}
 		
 	}

@@ -45,6 +45,13 @@ namespace Bind
 			textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS | D3D11_RESOURCE_MISC_TEXTURECUBE;
 			break;
 		}
+		case Type::GBuffer:
+		{
+			textureDesc.ArraySize = 8;
+			textureDesc.MipLevels = 1;
+			textureDesc.MiscFlags = 0;
+			break;
+		}
 		case Type::PreBRDFPlane:
 		{
 			textureDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
@@ -69,7 +76,6 @@ namespace Bind
 
 		switch (type)
 		{
-
 		case Type::PreCalMipCube:
 			rtvDesc.Texture2DArray.MipSlice = 0;
 		case Type::PreCalSimpleCube:
@@ -82,6 +88,20 @@ namespace Bind
 				rtvDesc.Texture2DArray.FirstArraySlice = i;
 				GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
 					pTexture.Get(), &rtvDesc, &pTargetCubeView[i]));
+			}
+			break;
+		}
+		case Type::GBuffer:
+		{
+			rtvDesc.Texture2DArray.MipSlice = 0;
+			rtvDesc.Texture2DArray.ArraySize = 1;
+			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+			for (unsigned char i = 0; i < 8; ++i)
+			{
+				// Create a render target view to the ith element.
+				rtvDesc.Texture2DArray.FirstArraySlice = i;
+				GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
+					pTexture.Get(), &rtvDesc, &pTargetGBufferView[i]));
 			}
 			break;
 		}
@@ -301,6 +321,13 @@ namespace Bind
 			GFX_THROW_INFO_ONLY(GetContext(gfx)->OMSetRenderTargets(1, pTargetCubeView[targetIndex].GetAddressOf(), pDepthStencilView));
 			break;
 		}
+		case Type::GBuffer:
+		{
+			vp.Width = (float)width;
+			vp.Height = (float)height;
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->OMSetRenderTargets(8, pTargetGBufferView->GetAddressOf(), pDepthStencilView));
+			break;
+		}
 		case Type::PreBRDFPlane:
 		default:
 		{
@@ -330,6 +357,14 @@ namespace Bind
 			{
 				GFX_THROW_INFO_ONLY(GetContext(gfx)->ClearRenderTargetView(pTargetCubeView[i].Get(), color.data()));
 			}			
+			break;
+		}
+		case Type::GBuffer:
+		{
+			for (unsigned char i = 0; i < 8; i++)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->ClearRenderTargetView(pTargetGBufferView[i].Get(), color.data()));
+			}
 			break;
 		}
 		case Type::PreBRDFPlane:
@@ -391,11 +426,13 @@ namespace Bind
 		case Type::PreCalMipCube:
 			srvDesc.TextureCube.MipLevels = 5;
 			break;
+		case Type::GBuffer:
 		default:
 			srvDesc.Texture2D.MipLevels = 1;
 		}
 
 		wrl::ComPtr<ID3D11Resource> pRes;
+		wrl::ComPtr<ID3D11Resource> pReses[8];
 
 		switch (type)
 		{
@@ -406,6 +443,15 @@ namespace Bind
 			pTargetCubeView[0]->GetResource(&pRes);
 			break;
 		}
+		case Type::GBuffer:
+		{
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			for (char i = 0; i < 8; i++)
+			{
+				pTargetGBufferView[i]->GetResource(&pReses[i]);
+			}
+			break;
+		}
 		case Type::PreBRDFPlane:
 			srvDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
 		default:
@@ -413,11 +459,25 @@ namespace Bind
 			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			pTargetView->GetResource(&pRes);
 		}
-		}
-
-		GFX_THROW_INFO(GetDevice( gfx )->CreateShaderResourceView(
+		}	
+		switch (type)
+		{
+		case Type::GBuffer:
+		{
+			for (char i = 0; i < 8; i++)
+			{
+				GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
+					pReses[i].Get(), &srvDesc, &pShaderResourceGBufferViews[i]
+				));
+			}	
+			break;
+		}		
+		default:
+			GFX_THROW_INFO(GetDevice( gfx )->CreateShaderResourceView(
 			pRes.Get(),&srvDesc,&pShaderResourceView
-		) );
+			) );
+		}
+		
 	}
 
 	Surface Bind::ShaderInputRenderTarget::ToSurface( Graphics& gfx ) const
@@ -603,7 +663,31 @@ namespace Bind
 	{
 		INFOMAN_NOHR( gfx );
 		assert(shaderIndex & 0b00001111);
-		for (unsigned char i = 0; i < 5; i++)
+		switch (type)
+		{
+		case Type::GBuffer:
+		{
+			for (unsigned char i = 0; i < 8; i++)
+			{
+				if (shaderIndex & 0b00001000)
+				{
+					GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot + i, 1, pShaderResourceView.GetAddressOf()));
+				}
+				if (shaderIndex & 0b00000100)
+				{
+					GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot + i, 1, pShaderResourceView.GetAddressOf()));
+				}															  
+				if (shaderIndex & 0b00000010)								  
+				{															  
+					GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot + i, 1, pShaderResourceView.GetAddressOf()));
+				}															  
+				if (shaderIndex & 0b00000001)								  
+				{															  
+					GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot + i, 1, pShaderResourceView.GetAddressOf()));
+				}
+			}
+		}
+		default:
 		{
 			if (shaderIndex & 0b00001000)
 			{
@@ -621,7 +705,9 @@ namespace Bind
 			{
 				GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
 			}
-		}	
+		}
+		}
+		
 	}
 	
 

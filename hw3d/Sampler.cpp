@@ -59,24 +59,21 @@ namespace Bind
 	{
 		INFOMAN_NOHR( gfx );
 		assert(shaderIndex & 0b00001111);
-		for (unsigned char i = 0; i < 5; i++)
+		if (shaderIndex & 0b00001000)
 		{
-			if (shaderIndex & 0b00001000)
-			{
-				GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetSamplers(slot, 1, pSampler.GetAddressOf()));
-			}
-			if (shaderIndex & 0b00000100)
-			{
-				GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetSamplers(slot, 1, pSampler.GetAddressOf()));
-			}
-			if (shaderIndex & 0b00000010)
-			{
-				GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetSamplers(slot, 1, pSampler.GetAddressOf()));
-			}
-			if (shaderIndex & 0b00000001)
-			{
-				GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetSamplers(slot, 1, pSampler.GetAddressOf()));
-			}
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetSamplers(slot, 1, pSampler.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000100)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetSamplers(slot, 1, pSampler.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000010)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetSamplers(slot, 1, pSampler.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000001)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetSamplers(slot, 1, pSampler.GetAddressOf()));
 		}
 	}
 	std::shared_ptr<Sampler> Sampler::Resolve(Graphics& gfx, Filter filter, Address address, UINT slot, UINT shaderIndex, float LODRange)

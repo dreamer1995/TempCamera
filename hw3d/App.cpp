@@ -37,16 +37,16 @@ App::App( const std::string& commandLine )
 
 	//D3DTestScratchPad( wnd );
 
-	cube.SetPos( { 10.0f,5.0f,6.0f } );
-	cube2.SetPos( { 10.0f,5.0f,14.0f } );
-	nano.SetRootTransform(
-		dx::XMMatrixRotationY( PI / 2.f ) *
-		dx::XMMatrixTranslation( 27.f,-0.56f,1.7f )
-	);
-	gobber.SetRootTransform(
-		dx::XMMatrixRotationY( -PI / 2.f ) *
-		dx::XMMatrixTranslation( -8.f,10.f,0.f )
-	);
+	//cube.SetPos( { 10.0f,5.0f,6.0f } );
+	//cube2.SetPos( { 10.0f,5.0f,14.0f } );
+	//nano.SetRootTransform(
+	//	dx::XMMatrixRotationY( PI / 2.f ) *
+	//	dx::XMMatrixTranslation( 27.f,-0.56f,1.7f )
+	//);
+	//gobber.SetRootTransform(
+	//	dx::XMMatrixRotationY( -PI / 2.f ) *
+	//	dx::XMMatrixTranslation( -8.f,10.f,0.f )
+	//);
 
 	skybox.LinkTechniques(rg);
 	cameras.LinkTechniques(rg);
@@ -56,10 +56,10 @@ App::App( const std::string& commandLine )
 	dLight.LinkTechniques(rg);
 
 	sponza.LinkTechniques( rg );
-	gobber.LinkTechniques( rg );
-	nano.LinkTechniques( rg );
-	cube.LinkTechniques(rg);
-	cube2.LinkTechniques(rg);
+	//gobber.LinkTechniques( rg );
+	//nano.LinkTechniques( rg );
+	//cube.LinkTechniques(rg);
+	//cube2.LinkTechniques(rg);
 	sphere.LinkTechniques(rg);
 	// water.LinkTechniquesEX(rg);
 
@@ -96,19 +96,19 @@ void App::DoFrame( float dt )
 	dLight.Bind(wnd.Gfx());
 
 	cameras.Submit(Chan::main);
-	cube.Submit(Chan::main);
-	cube2.Submit(Chan::main);
+	//cube.Submit(Chan::main);
+	//cube2.Submit(Chan::main);
 	sponza.Submit(Chan::main);
-	gobber.Submit(Chan::main);
-	nano.Submit(Chan::main);
+	//gobber.Submit(Chan::main);
+	//nano.Submit(Chan::main);
 	sphere.Submit(Chan::main);
 	//water.SubmitEX(Chan::waterPre, Chan::main);
 
 	sponza.Submit(Chan::shadow);
-	gobber.Submit(Chan::shadow);
-	nano.Submit(Chan::shadow);
-	cube.Submit(Chan::shadow);
-	cube2.Submit(Chan::shadow);
+	//gobber.Submit(Chan::shadow);
+	//nano.Submit(Chan::shadow);
+	//cube.Submit(Chan::shadow);
+	//cube2.Submit(Chan::shadow);
 	sphere.Submit(Chan::shadow);
 
 	rg.Execute( wnd.Gfx() );
@@ -132,10 +132,10 @@ void App::DoFrame( float dt )
 	static MP gobberProbe{ "Gobber" };
 	static MP nanoProbe{ "Nano" };
 	sponzeProbe.SpawnWindow(sponza);
-	gobberProbe.SpawnWindow(gobber);
-	nanoProbe.SpawnWindow(nano);
-	cube.SpawnControlWindow(wnd.Gfx(), "Cube 1");
-	cube2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
+	//gobberProbe.SpawnWindow(gobber);
+	//nanoProbe.SpawnWindow(nano);
+	//cube.SpawnControlWindow(wnd.Gfx(), "Cube 1");
+	//cube2.SpawnControlWindow(wnd.Gfx(), "Cube 2");
 	sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
 	//water.SpawnControlWindow(wnd.Gfx(), "Water");
 	rg.RenderWindows( wnd.Gfx() );

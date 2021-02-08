@@ -49,7 +49,7 @@ namespace Rgph
 					(gfx, 1000u, 1000u, 15u + i, DepthStencil::Usage::ShadowDepth, DepthStencil::Type::Cube);
 				else
 					shadowDepthStencils[i] = std::make_unique<ShaderInputDepthStencil>
-						(gfx, 1u, 1u, 15u + i, DepthStencil::Usage::ShadowDepth);
+						(gfx, 1u, 1u, 15u + i, DepthStencil::Usage::ShadowDepth, DepthStencil::Type::Cube);
 				SetDepthBuffer(shadowDepthStencils[i]);
 				RegisterSource(DirectBindableSource<ShaderInputDepthStencil>::Make("pMap" + std::to_string(i), shadowDepthStencils[i]));
 			}
