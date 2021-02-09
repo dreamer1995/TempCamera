@@ -110,7 +110,7 @@ void GetMaterialParameters(out MaterialShadingParameters matParams, PSIn IN)
 	float3 F0 = float3(0.04f, 0.04f, 0.04f);
 	matParams.metallic = saturate(metallic * depthR * depthmap);
 	matParams.AO = 1.0f;
-	matParams.specular = 1.0f;
+	matParams.specular = 0.5f;
 }
 
 #include "ForwardRenderingTrunk.hlsli"

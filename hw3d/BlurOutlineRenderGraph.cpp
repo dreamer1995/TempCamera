@@ -18,6 +18,8 @@
 #include "WaterPre.h"
 #include "LambertianPass_Water.h"
 #include "WaterCaustics.h"
+#include "GBufferPass.h"
+#include "DebugDeferredPass.h"
 
 namespace Rgph
 {
@@ -82,6 +84,10 @@ namespace Rgph
 			}
 		}
 		
+		{
+			auto pass = std::make_unique<GbufferPass>(gfx, "gbuffer", gfx.GetWidth(), gfx.GetHeight());
+			AppendPass(std::move(pass));
+		}
 		{
 			auto pass = std::make_unique<LambertianPass>( gfx,"lambertian" );
 			pass->SetSinkLinkage( "dShadowMap","shadowMap.dMap" );
@@ -228,7 +234,15 @@ namespace Rgph
 			pass->SetSinkLinkage( "depthStencil","vertical.depthStencil" );
 			AppendPass( std::move( pass ) );
 		}
-		SetSinkTarget( "backbuffer","wireframe.renderTarget" );
+		{
+			auto pass = std::make_unique<DebugDeferredPass>("debugDeferred", gfx);
+			pass->SetSinkLinkage("gbufferIn", "gbuffer.gbufferOut");
+			pass->SetSinkLinkage("depthIn", "gbuffer.depthOut");
+			pass->SetSinkLinkage("renderTarget", "wireframe.renderTarget");
+			pass->SetSinkLinkage("depthStencil", "wireframe.depthStencil");
+			AppendPass(std::move(pass));
+		}
+		SetSinkTarget( "backbuffer","debugDeferred.renderTarget" );
 		Finalize();
 	}
 
@@ -467,6 +481,7 @@ namespace Rgph
 		dynamic_cast<EnvironmentPass&>(FindPassByName("environment")).BindMainCamera(cam);
 		dynamic_cast<LambertianPass&>(FindPassByName( "lambertian" )).BindMainCamera( cam );
 		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindMainCamera(cam);
+		dynamic_cast<GbufferPass&>(FindPassByName("gbuffer")).BindMainCamera(cam);
 	}
 	void Rgph::BlurOutlineRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams)
 	{

@@ -19,7 +19,7 @@ namespace Rgph
 class Model
 {
 public:
-	Model(Graphics& gfx, const std::string& pathString, float scale = 1.0f, bool IsPBR = false);
+	Model(Graphics& gfx, const std::string& pathString, float scale = 1.0f, bool IsPBR = false, bool IsDeferred = false);
 	void Submit( size_t channels ) const noxnd;
 	void SetRootTransform( DirectX::FXMMATRIX tf ) noexcept;
 	void Accept( class ModelProbe& probe );

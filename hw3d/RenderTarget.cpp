@@ -47,7 +47,7 @@ namespace Bind
 		}
 		case Type::GBuffer:
 		{
-			textureDesc.ArraySize = 8;
+			textureDesc.ArraySize = 1;
 			textureDesc.MipLevels = 1;
 			textureDesc.MiscFlags = 0;
 			break;
@@ -65,9 +65,26 @@ namespace Bind
 		}
 
 		wrl::ComPtr<ID3D11Texture2D> pTexture;
-		GFX_THROW_INFO( GetDevice( gfx )->CreateTexture2D(
+		wrl::ComPtr<ID3D11Texture2D> pTextures[8];
+		switch (type)
+		{
+		case Type::GBuffer:
+		{
+			for (unsigned char i = 0; i < 8; ++i)
+			{
+				GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+					&textureDesc, nullptr, &pTextures[i]
+				));
+			}
+			break;
+		}
+		default:
+		{
+			GFX_THROW_INFO( GetDevice( gfx )->CreateTexture2D(
 			&textureDesc,nullptr,&pTexture
-		) );
+			) );
+		}
+		}
 
 		// create the target view on the texture
 		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
@@ -95,13 +112,12 @@ namespace Bind
 		{
 			rtvDesc.Texture2DArray.MipSlice = 0;
 			rtvDesc.Texture2DArray.ArraySize = 1;
-			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			for (unsigned char i = 0; i < 8; ++i)
 			{
 				// Create a render target view to the ith element.
-				rtvDesc.Texture2DArray.FirstArraySlice = i;
 				GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
-					pTexture.Get(), &rtvDesc, &pTargetGBufferView[i]));
+					pTextures[i].Get(), &rtvDesc, &pTargetGBufferView[i]));
 			}
 			break;
 		}
@@ -473,11 +489,10 @@ namespace Bind
 			break;
 		}		
 		default:
-			GFX_THROW_INFO(GetDevice( gfx )->CreateShaderResourceView(
-			pRes.Get(),&srvDesc,&pShaderResourceView
-			) );
-		}
-		
+		GFX_THROW_INFO(GetDevice( gfx )->CreateShaderResourceView(
+		pRes.Get(),&srvDesc,&pShaderResourceView
+		) );
+		}	
 	}
 
 	Surface Bind::ShaderInputRenderTarget::ToSurface( Graphics& gfx ) const
@@ -667,25 +682,23 @@ namespace Bind
 		{
 		case Type::GBuffer:
 		{
-			for (unsigned char i = 0; i < 8; i++)
+			if (shaderIndex & 0b00001000)
 			{
-				if (shaderIndex & 0b00001000)
-				{
-					GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot + i, 1, pShaderResourceView.GetAddressOf()));
-				}
-				if (shaderIndex & 0b00000100)
-				{
-					GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot + i, 1, pShaderResourceView.GetAddressOf()));
-				}															  
-				if (shaderIndex & 0b00000010)								  
-				{															  
-					GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot + i, 1, pShaderResourceView.GetAddressOf()));
-				}															  
-				if (shaderIndex & 0b00000001)								  
-				{															  
-					GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot + i, 1, pShaderResourceView.GetAddressOf()));
-				}
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 8, pShaderResourceGBufferViews->GetAddressOf()));
 			}
+			if (shaderIndex & 0b00000100)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 8, pShaderResourceGBufferViews->GetAddressOf()));
+			}															  
+			if (shaderIndex & 0b00000010)								  
+			{															  
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 8, pShaderResourceGBufferViews->GetAddressOf()));
+			}															  
+			if (shaderIndex & 0b00000001)								  
+			{															  
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 8, pShaderResourceGBufferViews->GetAddressOf()));
+			}
+			break;
 		}
 		default:
 		{
@@ -706,8 +719,7 @@ namespace Bind
 				GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
 			}
 		}
-		}
-		
+		}	
 	}
 	
 

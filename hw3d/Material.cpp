@@ -7,7 +7,7 @@
 #include <filesystem>
 #include "Channels.h"
 
-Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesystem::path& path, bool IsPBR) noxnd
+Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesystem::path& path, bool IsPBR, bool IsDeferred) noxnd
 	:
 	modelPath( path.string() )
 {
@@ -130,99 +130,196 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 	else
 	// PBR technique
 	{
-		Technique pbr{ "PBR",Chan::main };
-		Step step( "lambertian" );
-		std::string shaderCode = "PBR";
-		aiString texFileName;
-
-		// common (pre)
-		vtxLayout.Append( Dvtx::VertexLayout::Position3D );
-		vtxLayout.Append( Dvtx::VertexLayout::Normal );
-		vtxLayout.Append(Dvtx::VertexLayout::Texture2D);
-		vtxLayout.Append(Dvtx::VertexLayout::Tangent);
-		vtxLayout.Append(Dvtx::VertexLayout::Binormal);
-		Dcb::RawLayout pscLayout;
-
-		pscLayout.Add<Dcb::Bool>("enableAbedoMap");
-		pscLayout.Add<Dcb::Bool>("enableMRAMap");
-		pscLayout.Add<Dcb::Bool>("enableNormalMap");
-		bool enableAbedoMap = false;
-		bool enableMRAMap = false;
-		bool enableNormalMap = false;
-		// diffuse
 		{
-			bool hasAlpha = false;
-			if( material.GetTexture( aiTextureType_DIFFUSE,0,&texFileName ) == aiReturn_SUCCESS )
+			Technique pbr{ "PBR",Chan::main };
+			Step step( "lambertian" );
+			std::string shaderCode = "PBR";
+			aiString texFileName;
+
+			// common (pre)
+			vtxLayout.Append( Dvtx::VertexLayout::Position3D );
+			vtxLayout.Append( Dvtx::VertexLayout::Normal );
+			vtxLayout.Append(Dvtx::VertexLayout::Texture2D);
+			vtxLayout.Append(Dvtx::VertexLayout::Tangent);
+			vtxLayout.Append(Dvtx::VertexLayout::Binormal);
+			Dcb::RawLayout pscLayout;
+
+			pscLayout.Add<Dcb::Bool>("enableAbedoMap");
+			pscLayout.Add<Dcb::Bool>("enableMRAMap");
+			pscLayout.Add<Dcb::Bool>("enableNormalMap");
+			bool enableAbedoMap = false;
+			bool enableMRAMap = false;
+			bool enableNormalMap = false;
+			// diffuse
 			{
-				enableAbedoMap = true;
-				auto tex = Texture::Resolve( gfx,rootPath + texFileName.C_Str() );
-				if( tex->HasAlpha() )
+				bool hasAlpha = false;
+				if( material.GetTexture( aiTextureType_DIFFUSE,0,&texFileName ) == aiReturn_SUCCESS )
 				{
-					hasAlpha = true;
-					shaderCode += "Msk";
+					enableAbedoMap = true;
+					auto tex = Texture::Resolve( gfx,rootPath + texFileName.C_Str() );
+					if( tex->HasAlpha() )
+					{
+						hasAlpha = true;
+						shaderCode += "Msk";
+					}
+					step.AddBindable( std::move( tex ) );
 				}
-				step.AddBindable( std::move( tex ) );
+				pscLayout.Add<Dcb::Bool>("useAbedoMap");
+				pscLayout.Add<Dcb::Float3>( "materialColor" );
+				step.AddBindable( Rasterizer::Resolve( gfx,hasAlpha ) );
 			}
-			pscLayout.Add<Dcb::Bool>("useAbedoMap");
-			pscLayout.Add<Dcb::Float3>( "materialColor" );
-			step.AddBindable( Rasterizer::Resolve( gfx,hasAlpha ) );
-		}
-		// specular
-		{
-			if( material.GetTexture( aiTextureType_SPECULAR,0,&texFileName ) == aiReturn_SUCCESS )
+			// specular
 			{
-				enableMRAMap = true;
-				auto tex = Texture::Resolve( gfx,rootPath + texFileName.C_Str(),1 );
-				//hasGlossAlpha = tex->HasAlpha();
-				step.AddBindable( std::move( tex ) );
+				if( material.GetTexture( aiTextureType_SPECULAR,0,&texFileName ) == aiReturn_SUCCESS )
+				{
+					enableMRAMap = true;
+					auto tex = Texture::Resolve( gfx,rootPath + texFileName.C_Str(),1 );
+					//hasGlossAlpha = tex->HasAlpha();
+					step.AddBindable( std::move( tex ) );
+				}
+				pscLayout.Add<Dcb::Bool>("useMetallicMap");
+				pscLayout.Add<Dcb::Bool>("useRoughnessMap");
+				pscLayout.Add<Dcb::Float>( "metallic" );
+				pscLayout.Add<Dcb::Float>( "roughness" );
 			}
-			pscLayout.Add<Dcb::Bool>("useMetallicMap");
-			pscLayout.Add<Dcb::Bool>("useRoughnessMap");
-			pscLayout.Add<Dcb::Float>( "metallic" );
-			pscLayout.Add<Dcb::Float>( "roughness" );
-		}
-		// normal
-		{
-			if( material.GetTexture( aiTextureType_NORMALS,0,&texFileName ) == aiReturn_SUCCESS )
+			// normal
 			{
-				enableNormalMap = true;
-				step.AddBindable( Texture::Resolve( gfx,rootPath + texFileName.C_Str(),2 ) );
+				if( material.GetTexture( aiTextureType_NORMALS,0,&texFileName ) == aiReturn_SUCCESS )
+				{
+					enableNormalMap = true;
+					step.AddBindable( Texture::Resolve( gfx,rootPath + texFileName.C_Str(),2 ) );
+				}
+				pscLayout.Add<Dcb::Bool>("useNormalMap");
+				pscLayout.Add<Dcb::Float>("normalMapWeight");
 			}
-			pscLayout.Add<Dcb::Bool>("useNormalMap");
-			pscLayout.Add<Dcb::Float>("normalMapWeight");
+			// common (post)
+			{
+				step.AddBindable( std::make_shared<TransformCbuf>( gfx,0u ) );
+				auto pvs = VertexShader::Resolve( gfx,shaderCode + "_VS.cso" );
+				step.AddBindable( InputLayout::Resolve( gfx,vtxLayout,*pvs ) );
+				step.AddBindable( std::move( pvs ) );
+				step.AddBindable( PixelShader::Resolve( gfx,shaderCode + "_PS.cso" ) );
+				step.AddBindable( Bind::Sampler::Resolve( gfx ) );
+				step.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 1u));
+				// PS material params (cbuf)
+				Dcb::Buffer buf{ std::move( pscLayout ) };
+
+				buf["enableAbedoMap"] = enableAbedoMap;
+				buf["enableMRAMap"] = enableMRAMap;
+				buf["enableNormalMap"] = enableNormalMap;
+
+				buf["useAbedoMap"] = enableAbedoMap;
+				buf["materialColor"] = DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f };
+
+				buf["useMetallicMap"] = enableMRAMap;
+				buf["useRoughnessMap"] = enableMRAMap;
+
+				buf["metallic"] = 1.0f;
+				buf["roughness"] = 1.0f;
+
+				buf["useNormalMap"] = enableNormalMap;
+				buf["normalMapWeight"] = 1.0f;
+
+				step.AddBindable( std::make_unique<Bind::CachingPixelConstantBufferEx>( gfx,std::move( buf ),10u ) );
+			}
+			pbr.AddStep( std::move( step ) );
+			techniques.push_back( std::move(pbr) );
 		}
-		// common (post)
 		{
-			step.AddBindable( std::make_shared<TransformCbuf>( gfx,0u ) );
-			auto pvs = VertexShader::Resolve( gfx,shaderCode + "_VS.cso" );
-			step.AddBindable( InputLayout::Resolve( gfx,vtxLayout,*pvs ) );
-			step.AddBindable( std::move( pvs ) );
-			step.AddBindable( PixelShader::Resolve( gfx,shaderCode + "_PS.cso" ) );
-			step.AddBindable( Bind::Sampler::Resolve( gfx ) );
-			step.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 1u));
-			// PS material params (cbuf)
-			Dcb::Buffer buf{ std::move( pscLayout ) };
+			Technique pbr{ "DeferredPBR",Chan::gbuffer };
+			Step step("gbuffer");
+			std::string shaderCode = "PBR";
+			aiString texFileName;
 
-			buf["enableAbedoMap"] = enableAbedoMap;
-			buf["enableMRAMap"] = enableMRAMap;
-			buf["enableNormalMap"] = enableNormalMap;
+			// common (pre)
+			vtxLayout.Append(Dvtx::VertexLayout::Position3D);
+			vtxLayout.Append(Dvtx::VertexLayout::Normal);
+			vtxLayout.Append(Dvtx::VertexLayout::Texture2D);
+			vtxLayout.Append(Dvtx::VertexLayout::Tangent);
+			vtxLayout.Append(Dvtx::VertexLayout::Binormal);
+			Dcb::RawLayout pscLayout;
 
-			buf["useAbedoMap"] = enableAbedoMap;
-			buf["materialColor"] = DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f };
+			pscLayout.Add<Dcb::Bool>("enableAbedoMap");
+			pscLayout.Add<Dcb::Bool>("enableMRAMap");
+			pscLayout.Add<Dcb::Bool>("enableNormalMap");
+			bool enableAbedoMap = false;
+			bool enableMRAMap = false;
+			bool enableNormalMap = false;
+			// diffuse
+			{
+				bool hasAlpha = false;
+				if (material.GetTexture(aiTextureType_DIFFUSE, 0, &texFileName) == aiReturn_SUCCESS)
+				{
+					enableAbedoMap = true;
+					auto tex = Texture::Resolve(gfx, rootPath + texFileName.C_Str());
+					if (tex->HasAlpha())
+					{
+						hasAlpha = true;
+						shaderCode += "Msk";
+					}
+					step.AddBindable(std::move(tex));
+				}
+				pscLayout.Add<Dcb::Bool>("useAbedoMap");
+				pscLayout.Add<Dcb::Float3>("materialColor");
+				step.AddBindable(Rasterizer::Resolve(gfx, hasAlpha));
+			}
+			// specular
+			{
+				if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS)
+				{
+					enableMRAMap = true;
+					auto tex = Texture::Resolve(gfx, rootPath + texFileName.C_Str(), 1);
+					//hasGlossAlpha = tex->HasAlpha();
+					step.AddBindable(std::move(tex));
+				}
+				pscLayout.Add<Dcb::Bool>("useMetallicMap");
+				pscLayout.Add<Dcb::Bool>("useRoughnessMap");
+				pscLayout.Add<Dcb::Float>("metallic");
+				pscLayout.Add<Dcb::Float>("roughness");
+			}
+			// normal
+			{
+				if (material.GetTexture(aiTextureType_NORMALS, 0, &texFileName) == aiReturn_SUCCESS)
+				{
+					enableNormalMap = true;
+					step.AddBindable(Texture::Resolve(gfx, rootPath + texFileName.C_Str(), 2));
+				}
+				pscLayout.Add<Dcb::Bool>("useNormalMap");
+				pscLayout.Add<Dcb::Float>("normalMapWeight");
+			}
+			// common (post)
+			{
+				step.AddBindable(std::make_shared<TransformCbuf>(gfx, 0u));
+				auto pvs = VertexShader::Resolve(gfx, shaderCode + "NoShadow_VS.cso");
+				step.AddBindable(InputLayout::Resolve(gfx, vtxLayout, *pvs));
+				step.AddBindable(std::move(pvs));
+				step.AddBindable(PixelShader::Resolve(gfx, shaderCode + "EncodeToGbuffer.cso"));
+				step.AddBindable(Bind::Sampler::Resolve(gfx));
+				step.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 1u));
+				// PS material params (cbuf)
+				Dcb::Buffer buf{ std::move(pscLayout) };
 
-			buf["useMetallicMap"] = enableMRAMap;
-			buf["useRoughnessMap"] = enableMRAMap;
+				buf["enableAbedoMap"] = enableAbedoMap;
+				buf["enableMRAMap"] = enableMRAMap;
+				buf["enableNormalMap"] = enableNormalMap;
 
-			buf["metallic"] = 1.0f;
-			buf["roughness"] = 1.0f;
+				buf["useAbedoMap"] = enableAbedoMap;
+				buf["materialColor"] = DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f };
 
-			buf["useNormalMap"] = enableNormalMap;
-			buf["normalMapWeight"] = 1.0f;
+				buf["useMetallicMap"] = enableMRAMap;
+				buf["useRoughnessMap"] = enableMRAMap;
 
-			step.AddBindable( std::make_unique<Bind::CachingPixelConstantBufferEx>( gfx,std::move( buf ),10u ) );
+				buf["metallic"] = 1.0f;
+				buf["roughness"] = 1.0f;
+
+				buf["useNormalMap"] = enableNormalMap;
+				buf["normalMapWeight"] = 1.0f;
+
+				step.AddBindable(std::make_unique<Bind::CachingPixelConstantBufferEx>(gfx, std::move(buf), 10u));
+			}
+			pbr.AddStep(std::move(step));
+			techniques.push_back(std::move(pbr));	
 		}
-		pbr.AddStep( std::move( step ) );
-		techniques.push_back( std::move(pbr) );
 	}
 	// outline technique
 	{

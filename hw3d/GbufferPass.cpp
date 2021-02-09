@@ -13,33 +13,29 @@
 
 namespace Rgph
 {
-	class GbufferPass : public RenderQueuePass
+	GbufferPass::GbufferPass(Graphics& gfx, std::string name, unsigned int fullWidth, unsigned int fullHeight)
+		:
+		RenderQueuePass(std::move(name))
 	{
-	public:
-		GbufferPass(Graphics& gfx, std::string name, unsigned int fullWidth, unsigned int fullHeight)
-			:
-			RenderQueuePass(std::move(name))
-		{
-			using namespace Bind;
-			renderTarget = std::make_unique<ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0, RenderTarget::Type::GBuffer);
-			RegisterSink(DirectBufferSink<DepthStencil>::Make("depthStencil", depthStencil));
-			AddBind(VertexShader::Resolve(gfx, "Solid_VS.cso"));
-			AddBind(PixelShader::Resolve(gfx, "Solid_PS.cso"));
-			AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));
-			AddBind(Blender::Resolve(gfx, false));
-			RegisterSource(DirectBindableSource<Bind::RenderTarget>::Make("scratchOut", renderTarget));
-			RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
-		}
-		void BindMainCamera(const Camera& cam) noexcept
-		{
-			pMainCamera = &cam;
-		}
-		void Execute(Graphics& gfx) const noxnd override
-		{
-			assert(pMainCamera);
-			pMainCamera->BindToGraphics(gfx);
-			renderTarget->Clear(gfx);
-			RenderQueuePass::Execute(gfx);
-		}
-	};
+		using namespace Bind;
+		renderTarget = std::make_unique<ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u, RenderTarget::Type::GBuffer);
+		depthStencilRT = std::make_unique<ShaderInputDepthStencil>(gfx, fullWidth, fullHeight, 8u, DepthStencil::Usage::ShadowDepth);
+		depthStencil = depthStencilRT;
+		AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));
+		AddBind(Blender::Resolve(gfx, false));
+		RegisterSource(DirectBindableSource<RenderTarget>::Make("gbufferOut", renderTarget));
+		RegisterSource(DirectBindableSource<ShaderInputDepthStencil>::Make("depthOut", depthStencilRT));
+	}
+	void GbufferPass::BindMainCamera(const Camera& cam) noexcept
+	{
+		pMainCamera = &cam;
+	}
+	void GbufferPass::Execute(Graphics& gfx) const noxnd
+	{
+		assert(pMainCamera);
+		pMainCamera->BindToGraphics(gfx);
+		renderTarget->Clear(gfx);
+		depthStencil->Clear(gfx);
+		RenderQueuePass::Execute(gfx);
+	}
 }

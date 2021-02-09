@@ -55,7 +55,7 @@ void GetMaterialParameters(out MaterialShadingParameters matParams, PSIn IN)
 	matParams.roughness = roughness;
 	matParams.metallic = metallic;
 	matParams.AO = 1.0f;
-	matParams.specular = 1.0f;
+	matParams.specular = 0.5f;
 }
 
 #include "ForwardRenderingTrunk.hlsli"

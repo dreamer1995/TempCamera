@@ -112,6 +112,9 @@ void App::DoFrame( float dt )
 	//cube2.Submit(Chan::shadow);
 	sphere.Submit(Chan::shadow);
 
+	sponza.Submit(Chan::gbuffer);
+	sphere.Submit(Chan::gbuffer);
+
 	rg.Execute( wnd.Gfx() );
 	
 	//if (savingDepth)

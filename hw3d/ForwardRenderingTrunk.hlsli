@@ -29,7 +29,9 @@ float4 main(PSIn IN) : SV_Target
 
     if (lightCount > 0u)
     {
+    #ifndef NoShadow
         shadowLevel = CubeShadow(IN.shadowCubeWorldPos0, smap0);
+    #endif
         //shadowLevel = 1.0f;
         if (shadowLevel != 0.0f)
         {
@@ -49,7 +51,9 @@ float4 main(PSIn IN) : SV_Target
     
     if (lightCount > 1u)
     {
+    #ifndef NoShadow
         shadowLevel = CubeShadow(IN.shadowCubeWorldPos1, smap1);
+    #endif
         if (shadowLevel != 0.0f)
         {
             EncodePLightData(litData, diffuseColor2 * diffuseIntensity2, lightPos2 - gBuffer.worldPos, attConst2, attLin2, attQuad2);
@@ -68,7 +72,9 @@ float4 main(PSIn IN) : SV_Target
     
     if (lightCount > 2u)
     {
+    #ifndef NoShadow
         shadowLevel = CubeShadow(IN.shadowCubeWorldPos2, smap2);
+    #endif
         if (shadowLevel != 0.0f)
         {
             EncodePLightData(litData, diffuseColor3 * diffuseIntensity3, lightPos3 - gBuffer.worldPos, attConst3, attLin3, attQuad3);
@@ -85,7 +91,9 @@ float4 main(PSIn IN) : SV_Target
         specularLighting += litRes.specularLighting;
     }
 
+#ifndef NoShadow
     shadowLevel = Shadow(IN.shadowHomoPos, smap);
+#endif
     //shadowLevel = 1.0f;
     if (shadowLevel != 0.0f)
     {

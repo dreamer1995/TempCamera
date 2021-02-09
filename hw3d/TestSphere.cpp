@@ -67,6 +67,50 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 		AddTechnique(std::move(shade));
 	}
 	{
+		Technique shade("gbufferDraw", Chan::gbuffer);
+		{
+			Step only("gbuffer");
+
+			/*only.AddBindable(Texture::Resolve(gfx, "Images\\brickwall.jpg"));
+			only.AddBindable(Texture::Resolve(gfx, "Images\\brickwall_normal.jpg", 2u));*/
+			only.AddBindable(Sampler::Resolve(gfx));
+			only.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 1u));
+
+			auto pvs = VertexShader::Resolve(gfx, "PBRNoShadow_VS.cso");
+			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *pvs));
+			only.AddBindable(std::move(pvs));
+
+			only.AddBindable(PixelShader::Resolve(gfx, "PBREncodeToGbuffer.cso"));
+
+			Dcb::RawLayout lay;
+			lay.Add<Dcb::Bool>("enableAbedoMap");
+			lay.Add<Dcb::Bool>("enableMRAMap");
+			lay.Add<Dcb::Bool>("enableNormalMap");
+			lay.Add<Dcb::Bool>("useAbedoMap");
+			lay.Add<Dcb::Float3>("baseColor");
+			lay.Add<Dcb::Bool>("useMetallicMap");
+			lay.Add<Dcb::Bool>("useRoughnessMap");
+			lay.Add<Dcb::Float>("roughness");
+			lay.Add<Dcb::Float>("metallic");
+			lay.Add<Dcb::Bool>("useNormalMap");
+			lay.Add<Dcb::Float>("normalMapWeight");
+			auto buf = Dcb::Buffer(std::move(lay));
+			buf["baseColor"] = dx::XMFLOAT3{ 1.0f,1.0f,1.0f };
+			buf["roughness"] = 0.05f;
+			buf["metallic"] = 0.0f;
+			buf["useNormalMap"] = false;
+			buf["normalMapWeight"] = 1.0f;
+			only.AddBindable(std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u));
+
+			only.AddBindable(Rasterizer::Resolve(gfx, false));
+
+			only.AddBindable(tcb);
+
+			shade.AddStep(std::move(only));
+		}
+		AddTechnique(std::move(shade));
+	}
+	{
 		Technique outline("Outline", Chan::main, false);
 		{
 			Step mask("outlineMask");

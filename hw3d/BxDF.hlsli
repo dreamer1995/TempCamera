@@ -22,7 +22,7 @@ void PBRShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData,
 	const float3 halfDir = normalize(litData.dirToL + V);
 	const float NdotH = max(dot(gBuffer.normal, halfDir), 0.0f);
 
-	float3 F0 = float3(0.04f, 0.04f, 0.04f);
+	float3 F0 = float3(0.08f, 0.08f, 0.08f) * gBuffer.specular;
 	F0 = lerp(F0, gBuffer.baseColor, gBuffer.metallic);
 
 	const float NDF = DistributionGGX(NdotH, gBuffer.roughness);
@@ -44,7 +44,7 @@ void PBRShading(inout LightingResult litRes, GBuffer gBuffer, LightData litData,
 void PBRAmbientShading(out float3 ambientLighting, GBuffer gBuffer, float3 V)
 {
 	const float NdotV = max(dot(gBuffer.normal, V), 0.0f);
-	float3 F0 = float3(0.04f, 0.04f, 0.04f);
+	float3 F0 = float3(0.08f, 0.08f, 0.08f) * gBuffer.specular;
 	F0 = lerp(F0, gBuffer.baseColor, gBuffer.metallic);
 	const float3 rotatedNormal = normalize(mul(gBuffer.normal, (float3x3)EVRotation));
 	const float3 R = reflect(normalize(mul(-V, (float3x3)EVRotation)), rotatedNormal);
@@ -72,7 +72,7 @@ void LiquidShading(inout LightingResult litRes, GBuffer gBuffer, LightData litDa
 
 	gBuffer.baseColor += gBuffer.CustomData0 * litData.irradiance;
 
-	float3 F0 = float3(0.04f, 0.04f, 0.04f);
+	float3 F0 = float3(0.08f, 0.08f, 0.08f) * gBuffer.specular;
 	F0 = lerp(F0, gBuffer.baseColor, gBuffer.metallic);
 
 	const float NDF = DistributionGGX(NdotH, gBuffer.roughness);
