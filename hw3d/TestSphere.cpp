@@ -66,6 +66,7 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 		}
 		AddTechnique(std::move(shade));
 	}
+#ifdef USE_DEFERRED
 	{
 		Technique shade("gbufferDraw", Chan::gbuffer);
 		{
@@ -110,6 +111,7 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 		}
 		AddTechnique(std::move(shade));
 	}
+#endif
 	{
 		Technique outline("Outline", Chan::main, false);
 		{

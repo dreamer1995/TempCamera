@@ -7,7 +7,7 @@
 #include <filesystem>
 #include "Channels.h"
 
-Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesystem::path& path, bool IsPBR, bool IsDeferred) noxnd
+Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesystem::path& path, bool IsPBR) noxnd
 	:
 	modelPath( path.string() )
 {
@@ -225,6 +225,7 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 			pbr.AddStep( std::move( step ) );
 			techniques.push_back( std::move(pbr) );
 		}
+#ifdef USE_DEFERRED
 		{
 			Technique pbr{ "DeferredPBR",Chan::gbuffer };
 			Step step("gbuffer");
@@ -320,6 +321,7 @@ Material::Material(Graphics& gfx, const aiMaterial& material, const std::filesys
 			pbr.AddStep(std::move(step));
 			techniques.push_back(std::move(pbr));	
 		}
+#endif
 	}
 	// outline technique
 	{

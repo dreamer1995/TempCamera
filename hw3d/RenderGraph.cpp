@@ -27,7 +27,7 @@ namespace Rgph
 		default:
 		{
 			AddGlobalSource(DirectBufferSource<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
-			AddGlobalSource(DirectBufferSource<Bind::DepthStencil>::Make("masterDepth", masterDepth));
+			AddGlobalSource(DirectBufferSource<Bind::OutputOnlyDepthStencil>::Make("masterDepth", masterDepth));
 			AddGlobalSink(DirectBufferSink<Bind::RenderTarget>::Make("backbuffer", backBufferTarget));
 		}
 		}

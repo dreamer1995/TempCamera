@@ -11,6 +11,8 @@
 #include <random>
 #include "ConditionalNoexcept.h"
 
+#define USE_DEFERRED
+
 namespace Bind
 {
 	class Bindable;

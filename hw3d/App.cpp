@@ -112,8 +112,10 @@ void App::DoFrame( float dt )
 	//cube2.Submit(Chan::shadow);
 	sphere.Submit(Chan::shadow);
 
+#ifdef USE_DEFERRED
 	sponza.Submit(Chan::gbuffer);
 	sphere.Submit(Chan::gbuffer);
+#endif
 
 	rg.Execute( wnd.Gfx() );
 	

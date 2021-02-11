@@ -11,6 +11,7 @@ namespace Bind
 {
 	class RenderTarget;
 	class DepthStencil;
+	class OutputOnlyDepthStencil;
 }
 
 namespace Rgph
@@ -43,7 +44,7 @@ namespace Rgph
 		void AppendPass( std::unique_ptr<Pass> pass );
 		Pass& FindPassByName( const std::string& name );
 		std::shared_ptr<Bind::RenderTarget> backBufferTarget;
-		std::shared_ptr<Bind::DepthStencil> masterDepth;
+		std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth;
 	private:
 		void LinkSinks( Pass& pass );
 		void LinkGlobalSinks();

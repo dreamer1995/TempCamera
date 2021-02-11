@@ -19,23 +19,32 @@ namespace Rgph
 	class DebugDeferredPass : public FullscreenPass
 	{
 	public:
-		DebugDeferredPass(std::string name, Graphics& gfx)
+		DebugDeferredPass(std::string name, Graphics& gfx, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
 			:
-			FullscreenPass(std::move(name), gfx)
+			FullscreenPass(std::move(name), gfx),
+			masterDepth(masterDepth)
 		{
 			using namespace Bind;
 			AddBind(PixelShader::Resolve(gfx, "DebugDeferred.cso"));
 			AddBind(Blender::Resolve(gfx, true));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u));
-
 			AddBindSink<Bindable>("gbufferIn");
-			AddBindSink<Bindable>("depthIn");
+			AddBind(masterDepth);
 			RegisterSink(DirectBufferSink<RenderTarget>::Make("renderTarget", renderTarget));
-			RegisterSink(DirectBufferSink<DepthStencil>::Make("depthStencil", depthStencil));
 
 			RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));
-			RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
 		}
+
+		// this override is necessary because we cannot (yet) link input bindables directly into
+	// the container of bindables (mainly because vector growth buggers references)
+		void Execute(Graphics& gfx) const noxnd override
+		{
+			masterDepth->BreakRule();
+			FullscreenPass::Execute(gfx);
+		}
+
+	private:
+		std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth;
 	};
 }

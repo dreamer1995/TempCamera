@@ -7,7 +7,11 @@
 #include "TestCube.h"
 #include "Model.h"
 #include "ScriptCommander.h"
-#include "BlurOutlineRenderGraph.h"
+#ifdef USE_DEFERRED
+	#include "DeferredRenderGraph.h"
+#else
+	#include "BlurOutlineRenderGraph.h"
+#endif
 #include "ChiliMath.h"
 #include "SkyBox.h"
 #include "DirectionalLight.h"
@@ -47,7 +51,11 @@ private:
 	ImguiManager imgui;
 	Window wnd;
 	ScriptCommander scriptCommander;
+#ifdef USE_DEFERRED
+	Rgph::DeferredRenderGraph rg{ wnd.Gfx() };
+#else
 	Rgph::BlurOutlineRenderGraph rg{ wnd.Gfx() };
+#endif
 	ChiliTimer timer;
 	float speed_factor = 1.0f;
 	CameraContainer cameras;
@@ -56,7 +64,7 @@ private:
 	//std::shared_ptr<PointLight> pointLight3;
 	//TestCube cube{ wnd.Gfx(),4.0f };
 	//TestCube cube2{ wnd.Gfx(),4.0f };
-	Model sponza{ wnd.Gfx(),"Models\\sponza\\sponza.obj",1.0f / 20.0f, true, true };
+	Model sponza{ wnd.Gfx(),"Models\\sponza\\sponza.obj",1.0f / 20.0f, true};
 	//Model gobber{ wnd.Gfx(),"Models\\gobber\\GoblinX.obj",4.0f };
 	//Model nano{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj",2.0f };
 	SkyBox skybox{ wnd.Gfx(),4.0f };

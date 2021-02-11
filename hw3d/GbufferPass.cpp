@@ -19,12 +19,14 @@ namespace Rgph
 	{
 		using namespace Bind;
 		renderTarget = std::make_unique<ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u, RenderTarget::Type::GBuffer);
-		depthStencilRT = std::make_unique<ShaderInputDepthStencil>(gfx, fullWidth, fullHeight, 8u, DepthStencil::Usage::ShadowDepth);
-		depthStencil = depthStencilRT;
+		//depthStencilRT = std::make_unique<ShaderInputDepthStencil>(gfx, fullWidth, fullHeight, 8u, DepthStencil::Usage::ShadowDepth);
+		//depthStencil = depthStencilRT;
+		RegisterSink(DirectBufferSink<DepthStencil>::Make("depthStencil", depthStencil));
 		AddBind(Stencil::Resolve(gfx, Stencil::Mode::Off));
 		AddBind(Blender::Resolve(gfx, false));
 		RegisterSource(DirectBindableSource<RenderTarget>::Make("gbufferOut", renderTarget));
-		RegisterSource(DirectBindableSource<ShaderInputDepthStencil>::Make("depthOut", depthStencilRT));
+		RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
+		//RegisterSource(DirectBindableSource<ShaderInputDepthStencil>::Make("depthOut", depthStencilRT));
 	}
 	void GbufferPass::BindMainCamera(const Camera& cam) noexcept
 	{
@@ -35,7 +37,7 @@ namespace Rgph
 		assert(pMainCamera);
 		pMainCamera->BindToGraphics(gfx);
 		renderTarget->Clear(gfx);
-		depthStencil->Clear(gfx);
+		//depthStencil->Clear(gfx);
 		RenderQueuePass::Execute(gfx);
 	}
 }

@@ -36,7 +36,7 @@ float4 main(float2 uv : Texcoord) : SV_Target
 	else if (3 / 4.0f <= uv.x && uv.x <= 1.0f && 2 / 4.0f < uv.y && uv.y < 3 / 4.0f)
 	{
 		color = gbuffer[1].Sample(splr, float2(uv.x - 0.25f * 3, uv.y - 0.25f * 2) * 4).aaa;
-		color = round(color * (float) 0xFF) * 16;
+		color = round(color * (float) 0xFF) / 16;
 		alpha = 1;
 	}
 	else if (3 / 4.0f <= uv.x && uv.x <= 1.0f && 3 / 4.0f < uv.y && uv.y <= 1.0f)

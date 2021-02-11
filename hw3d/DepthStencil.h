@@ -66,5 +66,9 @@ namespace Bind
 		OutputOnlyDepthStencil( Graphics& gfx,UINT width,UINT height );
 		OutputOnlyDepthStencil( Graphics& gfx,Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture,UINT face );
 		void Bind( Graphics& gfx ) noxnd override;
+		void BreakRule() noxnd;
+	private:
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
+		bool breakRule = false;
 	};
 }

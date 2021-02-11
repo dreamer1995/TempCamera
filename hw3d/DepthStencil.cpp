@@ -415,8 +415,23 @@ namespace Bind
 
 	OutputOnlyDepthStencil::OutputOnlyDepthStencil( Graphics& gfx,UINT width,UINT height )
 		:
-		DepthStencil( gfx,width,height,false,Usage::DepthStencil )
-	{}
+		DepthStencil( gfx,width,height,true,Usage::DepthStencil )
+	{
+		INFOMAN(gfx);
+		wrl::ComPtr<ID3D11Resource> pRes;
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = MapUsageColored(Usage::DepthStencil);
+		srvDesc.Texture2D.MostDetailedMip = 0;
+
+		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		pDepthStencilView->GetResource(&pRes);
+
+		GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
+			pRes.Get(), &srvDesc, &pShaderResourceView
+		));
+	}
 
 	OutputOnlyDepthStencil::OutputOnlyDepthStencil( Graphics& gfx,wrl::ComPtr<ID3D11Texture2D> pTexture,UINT face )
 	:
@@ -425,6 +440,17 @@ namespace Bind
 
 	void OutputOnlyDepthStencil::Bind( Graphics& gfx ) noxnd
 	{
-		assert( "OutputOnlyDepthStencil cannot be bound as shader input" && false );
+		//assert( "OutputOnlyDepthStencil cannot be bound as shader input" && false );
+		if (breakRule)
+		{
+			INFOMAN_NOHR(gfx);
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(8u, 1u, pShaderResourceView.GetAddressOf()));
+			breakRule = false;
+		}
+	}
+
+	void OutputOnlyDepthStencil::BreakRule() noxnd
+	{
+		breakRule = true;
 	}
 }
