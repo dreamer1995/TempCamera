@@ -1,5 +1,8 @@
 #include "Constants.hlsli"
 
+SamplerState splr;
+SamplerState splrClamp : register(s1);
+
 #define IsPBR
 
 Texture2D tex;
@@ -39,7 +42,7 @@ struct GBufferOutput
 	float4 GBuffer4 	: SV_Target4;	// GBufferE[R8G8B8A8]		: N.xyz, GILightingLum
 	float4 GBuffer5  	: SV_Target5;	// GBufferF[R8G8B8A8]		: BakeNormal.xyz
 	float4 GBuffer6 	: SV_Target6;	// GBufferG[R32F]			: Depth
-	float4 GBuffer7 	: SV_Target7;	// GBufferG[R32F]			: Depth
+	float4 GBuffer7		: SV_Target7;   // GBufferG[R32F]			: Depth
 //#if USE_PIXEL_OFFSET
 //	float  PixelDepth : SV_Depth;     // For pixel offset
 //#endif

@@ -94,16 +94,8 @@ void App::DoFrame( float dt )
 
 	dLight.Submit(Chan::main);
 	dLight.Bind(wnd.Gfx());
-
+	
 	cameras.Submit(Chan::main);
-
-	//cube.Submit(Chan::main);
-	//cube2.Submit(Chan::main);
-	sponza.Submit(Chan::main);
-	//gobber.Submit(Chan::main);
-	//nano.Submit(Chan::main);
-	sphere.Submit(Chan::main);
-	//water.SubmitEX(Chan::waterPre, Chan::main);
 
 	sponza.Submit(Chan::shadow);
 	//gobber.Submit(Chan::shadow);
@@ -112,10 +104,24 @@ void App::DoFrame( float dt )
 	//cube2.Submit(Chan::shadow);
 	sphere.Submit(Chan::shadow);
 
-#ifdef USE_DEFERRED
-	sponza.Submit(Chan::gbuffer);
-	sphere.Submit(Chan::gbuffer);
-#endif
+	bool isDeferred = true;
+	if (!isDeferred)
+	{
+		//cube.Submit(Chan::main);
+		//cube2.Submit(Chan::main);
+		sponza.Submit(Chan::main);
+		//gobber.Submit(Chan::main);
+		//nano.Submit(Chan::main);
+		sphere.Submit(Chan::main);
+		//water.SubmitEX(Chan::waterPre, Chan::main);
+	}
+	else
+	{
+	#ifdef USE_DEFERRED
+		sponza.Submit(Chan::gbuffer);
+		sphere.Submit(Chan::gbuffer);
+	#endif
+	}
 
 	rg.Execute( wnd.Gfx() );
 	

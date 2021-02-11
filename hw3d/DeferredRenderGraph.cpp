@@ -20,6 +20,7 @@
 #include "WaterCaustics.h"
 #include "GBufferPass.h"
 #include "DebugDeferredPass.h"
+#include "DeferredSunLightPass.h"
 
 namespace Rgph
 {
@@ -90,6 +91,12 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
+			auto pass = std::make_unique<DeferredSunLightPass>("deferredSunLighting", gfx, masterDepth);
+			pass->SetSinkLinkage("gbufferIn", "gbuffer.gbufferOut");
+			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
+			AppendPass(std::move(pass));
+		}
+		{
 			auto pass = std::make_unique<LambertianPass>(gfx, "lambertian");
 			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
 			pass->SetSinkLinkage("pShadowMap0", "shadowMap.pMap0");
@@ -98,7 +105,7 @@ namespace Rgph
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
-			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
+			pass->SetSinkLinkage("renderTarget", "deferredSunLighting.renderTarget");
 			pass->SetSinkLinkage("depthStencil", "gbuffer.depthStencil");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
 			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
@@ -235,13 +242,13 @@ namespace Rgph
 			pass->SetSinkLinkage("depthStencil", "vertical.depthStencil");
 			AppendPass(std::move(pass));
 		}
-		{
-			auto pass = std::make_unique<DebugDeferredPass>("debugDeferred", gfx, masterDepth);
-			pass->SetSinkLinkage("gbufferIn", "gbuffer.gbufferOut");
-			pass->SetSinkLinkage("renderTarget", "wireframe.renderTarget");
-			AppendPass(std::move(pass));
-		}
-		SetSinkTarget("backbuffer", "debugDeferred.renderTarget");
+		//{
+		//	auto pass = std::make_unique<DebugDeferredPass>("debugDeferred", gfx, masterDepth);
+		//	pass->SetSinkLinkage("gbufferIn", "gbuffer.gbufferOut");
+		//	pass->SetSinkLinkage("renderTarget", "wireframe.renderTarget");
+		//	AppendPass(std::move(pass));
+		//}
+		SetSinkTarget("backbuffer", "wireframe.renderTarget");
 		Finalize();
 	}
 

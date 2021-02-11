@@ -1,6 +1,3 @@
-SamplerState splr;
-SamplerState splrClamp : register(s1);
-
 float EncodeShadingModelID(uint ShadingModelID)
 {
 	return (float)ShadingModelID / (float)0xFF;
@@ -21,18 +18,6 @@ float3 DecodeNormal( float3 N )
 {
 	return N * 2 - 1;
 	//return OctahedronToUnitVector( Pack888To1212( N ) * 2 - 1 );
-}
-
-GBufferOutput InitGBuffer(inout GBufferOutput gbuffer)
-{	
-	gbuffer.GBuffer0 = 0;
-	gbuffer.GBuffer1 = 0;
-	gbuffer.GBuffer2 = 0;
-	gbuffer.GBuffer3 = 0;
-	gbuffer.GBuffer4 = 0;
-	gbuffer.GBuffer5 = 0;
-	gbuffer.GBuffer6 = 0;
-	gbuffer.GBuffer7 = 0;
 }
 
 //float ConvertFromLinearDepth(float linearDepth)

@@ -11,13 +11,6 @@ float4 main(PSIn IN) : SV_Target
     DecodeGBuffer(matParams, gBuffer);
 
     float3 V = normalize(cameraPos - gBuffer.worldPos);
-#ifdef MASK_BOI
-    // flip normal when backface
-    if (dot(gBuffer.normal, V) <= 0.0f)
-    {
-        gBuffer.normal = -gBuffer.normal;
-    }
-#endif
 
     // Dynamic Lighting
     float3 diffuseLighting = 0.0f;

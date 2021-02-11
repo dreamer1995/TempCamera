@@ -1,3 +1,7 @@
+#ifndef DEFERRED
+#define DEFERRED 0
+#endif
+
 struct LightingResult
 {
 	float3 diffuseLighting;
@@ -93,29 +97,44 @@ void EncodePLightData(out LightData litData, float3 irradiance, float3 vToL, flo
 	litData.irradiance *= Attenuate(attConst, attLin, attQuad, distToL);
 }
 
-void DecodeGBuffer(MaterialShadingParameters matParams, out GBuffer gBuffer)
-{
-	gBuffer.shadingModelID = matParams.shadingModelID;
-	gBuffer.worldPos = matParams.worldPos;
-	gBuffer.baseColor = matParams.baseColor;;
-	gBuffer.normal = matParams.normal;
-#ifdef IsPhong
-	gBuffer.specularColor = matParams.specularColor;
-	gBuffer.specularWeight = matParams.specularWeight;
-	gBuffer.specularGloss = matParams.specularGloss;
-#endif
-#ifdef IsPBR
-	gBuffer.roughness = matParams.roughness;
-	gBuffer.metallic = matParams.metallic;
-	gBuffer.AO = matParams.AO;
-	gBuffer.specular = matParams.specular;
-#endif
-	if (gBuffer.shadingModelID == ShadingModel_Liquid)
+#if !DEFERRED
+	void DecodeGBuffer(MaterialShadingParameters matParams, out GBuffer gBuffer)
 	{
-#ifdef PixelsWave
-		gBuffer.CustomData0 = float4(matParams.causticsColor, 0.0f);
-#endif
+		gBuffer.shadingModelID = matParams.shadingModelID;
+		gBuffer.worldPos = matParams.worldPos;
+		gBuffer.baseColor = matParams.baseColor;;
+		gBuffer.normal = matParams.normal;
+	#ifdef IsPhong
+		gBuffer.specularColor = matParams.specularColor;
+		gBuffer.specularWeight = matParams.specularWeight;
+		gBuffer.specularGloss = matParams.specularGloss;
+	#endif
+	#ifdef IsPBR
+		gBuffer.roughness = matParams.roughness;
+		gBuffer.metallic = matParams.metallic;
+		gBuffer.AO = matParams.AO;
+		gBuffer.specular = matParams.specular;
+	#endif
+		if (gBuffer.shadingModelID == ShadingModel_Liquid)
+		{
+	#ifdef PixelsWave
+			gBuffer.CustomData0 = float4(matParams.causticsColor, 0.0f);
+	#endif
+		}
+		else
+			gBuffer.CustomData0 = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	}
-	else
-		gBuffer.CustomData0 = float4(0.0f, 0.0f, 0.0f, 0.0f);
-}
+#else
+	void DecodeGBuffer(Texture2D gbuffer[8], out GBuffer gBuffer, float2 uv)
+	{
+		gBuffer.shadingModelID = DecodeShadingModelID(gbuffer[1].Sample(splr, uv).a);
+		gBuffer.worldPos = 0;
+		gBuffer.baseColor = gbuffer[0].Sample(splr, uv).rgb;
+		gBuffer.normal = DecodeNormal(gbuffer[2].Sample(splr, uv).rgb);
+		gBuffer.roughness = gbuffer[1].Sample(splr, uv).r;
+		gBuffer.metallic = gbuffer[0].Sample(splr, uv).a;
+		gBuffer.AO = gbuffer[1].Sample(splr, uv).g;
+		gBuffer.specular = gbuffer[1].Sample(splr, uv).b;
+		gBuffer.CustomData0 = gbuffer[3].Sample(splr, uv);
+	}
+#endif

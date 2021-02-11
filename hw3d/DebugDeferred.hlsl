@@ -4,7 +4,6 @@ SamplerState splr;
 
 float4 main(float2 uv : Texcoord) : SV_Target
 {
-    float width, height;
     //tex.GetDimensions(width, height);
 	float3 color = 0;
 	float alpha = 0;

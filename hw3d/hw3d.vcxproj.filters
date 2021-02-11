@@ -94,6 +94,15 @@
     <Filter Include="Header Files\Gizmo">
       <UniqueIdentifier>{3828e089-cf78-4a64-a35b-62235a359003}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Jobber\Passlib\Deferred">
+      <UniqueIdentifier>{9770e821-ce52-4ade-bfc9-451a3182ca3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Jobber\Passlib\Deferred">
+      <UniqueIdentifier>{6447f25b-a173-469d-89b2-de4edabb8a72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Postprocess">
+      <UniqueIdentifier>{cf886ab6-71f5-4d7a-af78-075df788d3a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -385,7 +394,7 @@
       <Filter>Source Files\Jobber\Graphlib</Filter>
     </ClCompile>
     <ClCompile Include="GbufferPass.cpp">
-      <Filter>Source Files\Jobber\Passlib</Filter>
+      <Filter>Source Files\Jobber\Passlib\Deferred</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -794,11 +803,14 @@
     <ClInclude Include="DeferredRenderGraph.h">
       <Filter>Header Files\Jobber\Graphlib</Filter>
     </ClInclude>
-    <ClInclude Include="GbufferPass.h">
-      <Filter>Header Files\Jobber\Passlib</Filter>
-    </ClInclude>
     <ClInclude Include="DebugDeferredPass.h">
-      <Filter>Header Files\Jobber\Passlib</Filter>
+      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="GbufferPass.h">
+      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredSunLightPass.h">
+      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1018,8 +1030,11 @@
     <FxCompile Include="PBRNoShadow_VS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="DeferredSunLight.hlsl">
+      <Filter>Shader\Postprocess</Filter>
+    </FxCompile>
     <FxCompile Include="DebugDeferred.hlsl">
-      <Filter>Shader\Miscellany</Filter>
+      <Filter>Shader\Postprocess</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
