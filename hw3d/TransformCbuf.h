@@ -19,6 +19,8 @@ namespace Bind
 			DirectX::XMMATRIX matrix_IT_MV;
 			DirectX::XMMATRIX matrix_M2W;
 			DirectX::XMMATRIX matrix_W2M;
+			DirectX::XMMATRIX matrix_I_V;
+			DirectX::XMMATRIX matrix_I_P;
 		};
 	public:
 		TransformCbuf(Graphics& gfx, UINT otherShaderIndex = 0b0u);

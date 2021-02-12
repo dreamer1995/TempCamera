@@ -97,8 +97,8 @@ void GetMaterialParameters(out MaterialShadingParameters matParams, PSIn IN)
 	//const float3 statVDir = normalize(cameraPos - (float3)mul(float4(0.0f, 0.0f, 0.0f, 1.0f), matrix_M2W));
 	const float depthmap = GenerateDepth(IN.worldPos.z);
 
-	const float t = lerp(0.225f, 0.465f, max(dot(matParams.normal, -cameraDir), 0.0f));
-	const float3 Rv = lerp(cameraDir, -matParams.normal, t);
+	const float t = lerp(0.225f, 0.465f, max(dot(matParams.normal, -float3(0.0f, 1.0f, 0.0f)), 0.0f));
+	const float3 Rv = lerp(float3(0.0f, 1.0f, 0.0f), -matParams.normal, t);
 	const float depthR = depth + IN.worldPos.y;
 	const float2 distUV = UVRefractionDistorted(Rv, IN.uv, depthR * depthmap);
 	const float2 subDistUV = UVRefractionDistorted(Rv, IN.uv, depthR * depthmap * 0.5f);

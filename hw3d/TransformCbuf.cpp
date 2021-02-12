@@ -53,15 +53,17 @@ namespace Bind
 	TransformCbuf::Transforms TransformCbuf::GetTransforms( Graphics& gfx ) noxnd
 	{
 		assert( pParent != nullptr );
-		const auto matrix_W2M = pParent->GetTransformXM();
-		const auto matrix_M2W = DirectX::XMMatrixTranspose(matrix_W2M);
+		const auto matrix_M2W = DirectX::XMMatrixTranspose(pParent->GetTransformXM());
+		const auto matrix_W2M = DirectX::XMMatrixInverse(nullptr, matrix_M2W);
 		const auto matrix_V = DirectX::XMMatrixTranspose(gfx.GetCamera());
 		const auto matrix_MV = matrix_V * matrix_M2W;
 		const auto matrix_P = DirectX::XMMatrixTranspose(gfx.GetProjection());
 		const auto matrix_VP = matrix_P * matrix_V;
 		const auto matrix_MVP = matrix_P * matrix_MV;
-		const auto matrix_T_MV = matrix_W2M * gfx.GetCamera();
-		const auto matrix_IT_MV = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, matrix_T_MV));
+		const auto matrix_T_MV = pParent->GetTransformXM() * gfx.GetCamera();
+		const auto matrix_IT_MV = DirectX::XMMatrixInverse(nullptr, matrix_T_MV);
+		const auto matrix_I_V = DirectX::XMMatrixInverse(nullptr, matrix_V);
+		const auto matrix_I_P = DirectX::XMMatrixInverse(nullptr, matrix_P);
 		return {matrix_MVP,
 				matrix_MV,
 				matrix_V,
@@ -70,7 +72,9 @@ namespace Bind
 				matrix_T_MV,
 				matrix_IT_MV,
 				matrix_M2W,
-				matrix_W2M
+				matrix_W2M,
+				matrix_I_V,
+				matrix_I_P
 		};
 	}
 

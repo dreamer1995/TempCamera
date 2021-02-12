@@ -5,18 +5,19 @@
 namespace dx = DirectX;
 
 Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float homePitch, float homeYaw,
-	bool tethered, bool isPerspective, float width, float hight) noexcept
+	bool tethered, bool isPerspective, float width, float hight, float farPlane, float nearPlane) noexcept
 	:
 	name( std::move( name ) ),
 	homePos( homePos ),
 	homePitch( homePitch ),
 	homeYaw( homeYaw ),
-	proj(gfx, width, hight, 0.5f,400.0f, isPerspective),
+	proj(gfx, width, hight, nearPlane, farPlane, isPerspective),
 	indicator( gfx ),
 	tethered( tethered ),
 	vCbuf(gfx, 1u),
 	pCbuf(gfx, 1u),
-	isPerspective(isPerspective)
+	isPerspective(isPerspective),
+	FNPlane{ farPlane,nearPlane }
 {
 	if( tethered )
 	{
@@ -263,10 +264,14 @@ void Camera::RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) no
 void Camera::Bind(Graphics& gfx) const noexcept
 {
 	using namespace dx;
-	DirectX::XMFLOAT3 lookVector;
-	dx::XMStoreFloat3(&lookVector, XMVector3Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
-		XMMatrixRotationRollPitchYaw(45.0f / 180.0f * PI, 0.0f, 0.0f)));
-	CameraCBuf cbData = { pos,{ 0.0f,1.0f,0.0f } };
+	const dx::XMVECTOR forwardBaseVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	// apply the camera rotations to a base vector
+	dx::XMFLOAT3 lookVector;
+	XMStoreFloat3(&lookVector, XMVector3Transform(forwardBaseVector,
+		XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f)
+	))
+	;
+	CameraCBuf cbData = { pos,lookVector,FNPlane };
 	vCbuf.Update(gfx, cbData);
 	vCbuf.Bind(gfx);
 	pCbuf.Update(gfx, cbData);

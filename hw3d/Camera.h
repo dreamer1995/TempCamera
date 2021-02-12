@@ -16,7 +16,8 @@ class Camera
 {
 public:
 	Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos = { 0.0f,0.0f,0.0f }, float homePitch = 0.0f, float homeYaw = 0.0f,
-		bool tethered = false, bool isPerspective = true, float width = 1.0f, float hight = 9.0f / 16.0f) noexcept;
+		bool tethered = false, bool isPerspective = true, float width = 1.0f, float hight = 9.0f / 16.0f,
+		float farPlane = 400.0f, float nearPlane = 0.5f) noexcept;
 	void BindToGraphics( Graphics& gfx ) const;
 	DirectX::XMMATRIX GetMatrix() const noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
@@ -43,6 +44,7 @@ private:
 	{
 		alignas(16) DirectX::XMFLOAT3 pos;
 		alignas(16) DirectX::XMFLOAT3 direction;
+		alignas(16) DirectX::XMFLOAT2 FNPlane;
 	};
 
 private:
@@ -63,4 +65,5 @@ private:
 	mutable Bind::VertexConstantBuffer<CameraCBuf> vCbuf;
 	mutable Bind::PixelConstantBuffer<CameraCBuf> pCbuf;
 	bool isPerspective;
+	DirectX::XMFLOAT2 FNPlane;
 };

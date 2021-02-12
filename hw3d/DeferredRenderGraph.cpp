@@ -488,6 +488,7 @@ namespace Rgph
 		dynamic_cast<LambertianPass&>(FindPassByName("lambertian")).BindMainCamera(cam);
 		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindMainCamera(cam);
 		dynamic_cast<GbufferPass&>(FindPassByName("gbuffer")).BindMainCamera(cam);
+		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindMainCamera(cam);
 	}
 	void Rgph::DeferredRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams)
 	{
