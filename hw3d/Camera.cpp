@@ -1,23 +1,21 @@
 #include "Camera.h"
 #include "imgui/imgui.h"
-#include "ChiliMath.h"
 
 namespace dx = DirectX;
 
 Camera::Camera(Graphics& gfx, std::string name, DirectX::XMFLOAT3 homePos, float homePitch, float homeYaw,
-	bool tethered, bool isPerspective, float width, float hight, float farPlane, float nearPlane) noexcept
+	bool tethered, bool isPerspective, float FOV, float aspect, float farPlane, float nearPlane) noexcept
 	:
 	name( std::move( name ) ),
 	homePos( homePos ),
 	homePitch( homePitch ),
 	homeYaw( homeYaw ),
-	proj(gfx, width, hight, nearPlane, farPlane, isPerspective),
+	proj(gfx, FOV, aspect, nearPlane, farPlane, isPerspective),
 	indicator( gfx ),
 	tethered( tethered ),
 	vCbuf(gfx, 1u),
 	pCbuf(gfx, 1u),
-	isPerspective(isPerspective),
-	FNPlane{ farPlane,nearPlane }
+	isPerspective(isPerspective)
 {
 	if( tethered )
 	{
@@ -271,7 +269,7 @@ void Camera::Bind(Graphics& gfx) const noexcept
 		XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f)
 	))
 	;
-	CameraCBuf cbData = { pos,lookVector,FNPlane };
+	CameraCBuf cbData = { pos,lookVector,proj.GetFarNearPlane() };
 	vCbuf.Update(gfx, cbData);
 	vCbuf.Bind(gfx);
 	pCbuf.Update(gfx, cbData);
