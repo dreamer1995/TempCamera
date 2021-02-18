@@ -25,7 +25,6 @@ namespace Rgph
 			masterDepth(masterDepth)
 		{
 			using namespace Bind;
-			pVcbuf = std::make_unique<VertexConstantBuffer<Transforms>>(gfx, 13u);
 			AddBind(PixelShader::Resolve(gfx, "DeferredSunLight.cso"));
 			AddBind(Blender::Resolve(gfx, true));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
@@ -42,24 +41,19 @@ namespace Rgph
 		}
 		// this override is necessary because we cannot (yet) link input bindables directly into
 	// the container of bindables (mainly because vector growth buggers references)
+
 		void Execute(Graphics& gfx) const noxnd override
 		{
 			assert(pMainCamera);
 			pMainCamera->BindToGraphics(gfx);
 			masterDepth->BreakRule();
-			pVcbuf->Update(gfx, { DirectX::XMMatrixTranspose(DirectX::XMMatrixIdentity() * gfx.GetCamera()) });
-			pVcbuf->Bind(gfx);
+
 			FullscreenPass::Execute(gfx);
+
 			gfx.ClearShaderResources(8u);
 		}
-
 	private:
 		std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth;
 		const Camera* pMainCamera = nullptr;
-		struct Transforms
-		{
-			DirectX::XMMATRIX matrix_I_P;
-		};
-		std::unique_ptr<Bind::VertexConstantBuffer<Transforms>> pVcbuf;
 	};
 }

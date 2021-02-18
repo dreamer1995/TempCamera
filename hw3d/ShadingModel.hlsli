@@ -127,14 +127,14 @@ void EncodePLightData(out LightData litData, float3 irradiance, float3 vToL, flo
 #else
 	void DecodeGBuffer(Texture2D gbuffer[8], out GBuffer gBuffer, float2 uv)
 	{
-		gBuffer.shadingModelID = DecodeShadingModelID(gbuffer[1].Sample(splr, uv).a);
+		gBuffer.shadingModelID = DecodeShadingModelID(gbuffer[1].Sample(splrClamp, uv).a);
 		gBuffer.worldPos = 0;
-		gBuffer.baseColor = gbuffer[0].Sample(splr, uv).rgb;
-		gBuffer.normal = DecodeNormal(gbuffer[2].Sample(splr, uv).rgb);
-		gBuffer.roughness = gbuffer[1].Sample(splr, uv).r;
-		gBuffer.metallic = gbuffer[0].Sample(splr, uv).a;
-		gBuffer.AO = gbuffer[1].Sample(splr, uv).g;
-		gBuffer.specular = gbuffer[1].Sample(splr, uv).b;
-		gBuffer.CustomData0 = gbuffer[3].Sample(splr, uv);
+		gBuffer.baseColor = gbuffer[0].Sample(splrClamp, uv).rgb;
+		gBuffer.normal = DecodeNormal(gbuffer[2].Sample(splrClamp, uv).rgb);
+		gBuffer.roughness = gbuffer[1].Sample(splrClamp, uv).r;
+		gBuffer.metallic = gbuffer[0].Sample(splrClamp, uv).a;
+		gBuffer.AO = gbuffer[1].Sample(splrClamp, uv).g;
+		gBuffer.specular = gbuffer[1].Sample(splrClamp, uv).b;
+		gBuffer.CustomData0 = gbuffer[3].Sample(splrClamp, uv);
 	}
 #endif

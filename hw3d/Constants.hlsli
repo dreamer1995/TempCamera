@@ -20,6 +20,9 @@ cbuffer CameraCBuf : register(b1)//VS, PS
 	float3 cameraPos;
 	float3 cameraDir;
 	float2 cameraFNPlane;
+	float4 vWBasisX;
+	float4 vWBasisY;
+	float4 vWBasisZ;
 };
 
 cbuffer Time : register(b2)//VS, DS, PS
@@ -46,8 +49,6 @@ cbuffer PointLightCBuf : register(b4)//PS
 	float attLin;
 	float attQuad;
 };
-
-
 
 cbuffer ShadowControl : register(b6)//PS
 {

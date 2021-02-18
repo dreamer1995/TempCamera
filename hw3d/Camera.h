@@ -39,13 +39,16 @@ public:
 	float yaw;
 	std::string name;
 	void SetRotation(float pitch, float yaw) noexcept;
-
+	void ProjectScreenToWorldExpansionBasis(DirectX::XMFLOAT4& vWBasisX, DirectX::XMFLOAT4& vWBasisY, DirectX::XMFLOAT4& vWBasisZ) const noxnd;
 private:
 	struct CameraCBuf
 	{
 		alignas(16) DirectX::XMFLOAT3 pos;
 		alignas(16) DirectX::XMFLOAT3 direction;
 		alignas(16) DirectX::XMFLOAT2 FNPlane;
+		alignas(16) DirectX::XMFLOAT4 vWBasisX;
+		alignas(16) DirectX::XMFLOAT4 vWBasisY;
+		alignas(16) DirectX::XMFLOAT4 vWBasisZ;
 	};
 
 private:

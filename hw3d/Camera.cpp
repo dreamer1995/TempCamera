@@ -267,9 +267,12 @@ void Camera::Bind(Graphics& gfx) const noexcept
 	dx::XMFLOAT3 lookVector;
 	XMStoreFloat3(&lookVector, XMVector3Transform(forwardBaseVector,
 		XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f)
-	))
-	;
-	CameraCBuf cbData = { pos,lookVector,proj.GetFarNearPlane() };
+	));
+	DirectX::XMFLOAT4 vWBasisX;
+	DirectX::XMFLOAT4 vWBasisY;
+	DirectX::XMFLOAT4 vWBasisZ;
+	ProjectScreenToWorldExpansionBasis(vWBasisX, vWBasisY, vWBasisZ);
+	CameraCBuf cbData = { pos,lookVector,proj.GetFarNearPlane(),vWBasisX,vWBasisY,vWBasisZ };
 	vCbuf.Update(gfx, cbData);
 	vCbuf.Bind(gfx);
 	pCbuf.Update(gfx, cbData);
@@ -284,4 +287,41 @@ void Camera::SetRotation(float pitch, float yaw) noexcept
 	const dx::XMFLOAT3 angles = { pitch,yaw,0.0f };
 	indicator.SetRotation(angles);
 	proj.SetRotation(angles);
+}
+
+void Camera::ProjectScreenToWorldExpansionBasis(dx::XMFLOAT4& vWBasisX, dx::XMFLOAT4& vWBasisY, dx::XMFLOAT4& vWBasisZ) const noxnd
+{
+	DirectX::XMFLOAT4X4 cameraToWorld;
+	dx::XMStoreFloat4x4(&cameraToWorld, DirectX::XMMatrixInverse(nullptr, GetMatrix()));
+
+	float FOV = proj.GetFOV();
+	float farPlane = proj.GetFarNearPlane().x;
+
+	dx::XMFLOAT3 vX = { cameraToWorld._11,cameraToWorld._12,cameraToWorld._13 };
+	dx::XMFLOAT3 vY = { -cameraToWorld._21,-cameraToWorld._22,-cameraToWorld._23 };
+	dx::XMFLOAT3 vZ = { cameraToWorld._31,cameraToWorld._32,cameraToWorld._33 };
+	auto NormalizeFloat3 = [](dx::XMFLOAT3& float3)
+	{
+		float length = std::sqrt(float3.x * float3.x + float3.y * float3.y + float3.z * float3.z);
+		float3 = { float3.x / length, float3.y / length, float3.z / length };
+	};
+	NormalizeFloat3(vX);
+	NormalizeFloat3(vY);
+	NormalizeFloat3(vZ);
+
+	float tanHalfFovToPlaneY = farPlane * std::tan(FOV * 0.5f);
+	float tanHalfFovToPlaneX = proj.GetAspect() * tanHalfFovToPlaneY;
+
+	vY = { vY.x * tanHalfFovToPlaneY,vY.y * tanHalfFovToPlaneY,vY.z * tanHalfFovToPlaneY };
+	vX = { vX.x * tanHalfFovToPlaneX,vX.y * tanHalfFovToPlaneX,vX.z * tanHalfFovToPlaneX };
+	vZ = { vZ.x * farPlane			,vZ.y * farPlane		  ,vZ.z * farPlane };
+
+	// remapping for input in range (x:[0, 1], y:[0, 1], z:[0,1])
+	vZ = { vZ.x - vX.x - vY.x,vZ.y - vX.y - vY.y,vZ.z - vX.z - vY.z };
+	vX = { vX.x * 2,vX.y * 2,vX.z * 2 };
+	vY = { vY.x * 2,vY.y * 2,vY.z * 2 };
+
+	vWBasisX.x = vX.x; vWBasisX.y = vX.y; vWBasisX.z = vX.z; vWBasisX.w = 0.0f;
+	vWBasisY.x = vY.x; vWBasisY.y = vY.y; vWBasisY.z = vY.z; vWBasisY.w = 0.0f;
+	vWBasisZ.x = vZ.x; vWBasisZ.y = vZ.y; vWBasisZ.z = vZ.z; vWBasisZ.w = 0.0f;
 }

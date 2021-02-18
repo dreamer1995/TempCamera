@@ -20,12 +20,33 @@ float3 DecodeNormal( float3 N )
 	//return OctahedronToUnitVector( Pack888To1212( N ) * 2 - 1 );
 }
 
-//float ConvertFromLinearDepth(float linearDepth)
-//{
-//	return (CameraInfo.x / linearDepth - CameraInfo.x) / (CameraInfo.y - CameraInfo.x);
-//}
+float ConvertFromLinearDepth(float linearDepth)
+{
+	float ProjectionA = cameraFNPlane.x / (cameraFNPlane.x - cameraFNPlane.y);
+	float ProjectionB = (-cameraFNPlane.x * cameraFNPlane.y) / (cameraFNPlane.x - cameraFNPlane.y);
 
-//float ConvertToLinearDepth(float depth)
-//{
-//	return CameraInfo.x / (depth * (CameraInfo.y - CameraInfo.x) + CameraInfo.x);
-//}
+	// Sample the depth and convert to linear view space Z (assume it gets sampled as
+	// a floating point value of the range [0,1])
+	float depth = ProjectionB / linearDepth * cameraFNPlane.x + ProjectionA;
+	return depth;
+	//return (CameraInfo.x / linearDepth - CameraInfo.x) / (CameraInfo.y - CameraInfo.x);
+}
+
+float ConvertToLinearDepth(float depth)
+{
+	// Calculate our projection constants (you should of course do this in the app code, I'm just showing how to do it)
+	float ProjectionA = cameraFNPlane.x / (cameraFNPlane.x - cameraFNPlane.y);
+	float ProjectionB = (-cameraFNPlane.x * cameraFNPlane.y) / (cameraFNPlane.x - cameraFNPlane.y);
+
+	// Sample the depth and convert to linear view space Z (assume it gets sampled as
+	// a floating point value of the range [0,1])
+	float linearDepth = ProjectionB / (depth - ProjectionA) / cameraFNPlane.x;
+	return linearDepth;
+	//return CameraInfo.x / (depth * (CameraInfo.y - CameraInfo.x) + CameraInfo.x);
+}
+
+float3 CalcHomogeneousPos(float depth, float2 screenTC)
+{
+	float3 pos = vWBasisZ.xyz + (vWBasisX.xyz * screenTC.x) + (vWBasisY.xyz * screenTC.y);
+	return pos * depth;
+}

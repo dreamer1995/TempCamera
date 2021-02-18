@@ -134,3 +134,8 @@ float Projection::GetFOV() const
 {
 	return FOV;
 }
+
+float Projection::GetAspect() const
+{
+	return aspect;
+}

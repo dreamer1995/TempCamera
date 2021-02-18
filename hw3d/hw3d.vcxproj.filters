@@ -339,13 +339,7 @@
     <ClCompile Include="Projection.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="BlurOutlineRenderGraph.cpp">
-      <Filter>Source Files\Jobber\Graphlib</Filter>
-    </ClCompile>
     <ClCompile Include="PreCalculateRenderGraph.cpp">
-      <Filter>Source Files\Jobber\Graphlib</Filter>
-    </ClCompile>
-    <ClCompile Include="ScaleOutlineRenderGraph.cpp">
       <Filter>Source Files\Jobber\Graphlib</Filter>
     </ClCompile>
     <ClCompile Include="VerticalBlurPass.cpp">
@@ -395,6 +389,12 @@
     </ClCompile>
     <ClCompile Include="GbufferPass.cpp">
       <Filter>Source Files\Jobber\Passlib\Deferred</Filter>
+    </ClCompile>
+    <ClCompile Include="BlurOutlineRenderGraph.cpp">
+      <Filter>Source Files\Jobber\Graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleOutlineRenderGraph.cpp">
+      <Filter>Source Files\Jobber\Graphlib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,7 @@ public:
 	void SetProjection(float _width, float _height, float _nearZ, float _farZ);
 	DirectX::XMFLOAT2 GetFarNearPlane() const;
 	float GetFOV() const;
+	float GetAspect() const;
 private:
 	float width;
 	float height;

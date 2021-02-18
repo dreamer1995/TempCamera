@@ -110,6 +110,5 @@ GBufferOutput main(PSIn IN)
 	}
 #endif
 	OUT.GBuffer2.rgb = EncodeNormal(normal);
-	OUT.GBuffer3.rgb = EncodeNormal(IN.worldPos / 1000.0f);
 	return OUT;
 }
