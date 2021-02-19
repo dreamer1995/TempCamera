@@ -50,6 +50,11 @@ cbuffer PointLightCBuf : register(b4)//PS
 	float attQuad;
 };
 
+cbuffer ShadowTransformCBuf : register(b5) //VS, may PS in deferred
+{
+	matrix shadowMatrix_VP;
+};
+
 cbuffer ShadowControl : register(b6)//PS
 {
 	int pcfLevel;

@@ -1,10 +1,5 @@
 //Used 0,1,2
 
-cbuffer ShadowTransformCBuf : register(b5)//VS
-{
-	matrix shadowMatrix_VP;
-};
-
 cbuffer ShadowTransformCBuf0 : register(b7)//VS
 {
 	matrix shadowMatrix_M0;

@@ -91,8 +91,8 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 			lay.Add<Dcb::Float3>("baseColor");
 			lay.Add<Dcb::Bool>("useMetallicMap");
 			lay.Add<Dcb::Bool>("useRoughnessMap");
-			lay.Add<Dcb::Float>("roughness");
 			lay.Add<Dcb::Float>("metallic");
+			lay.Add<Dcb::Float>("roughness");
 			lay.Add<Dcb::Bool>("useNormalMap");
 			lay.Add<Dcb::Float>("normalMapWeight");
 			auto buf = Dcb::Buffer(std::move(lay));

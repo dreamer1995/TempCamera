@@ -136,5 +136,9 @@ void EncodePLightData(out LightData litData, float3 irradiance, float3 vToL, flo
 		gBuffer.AO = gbuffer[1].Sample(splrClamp, uv).g;
 		gBuffer.specular = gbuffer[1].Sample(splrClamp, uv).b;
 		gBuffer.CustomData0 = gbuffer[3].Sample(splrClamp, uv);
+		float sceneZ = depth.SampleLevel(splrClamp, uv, 0).x;
+		sceneZ = ConvertToLinearDepth(sceneZ);	
+		float3 D = CalcHomogeneousPos(sceneZ, uv);
+		gBuffer.worldPos = cameraPos.xyz + D;
 	}
 #endif

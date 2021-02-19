@@ -30,16 +30,17 @@ struct PSIn {
 	float3 tangent : Tangent;
 	float3 binormal : Binormal;
 	float2 uv : Texcoord;
+	//float linerZ : TEXCOORD1;
 };
 
 struct GBufferOutput
 {
 	float4 GBuffer0 	: SV_Target0;	// GBufferA[R16G16B16A16F]	: Emission.rgb(Obsolete) BaseColor.rgb, Metallic
 	float4 GBuffer1 	: SV_Target1;	// GBufferB[R8G8B8A8]		: Roughness, AO, Specular, InShadow(Obsolete), ShadingModelID
-	float4 GBuffer2 	: SV_Target2;	// GBufferC[R8G8B8A8]		: N.xyz
+	float3 GBuffer2 	: SV_Target2;	// GBufferC[R10G10B12]		: N.xyz
 	float4 GBuffer3 	: SV_Target3;	// GBufferD[R8G8B8A8]		: CustomData
-
-	float4 GBuffer4 	: SV_Target4;	// GBufferE[R8G8B8A8]		: N.xyz, GILightingLum
+	float  GBuffer4		: SV_Target4;	// GBufferE[R32F]			: N.xyz(Obsolete), GILightingLum(Obsolete), linerZ
+	
 	float4 GBuffer5  	: SV_Target5;	// GBufferF[R8G8B8A8]		: BakeNormal.xyz
 	float4 GBuffer6 	: SV_Target6;	// GBufferG[R32F]			: Depth
 	float4 GBuffer7		: SV_Target7;   // GBufferG[R32F]			: Depth
@@ -110,5 +111,6 @@ GBufferOutput main(PSIn IN)
 	}
 #endif
 	OUT.GBuffer2.rgb = EncodeNormal(normal);
+	//OUT.GBuffer4.r = IN.linerZ;
 	return OUT;
 }

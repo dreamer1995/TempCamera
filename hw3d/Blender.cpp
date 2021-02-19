@@ -33,7 +33,7 @@ namespace Bind
 				switch (blendMode)
 				{
 				case BlendMode::Additive:
-					brt.SrcBlend = D3D11_BLEND_ONE;
+					brt.SrcBlend = D3D11_BLEND_SRC_ALPHA;
 					brt.DestBlend = D3D11_BLEND_ONE;
 					break;
 				case BlendMode::OneMinus:

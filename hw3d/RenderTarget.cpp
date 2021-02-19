@@ -72,6 +72,12 @@ namespace Bind
 		{
 			for (unsigned char i = 0; i < 8; ++i)
 			{
+				if (i == 2)
+					textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+				//else if (i == 4)
+				//	textureDesc.Format = DXGI_FORMAT_R32_FLOAT;
+				else
+					textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 				GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
 					&textureDesc, nullptr, &pTextures[i]
 				));
@@ -115,6 +121,12 @@ namespace Bind
 			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			for (unsigned char i = 0; i < 8; ++i)
 			{
+				if (i == 2)
+					rtvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+				//else if (i == 4)
+				//	rtvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+				else
+					rtvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 				// Create a render target view to the ith element.
 				GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
 					pTextures[i].Get(), &rtvDesc, &pTargetGBufferView[i]));
@@ -482,6 +494,12 @@ namespace Bind
 		{
 			for (char i = 0; i < 8; i++)
 			{
+				if (i == 2)
+					srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+				//else if (i == 4)
+				//	srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+				else
+					srvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 				GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
 					pReses[i].Get(), &srvDesc, &pShaderResourceGBufferViews[i]
 				));

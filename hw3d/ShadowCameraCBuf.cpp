@@ -6,13 +6,46 @@ namespace dx = DirectX;
 
 namespace Bind
 {
-	ShadowCameraCBuf::ShadowCameraCBuf( Graphics& gfx,UINT slot )
+	ShadowCameraCBuf::ShadowCameraCBuf(Graphics& gfx, UINT slot, UINT shaderIndex)
 		:
-		pVcbuf{ std::make_unique<VertexConstantBuffer<Transform>>( gfx,slot ) }
-	{}
+		shaderIndex(shaderIndex)
+	{
+		assert(shaderIndex & 0b00001111);
+		if (shaderIndex & 0b00001000)
+		{
+			pVcbuf = std::make_unique<VertexConstantBuffer<Transform>>(gfx, slot);
+		}
+		if (shaderIndex & 0b00000100)
+		{
+			pHcbuf = std::make_unique<HullConstantBuffer<Transform>>(gfx, slot);
+		}
+		if (shaderIndex & 0b00000010)
+		{
+			pDcbuf = std::make_unique<DomainConstantBuffer<Transform>>(gfx, slot);
+		}
+		if (shaderIndex & 0b00000001)
+		{
+			pPcbuf = std::make_unique<PixelConstantBuffer<Transform>>(gfx, slot);
+		}
+	}
 	void ShadowCameraCBuf::Bind( Graphics& gfx ) noxnd
 	{
-		pVcbuf->Bind( gfx );
+		if (shaderIndex & 0b00001000)
+		{
+			pVcbuf->Bind(gfx);
+		}
+		if (shaderIndex & 0b00000100)
+		{
+			pHcbuf->Bind(gfx);
+		}
+		if (shaderIndex & 0b00000010)
+		{
+			pDcbuf->Bind(gfx);
+		}
+		if (shaderIndex & 0b00000001)
+		{
+			pPcbuf->Bind(gfx);
+		}
 	}
 	void ShadowCameraCBuf::Update( Graphics& gfx )
 	{
@@ -21,7 +54,22 @@ namespace Bind
 				pCamera->GetMatrix() * pCamera->GetProjection()
 			)
 		};
-		pVcbuf->Update( gfx,t );
+		if (shaderIndex & 0b00001000)
+		{
+			pVcbuf->Update(gfx, t);
+		}
+		if (shaderIndex & 0b00000100)
+		{
+			pHcbuf->Update(gfx, t);
+		}
+		if (shaderIndex & 0b00000010)
+		{
+			pDcbuf->Update(gfx, t);
+		}
+		if (shaderIndex & 0b00000001)
+		{
+			pPcbuf->Update(gfx, t);
+		}
 	}
 	void ShadowCameraCBuf::SetCamera( const Camera* p ) noexcept
 	{
@@ -39,6 +87,21 @@ namespace Bind
 				dx::XMMatrixTranslation(-pos.x,-pos.y,-pos.z)
 			)
 		};
-		pVcbuf->Update(gfx, t);
+		if (shaderIndex & 0b00001000)
+		{
+			pVcbuf->Update(gfx, t);
+		}
+		if (shaderIndex & 0b00000100)
+		{
+			pHcbuf->Update(gfx, t);
+		}
+		if (shaderIndex & 0b00000010)
+		{
+			pDcbuf->Update(gfx, t);
+		}
+		if (shaderIndex & 0b00000001)
+		{
+			pPcbuf->Update(gfx, t);
+		}
 	}
 }

@@ -41,7 +41,10 @@ namespace Rgph
 		void Execute(Graphics& gfx) const noxnd override
 		{
 			masterDepth->BreakRule();
+
 			FullscreenPass::Execute(gfx);
+
+			gfx.ClearShaderResources(8u);
 		}
 
 	private:

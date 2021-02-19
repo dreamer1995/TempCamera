@@ -10,6 +10,7 @@ struct VSOut
 	float3 tangent : Tangent;
 	float3 binormal : Binormal;
 	float2 uv : Texcoord;
+	//float linerZ : TEXCOORD1;
 	float4 pos : SV_Position;
 };
 
@@ -23,7 +24,7 @@ struct VSIn {
 
 void GetVertexParameters(inout VSOut o, VSIn v)
 {
-
+	//o.linerZ = o.pos.w / cameraFNPlane.x;
 }
 
 #include "VSTrunk.hlsli"
