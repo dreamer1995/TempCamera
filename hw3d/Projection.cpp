@@ -29,13 +29,22 @@ Projection::Projection(Graphics& gfx, float FOV, float aspect, float nearZ, floa
 		homeHeight = height;
 		frust = std::make_unique<Frustum>(gfx, width, height, nearZ, farZ, isPerspective);
 	}
-	
+	mOffsetX = mOffsetY = 0;
+	screenW = gfx.GetWidth();
+	screenH = gfx.GetHeight();
 }
 
 DirectX::XMMATRIX Projection::GetMatrix() const
 {
 	if (isPerspective)
-		return DirectX::XMMatrixPerspectiveFovLH(FOV, aspect, nearZ, farZ);
+	{
+		DirectX::XMFLOAT4X4 projArray4x4;
+		DirectX::XMStoreFloat4x4(&projArray4x4, DirectX::XMMatrixPerspectiveFovLH(FOV, aspect, nearZ, farZ));
+		float vDirection = -1;
+		projArray4x4._31 = -2.0f * mOffsetX / screenW;
+		projArray4x4._32 = vDirection * -2.0f * mOffsetY / screenH;
+		return DirectX::XMLoadFloat4x4(&projArray4x4);
+	}
 	else
 		return DirectX::XMMatrixOrthographicLH(width, height, nearZ, farZ);
 }
@@ -138,4 +147,16 @@ float Projection::GetFOV() const
 float Projection::GetAspect() const
 {
 	return aspect;
+}
+
+void Projection::UpdateScreenResolution(Graphics& gfx)
+{
+	screenW = gfx.GetWidth();
+	screenH = gfx.GetHeight();
+}
+
+void Projection::SetOffsetPixels(float offsetX, float offsetY) noxnd
+{
+	mOffsetX = offsetX;
+	mOffsetY = offsetY;
 }

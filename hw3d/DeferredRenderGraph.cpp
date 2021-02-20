@@ -23,6 +23,7 @@
 #include "DeferredSunLightPass.h"
 #include "DeferredPointLightPass.h"
 #include "DeferredTAAPass.h"
+#include "DeferredHDRPass.h"
 
 namespace Rgph
 {
@@ -88,7 +89,15 @@ namespace Rgph
 		}
 
 		{
+			Dcb::RawLayout l;
+			l.Add<Dcb::Integer>("TAAIndex");
+			Dcb::Buffer buf{ std::move(l) };
+			TAAIndex = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("TAAIndex", TAAIndex));
+		}
+		{
 			auto pass = std::make_unique<GbufferPass>(gfx, "gbuffer", gfx.GetWidth(), gfx.GetHeight());
+			pass->SetSinkLinkage("TAAIndex", "$.TAAIndex");
 			pass->SetSinkLinkage("depthStencil", "clearDS.buffer");
 			AppendPass(std::move(pass));
 		}
@@ -208,8 +217,13 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx);
+			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight());
 			pass->SetSinkLinkage("scratchIn", "water.renderTarget");
+			AppendPass(std::move(pass));
+		}
+		{
+			auto pass = std::make_unique<DeferredHDRPass>("HDR", gfx);
+			pass->SetSinkLinkage("scratchIn", "TAA.renderTarget");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			AppendPass(std::move(pass));
 		}
@@ -253,7 +267,7 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<VerticalBlurPass>("vertical", gfx);
-			pass->SetSinkLinkage("renderTarget", "TAA.renderTarget");
+			pass->SetSinkLinkage("renderTarget", "HDR.renderTarget");
 			pass->SetSinkLinkage("depthStencil", "outlineMask.depthStencil");
 			pass->SetSinkLinkage("scratchIn", "horizontal.scratchOut");
 			pass->SetSinkLinkage("kernel", "$.blurKernel");

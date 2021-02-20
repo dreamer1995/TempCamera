@@ -23,6 +23,8 @@ public:
 	DirectX::XMFLOAT2 GetFarNearPlane() const;
 	float GetFOV() const;
 	float GetAspect() const;
+	void UpdateScreenResolution(Graphics& gfx);
+	void SetOffsetPixels(float offsetX, float offsetY) noxnd;
 private:
 	float width;
 	float height;
@@ -39,4 +41,8 @@ private:
 	float aspect;
 	float homeFOV;
 	float homeAspect;
+	float mOffsetX;
+	float mOffsetY;
+	float screenW;
+	float screenH;
 };

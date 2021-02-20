@@ -818,6 +818,9 @@
     <ClInclude Include="DeferredTAAPass.h">
       <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
     </ClInclude>
+    <ClInclude Include="DeferredHDRPass.h">
+      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -1046,6 +1049,9 @@
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
     <FxCompile Include="TAA.hlsl">
+      <Filter>Shader\Postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="HDR.hlsl">
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
   </ItemGroup>

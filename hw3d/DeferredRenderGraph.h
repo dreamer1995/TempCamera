@@ -52,5 +52,6 @@ namespace Rgph
 		std::shared_ptr<Bind::CachingVertexConstantBufferEx> waterFlowVS;
 		std::shared_ptr<Bind::CachingDomainConstantBufferEx> waterFlowDS;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> waterRipple;
+		std::shared_ptr<Bind::CachingPixelConstantBufferEx> TAAIndex;
 	};
 }

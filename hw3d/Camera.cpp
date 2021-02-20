@@ -259,7 +259,7 @@ void Camera::RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) no
 	}
 }
 
-void Camera::Bind(Graphics& gfx) const noexcept
+void Camera::Bind(Graphics& gfx) noexcept
 {
 	using namespace dx;
 	const dx::XMVECTOR forwardBaseVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -277,6 +277,7 @@ void Camera::Bind(Graphics& gfx) const noexcept
 	vCbuf.Bind(gfx);
 	pCbuf.Update(gfx, cbData);
 	pCbuf.Bind(gfx);
+	proj.UpdateScreenResolution(gfx);
 }
 
 void Camera::SetRotation(float pitch, float yaw) noexcept
@@ -324,4 +325,9 @@ void Camera::ProjectScreenToWorldExpansionBasis(dx::XMFLOAT4& vWBasisX, dx::XMFL
 	vWBasisX.x = vX.x; vWBasisX.y = vX.y; vWBasisX.z = vX.z; vWBasisX.w = 0.0f;
 	vWBasisY.x = vY.x; vWBasisY.y = vY.y; vWBasisY.z = vY.z; vWBasisY.w = 0.0f;
 	vWBasisZ.x = vZ.x; vWBasisZ.y = vZ.y; vWBasisZ.z = vZ.z; vWBasisZ.w = 0.0f;
+}
+
+void Camera::SetOffsetPixels(float offsetX, float offsetY) noxnd
+{
+	proj.SetOffsetPixels(offsetX, offsetY);
 }

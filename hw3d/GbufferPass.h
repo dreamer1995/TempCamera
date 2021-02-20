@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderQueuePass.h"
 #include "Camera.h"
+#include "ConstantBuffersEx.h"
 
 class Graphics;
 
@@ -11,9 +12,10 @@ namespace Rgph
 	public:
 		GbufferPass(Graphics& gfx, std::string name, unsigned int fullWidth, unsigned int fullHeight);
 		void Execute(Graphics& gfx) const noxnd override;
-		void BindMainCamera(const Camera& cam) noexcept;
+		void BindMainCamera(Camera& cam) noexcept;
 	private:
-		const Camera* pMainCamera = nullptr;
-		std::shared_ptr<Bind::ShaderInputDepthStencil> depthStencilRT;
+		Camera* pMainCamera = nullptr;
+		//std::shared_ptr<Bind::ShaderInputDepthStencil> depthStencilRT;
+		std::shared_ptr<Bind::CachingPixelConstantBufferEx> TAAIndex;
 	};
 }
