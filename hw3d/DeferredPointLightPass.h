@@ -16,39 +16,41 @@ namespace Bind
 
 namespace Rgph
 {
-	class DeferredSunLightPass : public FullscreenPass
+	class DeferredPointLightPass : public FullscreenPass
 	{
 	public:
-		DeferredSunLightPass(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
+		DeferredPointLightPass(std::string name, Graphics& gfx, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
 			:
 			FullscreenPass(std::move(name), gfx),
 			masterDepth(masterDepth)
 		{
 			using namespace Bind;
-			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u, 0b1u);
-			AddBind(pDShadowCBuf);
-			AddBindSink<Bindable>("dShadowMap");
-			AddBind(PixelShader::Resolve(gfx, "DeferredSunLight.cso"));
-			AddBind(Blender::Resolve(gfx, false));
+			AddBindSink<Bindable>("pShadowMap0");
+			AddBindSink<Bindable>("pShadowMap1");
+			AddBindSink<Bindable>("pShadowMap2");
+			AddBind(PixelShader::Resolve(gfx, "DeferredPointLight.cso"));
+			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::Additive));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u));
 			AddBindSink<Bindable>("gbufferIn");
 			AddBind(masterDepth);
 			AddBindSink<Bindable>("shadowControl");
 			AddBindSink<Bindable>("shadowSampler");
-			AddBindSink<Bindable>("cubeMapBlurIn");
-			AddBindSink<Bindable>("cubeMapMipIn");
-			AddBindSink<Bindable>("planeBRDFLUTIn");
-			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u);
+			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSource(DirectBindableSource<RenderTarget>::Make("renderTarget", renderTarget));
 		}
 		void BindMainCamera(const Camera& cam) noexcept
 		{
 			pMainCamera = &cam;
 		}
-		void BindShadowCamera(Graphics& gfx, const Camera& dCam) noexcept
+		void BindShadowCamera(Graphics& gfx, std::vector<std::shared_ptr<PointLight>> pCams) noexcept
 		{
-			pDShadowCBuf->SetCamera(&dCam);
+			for (unsigned char i = 0; i < pCams.size(); i++)
+			{
+				pPShadowCBufs.emplace_back(std::make_shared<Bind::ShadowCameraCBuf>(gfx, 10u + i, 0b1u));
+				pPShadowCBufs[i]->SetPointLight(pCams[i]);
+				AddBind(pPShadowCBufs[i]);
+			}
 		}
 		// this override is necessary because we cannot (yet) link input bindables directly into
 		// the container of bindables (mainly because vector growth buggers references)
@@ -57,7 +59,10 @@ namespace Rgph
 			assert(pMainCamera);
 			pMainCamera->BindToGraphics(gfx);
 			masterDepth->BreakRule();
-			pDShadowCBuf->Update(gfx);
+			for (unsigned char i = 0; i < pPShadowCBufs.size(); i++)
+				pPShadowCBufs[i]->UpdatePointLight(gfx);
+
+			gfx.ClearConstantBuffers(11u);
 
 			FullscreenPass::Execute(gfx);
 
@@ -66,6 +71,6 @@ namespace Rgph
 	private:
 		std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth;
 		const Camera* pMainCamera = nullptr;
-		std::shared_ptr<Bind::ShadowCameraCBuf> pDShadowCBuf;
+		std::vector<std::shared_ptr<Bind::ShadowCameraCBuf>> pPShadowCBufs;
 	};
 }

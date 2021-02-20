@@ -79,6 +79,7 @@ public:
 	std::shared_ptr<Bind::RenderTarget> GetTarget();
 	void ClearShaderResources(UINT slot) noexcept;
 	void UnbindTessellationShaders() noexcept;
+	void ClearConstantBuffers(UINT slot) noexcept;
 private:
 	UINT width;
 	UINT height;

@@ -11,7 +11,7 @@ SamplerState splr;
 float4 main(float3 tc : Texcoord) : SV_Target
 {
 	float3 col = DecodeGamma(SkyMap.Sample(splr, normalize(tc))) * materialColor;
-	col = EncodeGamma(col);
+	
 	return float4(col, 1.0f);
 }
 

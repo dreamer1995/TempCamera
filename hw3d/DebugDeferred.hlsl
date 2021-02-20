@@ -78,5 +78,5 @@ float4 main(float2 uv : Texcoord) : SV_Target
 		color = sceneZ;
 		alpha = 1;
 	}
-	return float4(color, alpha);
+	return float4(color, 0);
 }

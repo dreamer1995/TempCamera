@@ -30,7 +30,7 @@ namespace Rgph
 			AddBindSink<Bindable>("pShadowMap0");
 			AddBindSink<Bindable>("pShadowMap1");
 			AddBindSink<Bindable>("pShadowMap2");
-			RegisterSink( DirectBufferSink<RenderTarget>::Make( "renderTarget",renderTarget ) );
+			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSink( DirectBufferSink<DepthStencil>::Make( "depthStencil",depthStencil ) );
 			AddBindSink<Bindable>( "shadowControl" );
 			AddBindSink<Bindable>( "shadowSampler" );
@@ -38,7 +38,7 @@ namespace Rgph
 			AddBindSink<Bindable>("cubeMapBlurIn");
 			AddBindSink<Bindable>("cubeMapMipIn");
 			AddBindSink<Bindable>("planeBRDFLUTIn");
-			RegisterSource( DirectBufferSource<RenderTarget>::Make( "renderTarget",renderTarget ) );
+			RegisterSource(DirectBindableSource<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSource( DirectBufferSource<DepthStencil>::Make( "depthStencil",depthStencil ) );
 			AddBind( Stencil::Resolve( gfx,Stencil::Mode::Off ) );
 			AddBind(Blender::Resolve(gfx, false));
@@ -56,7 +56,6 @@ namespace Rgph
 				pPShadowCBufs[i]->SetPointLight(pCams[i]);
 				AddBind(pPShadowCBufs[i]);
 			}
-			
 		}
 		void Execute( Graphics& gfx ) const noxnd override
 		{

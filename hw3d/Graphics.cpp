@@ -141,6 +141,15 @@ void Graphics::ClearShaderResources(UINT slot) noexcept
 	pContext->PSSetShaderResources(slot, 1, &pNullTex);
 }
 
+void Graphics::ClearConstantBuffers(UINT slot) noexcept
+{
+	ID3D11Buffer* const pNullBuffer = nullptr;
+	pContext->VSSetConstantBuffers(slot, 1, &pNullBuffer);
+	pContext->HSSetConstantBuffers(slot, 1, &pNullBuffer);
+	pContext->DSSetConstantBuffers(slot, 1, &pNullBuffer);
+	pContext->PSSetConstantBuffers(slot, 1, &pNullBuffer);
+}
+
 void Graphics::DrawIndexed( UINT count ) noxnd
 {
 	GFX_THROW_INFO_ONLY( pContext->DrawIndexed( count,0u,0u ) );

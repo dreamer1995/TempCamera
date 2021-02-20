@@ -9,7 +9,6 @@ Texture2D depth : register(t8);
 #include "Algorithms.hlsli"
 #include "DeferredCommon.hlsli"
 #include "ShadingModel.hlsli"
-#include "ConstantsPS.hlsli"
 
 float4 main(float2 uv : Texcoord) : SV_Target
 {
@@ -54,8 +53,6 @@ float4 main(float2 uv : Texcoord) : SV_Target
 
     // final color = attenuate diffuse & ambient by diffuse texture color and add specular reflected
 	outCol = diffuseLighting + specularLighting + ambientLighting;
-
-	outCol = EncodeGamma(outCol);
 
 	return float4(outCol, 1);
 }

@@ -19,9 +19,9 @@ namespace Rgph
 		{
 			using namespace Bind;
 			AddBindSink<Bind::Bindable>("cubeMapIn");
-			RegisterSink(DirectBufferSink<RenderTarget>::Make("renderTarget", renderTarget));
+			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSink(DirectBufferSink<DepthStencil>::Make("depthStencil", depthStencil));
-			RegisterSource(DirectBufferSource<RenderTarget>::Make("renderTarget", renderTarget));
+			RegisterSource(DirectBindableSource<RenderTarget>::Make("renderTarget", renderTarget));
 			RegisterSource(DirectBufferSource<DepthStencil>::Make("depthStencil", depthStencil));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::SkyBox));
 			AddBind(Blender::Resolve(gfx, false));

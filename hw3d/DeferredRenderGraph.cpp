@@ -21,6 +21,8 @@
 #include "GBufferPass.h"
 #include "DebugDeferredPass.h"
 #include "DeferredSunLightPass.h"
+#include "DeferredPointLightPass.h"
+#include "DeferredTAAPass.h"
 
 namespace Rgph
 {
@@ -91,13 +93,23 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<DeferredSunLightPass>("deferredSunLighting", gfx, masterDepth);
+			auto pass = std::make_unique<DeferredSunLightPass>("deferredSunLighting", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
 			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
 			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
 			pass->SetSinkLinkage("gbufferIn", "gbuffer.gbufferOut");
-			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
+			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
+			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
+			AppendPass(std::move(pass));
+		}
+		{
+			auto pass = std::make_unique<DeferredPointLightPass>("deferredPointLighting", gfx, masterDepth);
+			pass->SetSinkLinkage("pShadowMap0", "shadowMap.pMap0");
+			pass->SetSinkLinkage("pShadowMap1", "shadowMap.pMap1");
+			pass->SetSinkLinkage("pShadowMap2", "shadowMap.pMap2");
+			pass->SetSinkLinkage("gbufferIn", "gbuffer.gbufferOut");
+			pass->SetSinkLinkage("renderTarget", "deferredSunLighting.renderTarget");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
 			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
 			AppendPass(std::move(pass));
@@ -196,6 +208,12 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
+			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx);
+			pass->SetSinkLinkage("scratchIn", "water.renderTarget");
+			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
+			AppendPass(std::move(pass));
+		}
+		{
 			auto pass = std::make_unique<OutlineMaskGenerationPass>(gfx, "outlineMask");
 			pass->SetSinkLinkage("depthStencil", "water.depthStencil");
 			AppendPass(std::move(pass));
@@ -235,7 +253,7 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<VerticalBlurPass>("vertical", gfx);
-			pass->SetSinkLinkage("renderTarget", "water.renderTarget");
+			pass->SetSinkLinkage("renderTarget", "TAA.renderTarget");
 			pass->SetSinkLinkage("depthStencil", "outlineMask.depthStencil");
 			pass->SetSinkLinkage("scratchIn", "horizontal.scratchOut");
 			pass->SetSinkLinkage("kernel", "$.blurKernel");
@@ -495,6 +513,7 @@ namespace Rgph
 		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindMainCamera(cam);
 		dynamic_cast<GbufferPass&>(FindPassByName("gbuffer")).BindMainCamera(cam);
 		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindMainCamera(cam);
+		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindMainCamera(cam);
 	}
 	void Rgph::DeferredRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams)
 	{
@@ -502,5 +521,6 @@ namespace Rgph
 		dynamic_cast<LambertianPass&>(FindPassByName("lambertian")).BindShadowCamera(gfx, dCam, pCams);
 		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindShadowCamera(gfx, dCam, pCams);
 		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindShadowCamera(gfx, dCam);
+		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindShadowCamera(gfx, pCams);
 	}
 }
