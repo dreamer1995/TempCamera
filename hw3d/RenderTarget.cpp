@@ -694,6 +694,8 @@ namespace Bind
 
 	void ShaderInputRenderTarget::Bind( Graphics& gfx ) noxnd
 	{
+		if (banToBind)
+			return;
 		INFOMAN_NOHR( gfx );
 		assert(shaderIndex & 0b00001111);
 		switch (type)
@@ -740,6 +742,15 @@ namespace Bind
 		}	
 	}
 	
+	void ShaderInputRenderTarget::BanToBind() noxnd
+	{
+		banToBind = true;
+	}
+
+	void ShaderInputRenderTarget::ReleaseToBind() noxnd
+	{
+		banToBind = false;
+	}
 
 	void OutputOnlyRenderTarget::Bind( Graphics& gfx ) noxnd
 	{

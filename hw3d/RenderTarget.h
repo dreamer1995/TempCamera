@@ -58,9 +58,12 @@ namespace Bind
 		Surface ToSurface( Graphics& gfx ) const;
 		void ToCube(Graphics& gfx, const std::string& path) const;
 		void ToMipCube(Graphics& gfx, const std::string& path) const;
+		void BanToBind() noxnd;
+		void ReleaseToBind() noxnd;
 	private:
 		UINT slot;
 		UINT shaderIndex;
+		bool banToBind = false;
 	public:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceGBufferViews[8];

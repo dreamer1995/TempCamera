@@ -23,6 +23,8 @@ cbuffer CameraCBuf : register(b1)//VS, PS
 	float4 vWBasisX;
 	float4 vWBasisY;
 	float4 vWBasisZ;
+	float2 UVToViewA;
+	float2 UVToViewB;
 };
 
 cbuffer Time : register(b2)//VS, DS, PS
@@ -30,6 +32,9 @@ cbuffer Time : register(b2)//VS, DS, PS
 	double time;
 	matrix EVRotation;
 	uint lightCount;
+	float4 screenInfo;
+	bool TAA;
+	bool HBAO;
 };
 
 cbuffer DirectionalLightCBuf : register(b3)//PS

@@ -37,6 +37,7 @@ namespace Rgph
 	{
 		assert(pMainCamera);
 
+		if (gfx.isTAA)
 		{
 			int TAASamples = 8;
 			static int mOffsetIdx = 0;

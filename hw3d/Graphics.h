@@ -80,12 +80,15 @@ public:
 	void ClearShaderResources(UINT slot) noexcept;
 	void UnbindTessellationShaders() noexcept;
 	void ClearConstantBuffers(UINT slot) noexcept;
+	void SetFOV(float FOV) noexcept;
+	float GetFOV() const noexcept;
 private:
 	UINT width;
 	UINT height;
 	DirectX::XMMATRIX projection;
 	DirectX::XMMATRIX camera;
 	bool imguiEnabled = true;
+	float mFOV;
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
@@ -95,4 +98,6 @@ private:
 	std::shared_ptr<Bind::RenderTarget> pTarget;
 public:
 	bool isWireFrame = false;
+	bool isTAA;
+	bool isHBAO;
 };

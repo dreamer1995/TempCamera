@@ -24,6 +24,7 @@
 #include "DeferredPointLightPass.h"
 #include "DeferredTAAPass.h"
 #include "DeferredHDRPass.h"
+#include "DeferredHBAOPass.h"
 
 namespace Rgph
 {
@@ -217,13 +218,51 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight());
-			pass->SetSinkLinkage("scratchIn", "water.renderTarget");
+			Dcb::RawLayout l;
+			l.Add<Dcb::Float>("ViewDepthThresholdNegInv");
+			l.Add<Dcb::Float>("ViewDepthThresholdSharpness");
+			l.Add<Dcb::Float>("NegInvR2");
+			l.Add<Dcb::Float>("RadiusToScreen");
+			l.Add<Dcb::Float>("BackgroundAORadiusPixels");
+			l.Add<Dcb::Float>("ForegroundAORadiusPixels");
+			l.Add<Dcb::Float>("NDotVBias");
+			l.Add<Dcb::Float2>("AORes");
+			l.Add<Dcb::Float2>("InvAORes");
+			l.Add<Dcb::Float>("SmallScaleAOAmount");
+			l.Add<Dcb::Float>("LargeScaleAOAmount");
+			Dcb::Buffer buf{ std::move(l) };
+			buf["ViewDepthThresholdNegInv"] = -1.f / HAOMaxViewDepth;
+			buf["ViewDepthThresholdSharpness"] = HAOSharpness;
+			const float R = HAORadius * 1.0f;
+			buf["NegInvR2"] = -1.f / (R * R);
+			float RadiusToScreen = R * 0.5f / gfx.GetFOV() * gfx.GetHeight();
+			buf["RadiusToScreen"] = RadiusToScreen;
+			buf["BackgroundAORadiusPixels"] = RadiusToScreen / HAOBackgroundViewDepth;
+			buf["ForegroundAORadiusPixels"] = RadiusToScreen / HAOForegroundViewDepth;
+			buf["NDotVBias"] = HAOBias;
+			buf["AORes"] = DirectX::XMFLOAT2{ (float)gfx.GetWidth(),(float)gfx.GetHeight() };
+			buf["InvAORes"] = DirectX::XMFLOAT2{ 1.0f / gfx.GetWidth(),1.0f / gfx.GetHeight() };
+			const float AOAmountScaleFactor = 1.0f / (1.0f - HAOBias);
+			buf["SmallScaleAOAmount"] = HAOSmallScaleAO * AOAmountScaleFactor * 2.0f;
+			buf["LargeScaleAOAmount"] = HAOLargeScaleAO * AOAmountScaleFactor;
+			AOParams = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("AOParams", AOParams));
+		}
+		{
+			auto pass = std::make_unique<DeferredHBAOPass>("HBAO", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+			pass->SetSinkLinkage("AOParams", "$.AOParams");
+			pass->SetSinkLinkage("renderTarget", "water.renderTarget");
+			AppendPass(std::move(pass));
+		}
+		{
+			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+			pass->SetSinkLinkage("scratchIn", "HBAO.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
 			auto pass = std::make_unique<DeferredHDRPass>("HDR", gfx);
-			pass->SetSinkLinkage("scratchIn", "TAA.renderTarget");
+			pass->SetSinkLinkage("TAA0", "TAA.renderTarget0");
+			pass->SetSinkLinkage("TAA1", "TAA.renderTarget1");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			AppendPass(std::move(pass));
 		}
@@ -330,6 +369,7 @@ namespace Rgph
 		RenderShadowWindow(gfx);
 		RenderKernelWindow(gfx);
 		// RenderWaterWindow(gfx);
+		RenderAOWindow(gfx);
 	}
 
 	void DeferredRenderGraph::RenderKernelWindow(Graphics& gfx)
@@ -516,6 +556,45 @@ namespace Rgph
 		ImGui::End();
 	}
 
+	void DeferredRenderGraph::RenderAOWindow(Graphics& gfx)
+	{
+		if (!gfx.isHBAO)
+			return;
+		if (ImGui::Begin("HBAO+"))
+		{
+			auto buf = AOParams->GetBuffer();
+
+			bool con1 = ImGui::SliderFloat("Max View Depth", &HAOMaxViewDepth, 0.001f, 1.0f);
+			bool con2 = ImGui::SliderFloat("Sharpness", &HAOSharpness, 0.0f, 10.0f);
+			bool con3 = ImGui::SliderFloat("Radius", &HAORadius, 0.001f, 50.0f);
+			bool con4 = ImGui::SliderFloat("Background View Depth", &HAOBackgroundViewDepth, -1.0f, 200.0f);
+			bool con5 = ImGui::SliderFloat("Foreground View Depth", &HAOForegroundViewDepth, -1.0f, 200.0f);
+			bool con6 = ImGui::SliderFloat("Bias", &HAOBias, 0.01f, 1.0f);
+			bool con7 = ImGui::SliderFloat("Small Scale AO", &HAOSmallScaleAO, 0.0f, 2.0f);
+			bool con8 = ImGui::SliderFloat("Large Scale AO", &HAOLargeScaleAO, 0.0f, 2.0f);
+
+			if (con1 || con2 || con3 || con4 || con5 || con6 || con7 || con8)
+			{
+				buf["ViewDepthThresholdNegInv"] = -1.f / HAOMaxViewDepth;
+				buf["ViewDepthThresholdSharpness"] = HAOSharpness;
+				const float R = HAORadius * 1.0f;
+				buf["NegInvR2"] = -1.f / (R * R);
+				float RadiusToScreen = R * 0.5f / gfx.GetFOV() * gfx.GetHeight();
+				buf["RadiusToScreen"] = RadiusToScreen;
+				buf["BackgroundAORadiusPixels"] = RadiusToScreen / HAOBackgroundViewDepth;
+				buf["ForegroundAORadiusPixels"] = RadiusToScreen / HAOForegroundViewDepth;
+				buf["NDotVBias"] = HAOBias;
+				buf["AORes"] = DirectX::XMFLOAT2{ (float)gfx.GetWidth(),(float)gfx.GetHeight() };
+				buf["InvAORes"] = DirectX::XMFLOAT2{ 1.0f / gfx.GetWidth(),1.0f / gfx.GetHeight() };
+				const float AOAmountScaleFactor = 1.0f / (1.0f - HAOBias);
+				buf["SmallScaleAOAmount"] = HAOSmallScaleAO * AOAmountScaleFactor * 2.0f;
+				buf["LargeScaleAOAmount"] = HAOLargeScaleAO * AOAmountScaleFactor;
+				AOParams->SetBuffer(buf);
+			}
+		}
+		ImGui::End();
+	}
+
 	void Rgph::DeferredRenderGraph::DumpShadowMap(Graphics& gfx, const std::string& path)
 	{
 		dynamic_cast<ShadowMappingPass&>(FindPassByName("shadowMap")).DumpShadowMap(gfx, path);
@@ -528,6 +607,7 @@ namespace Rgph
 		dynamic_cast<GbufferPass&>(FindPassByName("gbuffer")).BindMainCamera(cam);
 		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindMainCamera(cam);
 		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindMainCamera(cam);
+		dynamic_cast<DeferredTAAPass&>(FindPassByName("TAA")).BindMainCamera(cam);
 	}
 	void Rgph::DeferredRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams)
 	{

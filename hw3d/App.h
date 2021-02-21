@@ -32,7 +32,9 @@ private:
 		double time;
 		DirectX::XMMATRIX EVRotation;
 		unsigned int lightCount;
-		float padding[2];
+		alignas(16) DirectX::XMFLOAT4 screenInfo;
+		BOOL TAA;
+		BOOL HBAO;
 	};
 	double time;
 	static std::unique_ptr<Bind::VertexConstantBuffer<CommonVar>> cVBuf;
@@ -78,4 +80,6 @@ private:
 	//float scanSpeed = 0.4f;
 	//float extentSpeed = 1.7f;
 	std::vector<std::shared_ptr<PointLight>> pCams;
+	bool TAA = true;
+	bool HBAO = true;
 };

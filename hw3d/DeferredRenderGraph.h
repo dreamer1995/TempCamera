@@ -34,6 +34,7 @@ namespace Rgph
 		void SetKernelGauss(int radius, float sigma) noxnd;
 		void SetKernelBox(int radius) noxnd;
 		void RenderWaterWindow(Graphics& gfx);
+		void RenderAOWindow(Graphics& gfx);
 		// private data
 		enum class KernelType
 		{
@@ -53,5 +54,14 @@ namespace Rgph
 		std::shared_ptr<Bind::CachingDomainConstantBufferEx> waterFlowDS;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> waterRipple;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> TAAIndex;
+		std::shared_ptr<Bind::CachingPixelConstantBufferEx> AOParams;
+		float HAOMaxViewDepth = 1.0f;
+		float HAOSharpness = 10.0f;
+		float HAORadius = 0.95f;
+		float HAOBackgroundViewDepth = -1.0f;
+		float HAOForegroundViewDepth = 62.608f;
+		float HAOBias = 0.975f;
+		float HAOSmallScaleAO = 2.0f;
+		float HAOLargeScaleAO = 2.0f;
 	};
 }

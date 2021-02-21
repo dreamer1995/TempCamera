@@ -73,7 +73,9 @@ App::App( const std::string& commandLine )
 void App::DoFrame( float dt )
 {
 	time += dt;
-	UpdateCommonVar(wnd.Gfx(), { time,DirectX::XMMatrixRotationRollPitchYaw(skybox.pitch, skybox.yaw, skybox.roll),(unsigned int)pCams.size() });
+	UpdateCommonVar(wnd.Gfx(), { time,DirectX::XMMatrixRotationRollPitchYaw(skybox.pitch, skybox.yaw, skybox.roll),
+		(unsigned int)pCams.size(),{(float)wnd.Gfx().GetWidth(),(float)wnd.Gfx().GetHeight(),1.0f / wnd.Gfx().GetWidth(),1.0f / wnd.Gfx().GetHeight()},
+		TAA, HBAO});
 	//wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().BeginFrame(0.1f, 0.1f, 0.1f);
 	//wnd.Gfx().SetCamera(cameras->GetMatrix() );
@@ -151,7 +153,7 @@ void App::DoFrame( float dt )
 	sphere.SpawnControlWindow(wnd.Gfx(), "Sphere");
 	//water.SpawnControlWindow(wnd.Gfx(), "Water");
 	rg.RenderWindows( wnd.Gfx() );
-	//RenderMainWindows(wnd.Gfx());
+	RenderMainWindows(wnd.Gfx());
 
 	//if (ImGui::Begin("Delete"))
 	//{
@@ -401,22 +403,26 @@ void App::UpdateCommonVar(Graphics& gfx, const CommonVar& cvar) noxnd
 	cPBuf->Bind(gfx);
 	cDBuf->Update(gfx, cvar);
 	cDBuf->Bind(gfx);
+	gfx.isTAA = TAA;
+	gfx.isHBAO = HBAO;
 }
 std::unique_ptr<Bind::VertexConstantBuffer<App::CommonVar>> App::cVBuf;
 std::unique_ptr<Bind::PixelConstantBuffer<App::CommonVar>> App::cPBuf;
 std::unique_ptr<Bind::DomainConstantBuffer<App::CommonVar>> App::cDBuf;
 
-//void App::RenderMainWindows(Graphics& gfx)
-//{
-//	if (ImGui::Begin("Íæ"))
-//	{
-//		ImGui::SliderFloat("X", &rotateSpeed, 0.0f, 5.0f, "%.001f");
-//		ImGui::SliderFloat("Y", &flickerSpeed, 0.0f, 5.0f, "%.1f");
-//		ImGui::SliderFloat("Z", &scanSpeed, 0.0f, 1.0f, "%.1f");
-//		ImGui::SliderFloat("W", &extentSpeed, 0.0f, 2.0f, "%.1f");
-//	}
-//	ImGui::End();
-//}
+void App::RenderMainWindows(Graphics& gfx)
+{
+	if (ImGui::Begin("Íæ"))
+	{
+		//ImGui::SliderFloat("X", &rotateSpeed, 0.0f, 5.0f, "%.001f");
+		//ImGui::SliderFloat("Y", &flickerSpeed, 0.0f, 5.0f, "%.1f");
+		//ImGui::SliderFloat("Z", &scanSpeed, 0.0f, 1.0f, "%.1f");
+		//ImGui::SliderFloat("W", &extentSpeed, 0.0f, 2.0f, "%.1f");
+		ImGui::Checkbox("TAA", &TAA);
+		ImGui::Checkbox("HBAO+", &HBAO);
+	}
+	ImGui::End();
+}
 
 void App::GameLogic(float dt, float time)
 {

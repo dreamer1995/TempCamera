@@ -211,7 +211,14 @@ void Graphics::UnbindTessellationShaders() noexcept
 	pContext->DSSetShader(NULL, nullptr, 0u);
 }
 
-
+void Graphics::SetFOV(float FOV) noexcept
+{
+	mFOV = FOV;
+}
+float Graphics::GetFOV() const noexcept
+{
+	return mFOV;
+}
 // Graphics exception stuff
 Graphics::HrException::HrException( int line,const char* file,HRESULT hr,std::vector<std::string> infoMsgs ) noexcept
 	:

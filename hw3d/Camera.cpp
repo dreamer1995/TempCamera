@@ -30,6 +30,7 @@ void Camera::BindToGraphics( Graphics& gfx ) const
 {
 	gfx.SetCamera( GetMatrix() );
 	gfx.SetProjection( proj.GetMatrix() );
+	gfx.SetFOV(proj.GetFOV());
 }
 
 DirectX::XMMATRIX Camera::GetMatrix() const noexcept
@@ -259,7 +260,7 @@ void Camera::RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) no
 	}
 }
 
-void Camera::Bind(Graphics& gfx) noexcept
+void Camera::Bind(Graphics& gfx) const noexcept
 {
 	using namespace dx;
 	const dx::XMVECTOR forwardBaseVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -271,13 +272,15 @@ void Camera::Bind(Graphics& gfx) noexcept
 	DirectX::XMFLOAT4 vWBasisX;
 	DirectX::XMFLOAT4 vWBasisY;
 	DirectX::XMFLOAT4 vWBasisZ;
-	ProjectScreenToWorldExpansionBasis(vWBasisX, vWBasisY, vWBasisZ);
-	CameraCBuf cbData = { pos,lookVector,proj.GetFarNearPlane(),vWBasisX,vWBasisY,vWBasisZ };
+	DirectX::XMFLOAT2 UVToViewA;
+	DirectX::XMFLOAT2 UVToViewB;
+	ProjectScreenToWorldExpansionBasis(vWBasisX, vWBasisY, vWBasisZ, UVToViewA, UVToViewB);
+	CameraCBuf cbData = { pos,lookVector,proj.GetFarNearPlane(),vWBasisX,vWBasisY,vWBasisZ,UVToViewA,UVToViewB };
 	vCbuf.Update(gfx, cbData);
 	vCbuf.Bind(gfx);
 	pCbuf.Update(gfx, cbData);
 	pCbuf.Bind(gfx);
-	proj.UpdateScreenResolution(gfx);
+	const_cast<Camera*>(this)->proj.UpdateScreenResolution(gfx);
 }
 
 void Camera::SetRotation(float pitch, float yaw) noexcept
@@ -290,7 +293,8 @@ void Camera::SetRotation(float pitch, float yaw) noexcept
 	proj.SetRotation(angles);
 }
 
-void Camera::ProjectScreenToWorldExpansionBasis(dx::XMFLOAT4& vWBasisX, dx::XMFLOAT4& vWBasisY, dx::XMFLOAT4& vWBasisZ) const noxnd
+void Camera::ProjectScreenToWorldExpansionBasis(dx::XMFLOAT4& vWBasisX, dx::XMFLOAT4& vWBasisY, dx::XMFLOAT4& vWBasisZ,
+	dx::XMFLOAT2& UVToViewA, dx::XMFLOAT2& UVToViewB) const noxnd
 {
 	DirectX::XMFLOAT4X4 cameraToWorld;
 	dx::XMStoreFloat4x4(&cameraToWorld, DirectX::XMMatrixInverse(nullptr, GetMatrix()));
@@ -310,7 +314,10 @@ void Camera::ProjectScreenToWorldExpansionBasis(dx::XMFLOAT4& vWBasisX, dx::XMFL
 	NormalizeFloat3(vY);
 	NormalizeFloat3(vZ);
 
-	float tanHalfFovToPlaneY = farPlane * std::tan(FOV * 0.5f);
+	float HalfTanFovY = std::tan(FOV * 0.5f);
+	float HalfTanFovX = proj.GetAspect() * HalfTanFovY;
+
+	float tanHalfFovToPlaneY = farPlane * HalfTanFovY;
 	float tanHalfFovToPlaneX = proj.GetAspect() * tanHalfFovToPlaneY;
 
 	vY = { vY.x * tanHalfFovToPlaneY,vY.y * tanHalfFovToPlaneY,vY.z * tanHalfFovToPlaneY };
@@ -325,6 +332,9 @@ void Camera::ProjectScreenToWorldExpansionBasis(dx::XMFLOAT4& vWBasisX, dx::XMFL
 	vWBasisX.x = vX.x; vWBasisX.y = vX.y; vWBasisX.z = vX.z; vWBasisX.w = 0.0f;
 	vWBasisY.x = vY.x; vWBasisY.y = vY.y; vWBasisY.z = vY.z; vWBasisY.w = 0.0f;
 	vWBasisZ.x = vZ.x; vWBasisZ.y = vZ.y; vWBasisZ.z = vZ.z; vWBasisZ.w = 0.0f;
+
+	UVToViewA.x = -2 * HalfTanFovX; UVToViewA.y = -2 * -1 * HalfTanFovY;
+	UVToViewB.x = HalfTanFovX; UVToViewB.y = -1 * HalfTanFovY;
 }
 
 void Camera::SetOffsetPixels(float offsetX, float offsetY) noxnd

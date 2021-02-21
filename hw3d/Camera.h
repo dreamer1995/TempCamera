@@ -35,11 +35,12 @@ public:
 	void LookZero(DirectX::XMFLOAT3 position) noexcept;
 	void RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) noexcept;
 	DirectX::XMFLOAT3 pos;
-	void Bind(Graphics& gfx) noexcept;
+	void Bind(Graphics& gfx) const noexcept;
 	float yaw;
 	std::string name;
 	void SetRotation(float pitch, float yaw) noexcept;
-	void ProjectScreenToWorldExpansionBasis(DirectX::XMFLOAT4& vWBasisX, DirectX::XMFLOAT4& vWBasisY, DirectX::XMFLOAT4& vWBasisZ) const noxnd;
+	void ProjectScreenToWorldExpansionBasis(DirectX::XMFLOAT4& vWBasisX, DirectX::XMFLOAT4& vWBasisY, DirectX::XMFLOAT4& vWBasisZ,
+		DirectX::XMFLOAT2& UVToViewA, DirectX::XMFLOAT2& UVToViewB) const noxnd;
 	void SetOffsetPixels(float offsetX, float offsetY) noxnd;
 private:
 	struct CameraCBuf
@@ -50,6 +51,8 @@ private:
 		alignas(16) DirectX::XMFLOAT4 vWBasisX;
 		alignas(16) DirectX::XMFLOAT4 vWBasisY;
 		alignas(16) DirectX::XMFLOAT4 vWBasisZ;
+		DirectX::XMFLOAT2 UVToViewA;
+		DirectX::XMFLOAT2 UVToViewB;
 	};
 
 private:

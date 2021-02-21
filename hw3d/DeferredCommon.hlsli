@@ -50,3 +50,13 @@ float3 CalcHomogeneousPos(float depth, float2 screenTC)
 	float3 pos = vWBasisZ.xyz + (vWBasisX.xyz * screenTC.x) + (vWBasisY.xyz * screenTC.y);
 	return pos * depth;
 }
+
+float2 ScreenSpace2NDC(float2 sc)
+{
+	return float2(sc.x * 2.0f - 1.0f, 1.0f - sc.y * 2.0f);
+}
+
+float2 NDC2ScreenSpace(float2 ndc)
+{
+	return float2(0.5 + 0.5 * ndc.x, 0.5 - 0.5 * ndc.y);
+}

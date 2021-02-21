@@ -37,3 +37,55 @@ float3 MapNormal(
     // bring normal from tanspace into target space
 	return normalize(mul(tanNormal, tanToTarget));
 }
+
+float3 RGB2YCoCg(float3 RGB)
+{
+	float Y = dot(RGB, float3(1, 2, 1));
+	float Co = dot(RGB, float3(2, 0, -2));
+	float Cg = dot(RGB, float3(-1, 2, -1));
+
+	return float3(Y, Co, Cg);
+}
+
+float3 YCoCg2RGB(float3 YCoCg)
+{
+	float Y = YCoCg.x * 0.25;
+	float Co = YCoCg.y * 0.25;
+	float Cg = YCoCg.z * 0.25;
+
+	float R = Y + Co - Cg;
+	float G = Y + Cg;
+	float B = Y - Co - Cg;
+
+	return float3(R, G, B);
+}
+
+float Min3(float a, float b, float c)
+{
+	return min(min(a, b), c);
+}
+
+float3 Min3x3(float3 a, float3 b, float3 c)
+{
+	return float3(Min3(a.x, b.x, c.x), Min3(a.y, b.y, c.y), Min3(a.z, b.z, c.z));
+}
+
+float Max3(float a, float b, float c)
+{
+	return max(max(a, b), c);
+}
+
+float3 Max3x3(float3 a, float3 b, float3 c)
+{
+	return float3(Max3(a.x, b.x, c.x), Max3(a.y, b.y, c.y), Max3(a.z, b.z, c.z));
+}
+
+float2 WeightedLerpFactors(float WeightA, float WeightB, float Blend)
+{
+	float BlendA = (1.0 - Blend) * WeightA;
+	float BlendB = Blend * WeightB;
+	float RcpBlend = rcp(BlendA + BlendB);
+	BlendA *= RcpBlend;
+	BlendB *= RcpBlend;
+	return float2(BlendA, BlendB);
+}
