@@ -82,6 +82,7 @@ public:
 	void ClearConstantBuffers(UINT slot) noexcept;
 	void SetFOV(float FOV) noexcept;
 	float GetFOV() const noexcept;
+	void ClearRenderTarget() noexcept;
 private:
 	UINT width;
 	UINT height;

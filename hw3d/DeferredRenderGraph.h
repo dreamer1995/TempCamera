@@ -59,9 +59,11 @@ namespace Rgph
 		float HAOSharpness = 10.0f;
 		float HAORadius = 0.95f;
 		float HAOBackgroundViewDepth = -1.0f;
-		float HAOForegroundViewDepth = 62.608f;
-		float HAOBias = 0.975f;
+		float HAOForegroundViewDepth = 3.873f;
+		float HAOBias = 0.01f;
 		float HAOSmallScaleAO = 2.0f;
 		float HAOLargeScaleAO = 2.0f;
+		float HAOPowerExponent = 1.0f;
+		float HAOForegroundSharpnessScale = 100.0f;
 	};
 }

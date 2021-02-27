@@ -25,6 +25,7 @@
 #include "DeferredTAAPass.h"
 #include "DeferredHDRPass.h"
 #include "DeferredHBAOPass.h"
+#include "DeferredHBAOBlurPass.h"
 
 namespace Rgph
 {
@@ -230,33 +231,30 @@ namespace Rgph
 			l.Add<Dcb::Float2>("InvAORes");
 			l.Add<Dcb::Float>("SmallScaleAOAmount");
 			l.Add<Dcb::Float>("LargeScaleAOAmount");
+			l.Add<Dcb::Float>("PowerExponent");
+			l.Add<Dcb::Float>("BlurViewDepth0");
+			l.Add<Dcb::Float>("BlurViewDepth1");
+			l.Add<Dcb::Float>("BlurSharpness0");
+			l.Add<Dcb::Float>("BlurSharpness1");
 			Dcb::Buffer buf{ std::move(l) };
-			buf["ViewDepthThresholdNegInv"] = -1.f / HAOMaxViewDepth;
-			buf["ViewDepthThresholdSharpness"] = HAOSharpness;
-			const float R = HAORadius * 1.0f;
-			buf["NegInvR2"] = -1.f / (R * R);
-			float RadiusToScreen = R * 0.5f / gfx.GetFOV() * gfx.GetHeight();
-			buf["RadiusToScreen"] = RadiusToScreen;
-			buf["BackgroundAORadiusPixels"] = RadiusToScreen / HAOBackgroundViewDepth;
-			buf["ForegroundAORadiusPixels"] = RadiusToScreen / HAOForegroundViewDepth;
-			buf["NDotVBias"] = HAOBias;
-			buf["AORes"] = DirectX::XMFLOAT2{ (float)gfx.GetWidth(),(float)gfx.GetHeight() };
-			buf["InvAORes"] = DirectX::XMFLOAT2{ 1.0f / gfx.GetWidth(),1.0f / gfx.GetHeight() };
-			const float AOAmountScaleFactor = 1.0f / (1.0f - HAOBias);
-			buf["SmallScaleAOAmount"] = HAOSmallScaleAO * AOAmountScaleFactor * 2.0f;
-			buf["LargeScaleAOAmount"] = HAOLargeScaleAO * AOAmountScaleFactor;
 			AOParams = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("AOParams", AOParams));
 		}
 		{
 			auto pass = std::make_unique<DeferredHBAOPass>("HBAO", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
 			pass->SetSinkLinkage("AOParams", "$.AOParams");
+			AppendPass(std::move(pass));
+		}
+		{
+			auto pass = std::make_unique<DeferredHBAOBlurPass>("HBAOBlur", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+			pass->SetSinkLinkage("AOParams", "$.AOParams");
+			pass->SetSinkLinkage("scratchIn", "HBAO.scratchOut");
 			pass->SetSinkLinkage("renderTarget", "water.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
 			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("scratchIn", "HBAO.renderTarget");
+			pass->SetSinkLinkage("scratchIn", "HBAOBlur.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -572,23 +570,35 @@ namespace Rgph
 			bool con6 = ImGui::SliderFloat("Bias", &HAOBias, 0.01f, 1.0f);
 			bool con7 = ImGui::SliderFloat("Small Scale AO", &HAOSmallScaleAO, 0.0f, 2.0f);
 			bool con8 = ImGui::SliderFloat("Large Scale AO", &HAOLargeScaleAO, 0.0f, 2.0f);
+			bool con9 = ImGui::SliderFloat("Power Exponent", &HAOPowerExponent, 0.0f, 10.0f);
+			bool con10 = ImGui::SliderFloat("Foreground Sharpness Scale", &HAOForegroundSharpnessScale, 0.0f, 100.0f);
 
-			if (con1 || con2 || con3 || con4 || con5 || con6 || con7 || con8)
+			static bool firstFrame = true;
+			if (con1 || con2 || con3 || con4 || con5 || con6 || con7 || con8 || con9 || con10 || firstFrame)
 			{
-				buf["ViewDepthThresholdNegInv"] = -1.f / HAOMaxViewDepth;
-				buf["ViewDepthThresholdSharpness"] = HAOSharpness;
-				const float R = HAORadius * 1.0f;
+				if (firstFrame)
+					firstFrame = false;
+				buf["ViewDepthThresholdNegInv"] = -1.f / std::max(HAOMaxViewDepth, 1.e-6f);
+				buf["ViewDepthThresholdSharpness"] = std::max(HAOSharpness, 0.f);
+				const float R = std::max(HAORadius, 1.e-6f);
 				buf["NegInvR2"] = -1.f / (R * R);
 				float RadiusToScreen = R * 0.5f / gfx.GetFOV() * gfx.GetHeight();
 				buf["RadiusToScreen"] = RadiusToScreen;
 				buf["BackgroundAORadiusPixels"] = RadiusToScreen / HAOBackgroundViewDepth;
 				buf["ForegroundAORadiusPixels"] = RadiusToScreen / HAOForegroundViewDepth;
-				buf["NDotVBias"] = HAOBias;
+				buf["NDotVBias"] = std::clamp(HAOBias, 0.0f, 1.0f);
 				buf["AORes"] = DirectX::XMFLOAT2{ (float)gfx.GetWidth(),(float)gfx.GetHeight() };
 				buf["InvAORes"] = DirectX::XMFLOAT2{ 1.0f / gfx.GetWidth(),1.0f / gfx.GetHeight() };
 				const float AOAmountScaleFactor = 1.0f / (1.0f - HAOBias);
-				buf["SmallScaleAOAmount"] = HAOSmallScaleAO * AOAmountScaleFactor * 2.0f;
-				buf["LargeScaleAOAmount"] = HAOLargeScaleAO * AOAmountScaleFactor;
+				buf["SmallScaleAOAmount"] = std::clamp(HAOSmallScaleAO, 0.0f, 2.0f) * AOAmountScaleFactor * 2.0f;
+				buf["LargeScaleAOAmount"] = std::clamp(HAOLargeScaleAO, 0.0f, 2.0f) * AOAmountScaleFactor;
+				buf["PowerExponent"] = HAOPowerExponent;
+				const float fBlurViewDepth0 = std::max(HAOForegroundViewDepth, 0.f);
+				buf["BlurViewDepth0"] = fBlurViewDepth0;
+				buf["BlurViewDepth1"] = std::max(HAOBackgroundViewDepth, fBlurViewDepth0 + 1.e-6f);
+				const float baseSharpness = std::max(HAOSharpness, 0.f);
+				buf["BlurSharpness0"] = baseSharpness * std::max(HAOForegroundSharpnessScale, 0.f);
+				buf["BlurSharpness1"] = baseSharpness;
 				AOParams->SetBuffer(buf);
 			}
 		}

@@ -58,7 +58,7 @@ namespace Rgph
 			currentRT->ReleaseToBind();
 			const_cast<DeferredTAAPass*>(this)->currentRT.swap(const_cast<DeferredTAAPass*>(this)->historyRT);
 			const_cast<DeferredTAAPass*>(this)->renderTarget = currentRT;
-			pPcbuf->Update(gfx, { DirectX::XMMatrixTranspose(gfx.GetProjection() * gfx.GetCamera()) });
+			pPcbuf->Update(gfx, { DirectX::XMMatrixTranspose(gfx.GetCamera() * gfx.GetProjection()) });
 
 			gfx.ClearShaderResources(8u);
 		}

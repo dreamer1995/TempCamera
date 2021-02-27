@@ -110,8 +110,8 @@ float4 main(float2 uv : Texcoord) : SV_Target
 	
 	float3 posN = 0;
 	posN.xy = screenPos;
-	float depth = scenedepth.SampleLevel(splr, uv, 0).r;
-	posN.z = ConvertToLinearDepth(depth);
+	float depth = ConvertToLinearDepth(scenedepth.SampleLevel(splr, uv, 0).r);
+	posN.z = depth;
 	
 	float2 velocityOffset = 0;
 	{
@@ -154,8 +154,9 @@ float4 main(float2 uv : Texcoord) : SV_Target
 
 	float3 worldPos = CalcHomogeneousPos(depth, uv);
 	worldPos += cameraPos.xyz;
-	float4 lastPos = mul(float4(worldPos, 1), matrix_MVP_Last);
+	float4 lastPos = mul(float4(worldPos, 1.0f), matrix_MVP_Last);
 	float2 lastUV = lastPos.xy / lastPos.w;
+	lastUV = NDC2ScreenSpace(lastUV);
 	//lastUV += stc - tc;
 	float2 lastScreenPos = ScreenSpace2NDC(lastUV);
 	
@@ -286,5 +287,5 @@ float4 main(float2 uv : Texcoord) : SV_Target
 
 	OUT.rgb = YCoCg2RGB(oc);
 	
-	return float4(OUT);
+	return OUT;
 }

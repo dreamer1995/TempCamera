@@ -150,6 +150,11 @@ void Graphics::ClearConstantBuffers(UINT slot) noexcept
 	pContext->PSSetConstantBuffers(slot, 1, &pNullBuffer);
 }
 
+void Graphics::ClearRenderTarget() noexcept
+{
+	pContext->OMSetRenderTargets(0, nullptr, nullptr);
+}
+
 void Graphics::DrawIndexed( UINT count ) noxnd
 {
 	GFX_THROW_INFO_ONLY( pContext->DrawIndexed( count,0u,0u ) );

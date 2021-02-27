@@ -6,11 +6,6 @@
 #define NUM_STEPS 4
 #define GFSDK_PI 3.14159265f
 
-#define USE_MAD_OPT 1
-#define USE_DEPTH_SLOPE 1
-#define ENABLE_SHARPNESS_PROFILE 1
-#define KERNEL_RADIUS 4
-
 Texture2D scenedepth : register(t8);
 SamplerState splr;
 
@@ -38,7 +33,7 @@ float3 UVToViewSpace(float2 uv, float z)
 float3 GetViewPos(float2 uv)
 {
     //float z = ViewSpaceZFromDepth(DecodeDepth(tDepthBuffer.SampleLevel(sDepthBufferSampler, uv, 0)));
-	float z = scenedepth.SampleLevel(splr, uv, 0);
+	float z = ConvertToLinearDepth(scenedepth.SampleLevel(splr, uv, 0).r);
 	return UVToViewSpace(uv, z);
 }
 
@@ -175,7 +170,7 @@ float DepthThresholdFactor(float ViewDepth)
 float4 main(float2 uv : Texcoord) : SV_Target
 {
 	if (!HBAO)
-		return 0;
+		return 1;
 	float3 P, Pr, Pl, Pt, Pb;
 	P = GetViewPos(uv);
 
@@ -211,5 +206,5 @@ float4 main(float2 uv : Texcoord) : SV_Target
 		ao *= DepthThresholdFactor(P.z);
 	}
 	ao = saturate(1.0 - ao * 2.0);
-	return float4(0, 0, 0, 1 - ao);
+	return ao;
 }

@@ -28,12 +28,12 @@ namespace Rgph
 			using namespace Bind;
 			AddBind(masterDepth);
 			AddBindSink<Bind::CachingPixelConstantBufferEx>("AOParams");
-			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
+			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u);
 			AddBind(PixelShader::Resolve(gfx, "HBAO.cso"));
-			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::OneMinus));
+			AddBind(Blender::Resolve(gfx, false));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u));
-			RegisterSource(DirectBindableSource<RenderTarget>::Make("renderTarget", renderTarget));
+			RegisterSource(DirectBindableSource<RenderTarget>::Make("scratchOut", renderTarget));
 		}
 		// this override is necessary because we cannot (yet) link input bindables directly into
 		// the container of bindables (mainly because vector growth buggers references)
@@ -46,7 +46,6 @@ namespace Rgph
 			gfx.ClearShaderResources(8u);
 		}
 	private:
-		const Camera* pMainCamera = nullptr;
 		std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth;
 	};
 }
