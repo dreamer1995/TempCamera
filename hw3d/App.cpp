@@ -75,7 +75,7 @@ void App::DoFrame( float dt )
 	time += dt;
 	UpdateCommonVar(wnd.Gfx(), { time,DirectX::XMMatrixRotationRollPitchYaw(skybox.pitch, skybox.yaw, skybox.roll),
 		(unsigned int)pCams.size(),{(float)wnd.Gfx().GetWidth(),(float)wnd.Gfx().GetHeight(),1.0f / wnd.Gfx().GetWidth(),1.0f / wnd.Gfx().GetHeight()},
-		TAA, HBAO});
+		TAA,HBAO,HDR });
 	//wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().BeginFrame(0.1f, 0.1f, 0.1f);
 	//wnd.Gfx().SetCamera(cameras->GetMatrix() );
@@ -405,6 +405,7 @@ void App::UpdateCommonVar(Graphics& gfx, const CommonVar& cvar) noxnd
 	cDBuf->Bind(gfx);
 	gfx.isTAA = TAA;
 	gfx.isHBAO = HBAO;
+	gfx.isHDR = HDR;
 }
 std::unique_ptr<Bind::VertexConstantBuffer<App::CommonVar>> App::cVBuf;
 std::unique_ptr<Bind::PixelConstantBuffer<App::CommonVar>> App::cPBuf;
@@ -420,6 +421,7 @@ void App::RenderMainWindows(Graphics& gfx)
 		//ImGui::SliderFloat("W", &extentSpeed, 0.0f, 2.0f, "%.1f");
 		ImGui::Checkbox("TAA", &TAA);
 		ImGui::Checkbox("HBAO+", &HBAO);
+		ImGui::Checkbox("HDR", &HDR);
 	}
 	ImGui::End();
 }

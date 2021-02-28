@@ -37,7 +37,7 @@ namespace Bind
 		void BindAsBuffer( Graphics& gfx,ID3D11DepthStencilView* pDepthStencilView ) noxnd;
 	protected:
 		RenderTarget( Graphics& gfx,ID3D11Texture2D* pTexture,std::optional<UINT> face );
-		RenderTarget(Graphics& gfx, UINT width, UINT height, Type type = Type::Default);
+		RenderTarget(Graphics& gfx, UINT width, UINT height, Type type = Type::Default, DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM);
 		UINT width;
 		UINT height;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetView;
@@ -53,7 +53,7 @@ namespace Bind
 	class ShaderInputRenderTarget : public RenderTarget
 	{
 	public:
-		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type = Type::Default, UINT shaderIndex = 0b1u);
+		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type = Type::Default, UINT shaderIndex = 0b1u, DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM);
 		void Bind( Graphics& gfx ) noxnd override;
 		Surface ToSurface( Graphics& gfx ) const;
 		void ToCube(Graphics& gfx, const std::string& path) const;

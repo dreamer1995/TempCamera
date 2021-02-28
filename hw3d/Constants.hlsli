@@ -35,6 +35,7 @@ cbuffer Time : register(b2)//VS, DS, PS
 	float4 screenInfo;
 	bool TAA;
 	bool HBAO;
+	bool HDR;
 };
 
 cbuffer DirectionalLightCBuf : register(b3)//PS

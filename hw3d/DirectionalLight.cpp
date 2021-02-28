@@ -11,7 +11,7 @@ DirectionalLight::DirectionalLight(Graphics& gfx, DirectX::XMFLOAT3 pos, float p
 	cbData = {
 	{ 0.0f,-1.0f,0.0f },
 	{ 1.0f,1.0f,1.0f }, // Color
-	1.0f, // Intensity
+	10.0f, // Intensity
 	};
 	home = { cbData,
 		pos,
@@ -48,7 +48,7 @@ void DirectionalLight::SpawnControlWindow() noexcept
 		}
 
 		ImGui::Text("Intensity/Color");
-		ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.0f, 2.0f, "%.2f", 2);
+		ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.0f, 50.0f, "%.2f", 2);
 		ImGui::ColorPicker3("Diffuse Color", &cbData.diffuseColor.x);
 
 		if (ImGui::Button("Reset"))

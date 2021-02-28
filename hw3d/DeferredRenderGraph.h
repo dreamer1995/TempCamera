@@ -35,6 +35,7 @@ namespace Rgph
 		void SetKernelBox(int radius) noxnd;
 		void RenderWaterWindow(Graphics& gfx);
 		void RenderAOWindow(Graphics& gfx);
+		void RenderBloomWindow(Graphics& gfx);
 		// private data
 		enum class KernelType
 		{
@@ -42,8 +43,8 @@ namespace Rgph
 			Box,
 		} kernelType = KernelType::Gauss;
 		static constexpr int maxRadius = 7;
-		int radius = 4;
-		float sigma = 2.0f;
+		int radius = 7;
+		float sigma = 10.0f;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> blurKernel;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> blurDirection;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> shadowControl;
@@ -65,5 +66,8 @@ namespace Rgph
 		float HAOLargeScaleAO = 2.0f;
 		float HAOPowerExponent = 1.0f;
 		float HAOForegroundSharpnessScale = 100.0f;
+		std::shared_ptr<Bind::CachingPixelConstantBufferEx> bloomParams;
+		float bloomThreshold = 0.5f;
+		int bloomQuality = 6;
 	};
 }

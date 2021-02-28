@@ -26,6 +26,9 @@
 #include "DeferredHDRPass.h"
 #include "DeferredHBAOPass.h"
 #include "DeferredHBAOBlurPass.h"
+#include "DeferredBloomCatchPass.h"
+#include "DeferredBloomBlurPass.h"
+#include "DeferredBloomMergePass.h"
 
 namespace Rgph
 {
@@ -253,8 +256,44 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+			Dcb::RawLayout l;
+			l.Add<Dcb::Float>("bloomThreshold");
+			Dcb::Buffer buf{ std::move(l) };
+			buf["bloomThreshold"] = bloomThreshold;
+			bloomParams = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("bloomParams", bloomParams));
+		}
+		{
+			auto pass = std::make_unique<DeferredBloomCatchPass>("bloomCatch", gfx, gfx.GetWidth(), gfx.GetHeight());
+			pass->SetSinkLinkage("bloomParams", "$.bloomParams");
 			pass->SetSinkLinkage("scratchIn", "HBAOBlur.renderTarget");
+			AppendPass(std::move(pass));
+		}
+		{
+			Dcb::RawLayout l;
+			l.Add<Dcb::Integer>("nTaps");
+			l.Add<Dcb::Array>("coefficients");
+			l["coefficients"].Set<Dcb::Float>(maxRadius * 2 + 1);
+			Dcb::Buffer buf{ std::move(l) };
+			blurKernel = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+			SetKernelGauss(radius, sigma);
+			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("blurKernel", blurKernel));
+		}
+		{
+			auto pass = std::make_unique<DeferredBloomBlurPass>("bloomBlur", gfx, gfx.GetWidth(), gfx.GetHeight(), bloomQuality);
+			pass->SetSinkLinkage("kernel", "$.blurKernel");
+			pass->SetSinkLinkage("scratchIn", "bloomCatch.scratchOut");
+			AppendPass(std::move(pass));
+		}
+		{
+			auto pass = std::make_unique<DeferredBloomMergePass>("bloomMerge", gfx);
+			pass->SetSinkLinkage("scratchIn", "bloomBlur.scratchOut");
+			pass->SetSinkLinkage("renderTarget", "HBAOBlur.renderTarget");
+			AppendPass(std::move(pass));
+		}
+		{
+			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+			pass->SetSinkLinkage("scratchIn", "bloomMerge.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -270,25 +309,13 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 
-		// setup blur constant buffers
+		// setup blur constant buffers	
 		{
-			{
-				Dcb::RawLayout l;
-				l.Add<Dcb::Integer>("nTaps");
-				l.Add<Dcb::Array>("coefficients");
-				l["coefficients"].Set<Dcb::Float>(maxRadius * 2 + 1);
-				Dcb::Buffer buf{ std::move(l) };
-				blurKernel = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
-				SetKernelGauss(radius, sigma);
-				AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("blurKernel", blurKernel));
-			}
-			{
-				Dcb::RawLayout l;
-				l.Add<Dcb::Bool>("isHorizontal");
-				Dcb::Buffer buf{ std::move(l) };
-				blurDirection = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 11u);
-				AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("blurDirection", blurDirection));
-			}
+			Dcb::RawLayout l;
+			l.Add<Dcb::Bool>("isHorizontal");
+			Dcb::Buffer buf{ std::move(l) };
+			blurDirection = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 11u);
+			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("blurDirection", blurDirection));
 		}
 
 		{
@@ -368,6 +395,7 @@ namespace Rgph
 		RenderKernelWindow(gfx);
 		// RenderWaterWindow(gfx);
 		RenderAOWindow(gfx);
+		RenderBloomWindow(gfx);
 	}
 
 	void DeferredRenderGraph::RenderKernelWindow(Graphics& gfx)
@@ -600,6 +628,31 @@ namespace Rgph
 				buf["BlurSharpness0"] = baseSharpness * std::max(HAOForegroundSharpnessScale, 0.f);
 				buf["BlurSharpness1"] = baseSharpness;
 				AOParams->SetBuffer(buf);
+			}
+		}
+		ImGui::End();
+	}
+
+	void DeferredRenderGraph::RenderBloomWindow(Graphics& gfx)
+	{
+		if (!gfx.isHDR)
+			return;
+		if (ImGui::Begin("HDR"))
+		{
+			auto buf = bloomParams->GetBuffer();
+			namespace dx = DirectX;
+			float dirty = false;
+			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+
+			if (auto v = buf["bloomThreshold"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat("Bloom Threshold", &v, 0.0f, 10.0f, "%.3f", 1.0f));
+			}
+			ImGui::SliderInt("Bloom Quality", &bloomQuality, 1, 6);
+
+			if (dirty)
+			{
+				bloomParams->SetBuffer(buf);
 			}
 		}
 		ImGui::End();

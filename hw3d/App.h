@@ -35,6 +35,8 @@ private:
 		alignas(16) DirectX::XMFLOAT4 screenInfo;
 		BOOL TAA;
 		BOOL HBAO;
+		BOOL HDR;
+		float padding[3];
 	};
 	double time;
 	static std::unique_ptr<Bind::VertexConstantBuffer<CommonVar>> cVBuf;
@@ -82,4 +84,5 @@ private:
 	std::vector<std::shared_ptr<PointLight>> pCams;
 	bool TAA = true;
 	bool HBAO = true;
+	bool HDR = true;
 };

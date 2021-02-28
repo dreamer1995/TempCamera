@@ -11,7 +11,7 @@ uint DecodeShadingModelID(float channelVal)
 //#define DecodeNormal(a) (a*255.0/127.0 - 1.0)
 float3 EncodeNormal( float3 N )
 {
-	return N * 0.5 + 0.5;
+	return N * 0.5f + 0.5f;
 	//return Pack1212To888( UnitVectorToOctahedron( N ) * 0.5 + 0.5 );
 }
 float3 DecodeNormal( float3 N )
@@ -58,5 +58,10 @@ float2 ScreenSpace2NDC(float2 sc)
 
 float2 NDC2ScreenSpace(float2 ndc)
 {
-	return float2(0.5 + 0.5 * ndc.x, 0.5 - 0.5 * ndc.y);
+	return float2(0.5f + 0.5f * ndc.x, 0.5f - 0.5f * ndc.y);
+}
+
+float Luminance(float3 LinearColor)
+{
+	return dot(LinearColor, float3(0.3f, 0.59f, 0.11f));
 }

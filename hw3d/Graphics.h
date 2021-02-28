@@ -101,4 +101,5 @@ public:
 	bool isWireFrame = false;
 	bool isTAA;
 	bool isHBAO;
+	bool isHDR;
 };

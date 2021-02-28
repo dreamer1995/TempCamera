@@ -208,7 +208,9 @@ float ComputeBlur(float2 stc,
 }
 
 float4 main(float2 uv : Texcoord) : SV_Target
-{	
+{
+	if (!HBAO)
+		return 0;
 	float AO = 1;
 	if(isHorizontal)
     	AO = ComputeBlur(uv, float2(screenInfo.z, 0));

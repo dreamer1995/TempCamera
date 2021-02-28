@@ -23,7 +23,8 @@ namespace Rgph
 			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::Additive));
 			AddBindSink<Bind::Bindable>("waterPreMap");
 			AddBindSink<Bind::CachingDomainConstantBufferEx>("waterFlow");
-			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullWidth, 5u);
+			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullWidth, 5u,
+				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);
 			RegisterSource(DirectBindableSource<Bind::RenderTarget>::Make("waterCausticOut", renderTarget));
 		}
 		void Execute(Graphics& gfx) const noxnd override

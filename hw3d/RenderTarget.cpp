@@ -10,7 +10,7 @@ namespace wrl = Microsoft::WRL;
 
 namespace Bind
 {
-	RenderTarget::RenderTarget(Graphics& gfx, UINT width, UINT height, Type type)
+	RenderTarget::RenderTarget(Graphics& gfx, UINT width, UINT height, Type type, DXGI_FORMAT format)
 		:
 		width( width ),
 		height( height ),
@@ -22,7 +22,7 @@ namespace Bind
 		D3D11_TEXTURE2D_DESC textureDesc = {};
 		textureDesc.Width = width;
 		textureDesc.Height = height;
-		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		textureDesc.Format = format;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -72,8 +72,10 @@ namespace Bind
 		{
 			for (unsigned char i = 0; i < 8; ++i)
 			{
-				if (i == 2)
-					textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+				if (i == 0)
+					textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+				else if (i == 2)
+					textureDesc.Format = DXGI_FORMAT_R10G10B10A2_UNORM;
 				//else if (i == 4)
 				//	textureDesc.Format = DXGI_FORMAT_R32_FLOAT;
 				else
@@ -121,8 +123,10 @@ namespace Bind
 			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			for (unsigned char i = 0; i < 8; ++i)
 			{
-				if (i == 2)
-					rtvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+				if (i == 0)
+					rtvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+				else if (i == 2)
+					rtvDesc.Format = DXGI_FORMAT_R10G10B10A2_UNORM;
 				//else if (i == 4)
 				//	rtvDesc.Format = DXGI_FORMAT_R32_FLOAT;
 				else
@@ -433,9 +437,9 @@ namespace Bind
 		}
 	}
 
-	ShaderInputRenderTarget::ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type, UINT shaderIndex)
+	ShaderInputRenderTarget::ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type, UINT shaderIndex, DXGI_FORMAT format)
 		:
-		RenderTarget(gfx, width, height, type),
+		RenderTarget(gfx, width, height, type, format),
 		slot( slot ),
 		shaderIndex(shaderIndex) 
 	{
@@ -443,7 +447,7 @@ namespace Bind
 
 		// create the resource view on the texture
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		srvDesc.Format = format;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 
 		switch (type)
@@ -494,8 +498,10 @@ namespace Bind
 		{
 			for (char i = 0; i < 8; i++)
 			{
-				if (i == 2)
-					srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+				if (i == 0)
+					srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+				else if (i == 2)
+					srvDesc.Format = DXGI_FORMAT_R10G10B10A2_UNORM;
 				//else if (i == 4)
 				//	srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
 				else

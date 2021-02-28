@@ -24,5 +24,5 @@ float4 main(PSIn i) : SV_Target
     float3 specular = Speculate(cameraPos, i.worldPos, direction, DdiffuseColor * DdiffuseIntensity,
         specularWeight, normal, 1.0f, specularGloss);
     // final color
-    return float4(saturate(diffuse + specular), 1.0f);
+    return float4(diffuse + specular, 1.0f);
 }

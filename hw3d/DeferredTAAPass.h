@@ -29,8 +29,10 @@ namespace Rgph
 			pPcbuf->Update(gfx, { DirectX::XMMatrixTranspose(gfx.GetProjection() * gfx.GetCamera()) });
 			AddBindSink<RenderTarget>("scratchIn");
 			AddBind(masterDepth);
-			currentRT = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 1u);
-			historyRT = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 1u);
+			currentRT = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 1u,
+				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);
+			historyRT = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 1u,
+				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);
 			//currentRT->Clear(gfx, { 1,0,0,0 });
 			//historyRT->Clear(gfx, { 0,1,0,0 });
 			renderTarget = currentRT;

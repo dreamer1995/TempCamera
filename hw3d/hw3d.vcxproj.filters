@@ -827,6 +827,15 @@
     <ClInclude Include="DeferredHBAOBlurPass.h">
       <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
     </ClInclude>
+    <ClInclude Include="DeferredBloomCatchPass.h">
+      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredBloomBlurPass.h">
+      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredBloomMergePass.h">
+      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -1064,6 +1073,15 @@
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
     <FxCompile Include="HBAOBlur.hlsl">
+      <Filter>Shader\Postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="BloomCatch.hlsl">
+      <Filter>Shader\Postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="BloomBlur.hlsl">
+      <Filter>Shader\Postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="BloomMerge.hlsl">
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
   </ItemGroup>
