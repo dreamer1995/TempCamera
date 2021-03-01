@@ -11,7 +11,7 @@ DirectionalLight::DirectionalLight(Graphics& gfx, DirectX::XMFLOAT3 pos, float p
 	cbData = {
 	{ 0.0f,-1.0f,0.0f },
 	{ 1.0f,1.0f,1.0f }, // Color
-	10.0f, // Intensity
+	5.79f, // Intensity
 	};
 	home = { cbData,
 		pos,

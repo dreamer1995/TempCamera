@@ -108,7 +108,7 @@ float4 main(PSIn IN) : SV_Target
     BxDF_Ambient(ambientLighting, gBuffer, V, ambient);
 
     // final color = attenuate diffuse & ambient by diffuse texture color and add specular reflected
-    outCol = diffuseLighting + specularLighting + ambientLighting;
+	outCol = diffuseLighting + specularLighting + ambientLighting;
 
     return float4(outCol, 1.0f);
 }

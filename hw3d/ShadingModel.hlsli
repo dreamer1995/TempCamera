@@ -80,6 +80,8 @@ void BxDF_Ambient(out float3 ambientLighting, GBuffer gBuffer, float3 V, float3 
 #endif
 		break;
 	}
+	ambientLighting *= GIScale;
+
 }
 
 void EncodeDLightData(out LightData litData, float3 irradiance, float3 vToL)

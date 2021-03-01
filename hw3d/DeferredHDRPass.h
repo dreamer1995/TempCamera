@@ -24,8 +24,7 @@ namespace Rgph
 			FullscreenPass(std::move(name), gfx)
 		{
 			using namespace Bind;
-			AddBindSink<RenderTarget>("TAA0");
-			AddBindSink<RenderTarget>("TAA1");
+			AddBindSink<RenderTarget>("scratchIn");
 			RegisterSink(DirectBufferSink<RenderTarget>::Make("renderTarget", renderTarget));
 			AddBind(PixelShader::Resolve(gfx, "HDR.cso"));
 			AddBind(Blender::Resolve(gfx, false));

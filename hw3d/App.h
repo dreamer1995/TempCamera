@@ -36,7 +36,8 @@ private:
 		BOOL TAA;
 		BOOL HBAO;
 		BOOL HDR;
-		float padding[3];
+		float GIScale;
+		float padding[2];
 	};
 	double time;
 	static std::unique_ptr<Bind::VertexConstantBuffer<CommonVar>> cVBuf;
@@ -85,4 +86,5 @@ private:
 	bool TAA = true;
 	bool HBAO = true;
 	bool HDR = true;
+	float GIScale = 0.353f;
 };

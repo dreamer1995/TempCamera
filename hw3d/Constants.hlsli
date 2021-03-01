@@ -36,6 +36,7 @@ cbuffer Time : register(b2)//VS, DS, PS
 	bool TAA;
 	bool HBAO;
 	bool HDR;
+	float GIScale;
 };
 
 cbuffer DirectionalLightCBuf : register(b3)//PS

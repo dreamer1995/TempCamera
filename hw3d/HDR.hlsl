@@ -1,6 +1,6 @@
 #include "Constants.hlsli"
 
-Texture2D sceneColor : register(t1);
+Texture2D sceneColor : register(t0);
 SamplerState splr;
 
 #define EncodeGamma(x) pow(x, 1.0f / 2.2f)

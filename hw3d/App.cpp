@@ -15,11 +15,11 @@ namespace dx = DirectX;
 App::App( const std::string& commandLine )
 	:
 	commandLine( commandLine ),
-	wnd( 1280,720,"The Donkey Fart Box" ),
+	wnd( 1920,1080,"Fallshill Engine Demo" ),
 	scriptCommander( TokenizeQuoted( commandLine ) ),
-	dLight(wnd.Gfx(), { 10.0f,9.0f,2.5f }, 63.0f * PI / 180.0f, 84.0f * PI / 180.0f)
+	dLight(wnd.Gfx(), { 10.0f,9.0f,2.5f }, 46.0f * PI / 180.0f, 78.0f * PI / 180.0f)
 {
-	pointLight = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 16.5f, 9.0f, 1.5f }, 1.0f, 4u);
+	pointLight = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 35.7f, 9.0f, 1.5f }, 1.0f, 4u);
 	//pointLight = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{  27.f + 9 * 0.666666f, 20.0f, 1.7f }, 1.0f, 4u);
 	//pointLight2 = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 27.f - 9 * 0.333333f, 20.0f, 1.7f + 9 * 0.577350f }, 1.0f, 7u);
 	//pointLight3 = std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3{ 27.f - 9 * 0.333333f, 20.0f, 1.7f - 9 * 0.577350f }, 1.0f, 8u);
@@ -28,7 +28,7 @@ App::App( const std::string& commandLine )
 	cVBuf = std::make_unique<Bind::VertexConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cPBuf = std::make_unique<Bind::PixelConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cDBuf = std::make_unique<Bind::DomainConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
-	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -7.2f,6.2f,5.9f }, -9.0f * PI / 180.0f, 105.0f * PI / 180.0f));
+	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -49.9f,7.7f,-5.6f }, -12.0f * PI / 180.0f, 75.0f * PI / 180.0f));
 	cameras.AddCamera( std::make_unique<Camera>( wnd.Gfx(),"B",dx::XMFLOAT3{ -13.5f,28.8f,-6.4f },PI / 180.0f * 13.0f,PI / 180.0f * 61.0f ) );
 	//pCam = std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f,28.8f,-6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f);
 	//cameras.AddCamera(pCam);
@@ -75,7 +75,7 @@ void App::DoFrame( float dt )
 	time += dt;
 	UpdateCommonVar(wnd.Gfx(), { time,DirectX::XMMatrixRotationRollPitchYaw(skybox.pitch, skybox.yaw, skybox.roll),
 		(unsigned int)pCams.size(),{(float)wnd.Gfx().GetWidth(),(float)wnd.Gfx().GetHeight(),1.0f / wnd.Gfx().GetWidth(),1.0f / wnd.Gfx().GetHeight()},
-		TAA,HBAO,HDR });
+		TAA,HBAO,HDR,GIScale });
 	//wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().BeginFrame(0.1f, 0.1f, 0.1f);
 	//wnd.Gfx().SetCamera(cameras->GetMatrix() );
@@ -413,7 +413,7 @@ std::unique_ptr<Bind::DomainConstantBuffer<App::CommonVar>> App::cDBuf;
 
 void App::RenderMainWindows(Graphics& gfx)
 {
-	if (ImGui::Begin("Íæ"))
+	if (ImGui::Begin("RenderOptions"))
 	{
 		//ImGui::SliderFloat("X", &rotateSpeed, 0.0f, 5.0f, "%.001f");
 		//ImGui::SliderFloat("Y", &flickerSpeed, 0.0f, 5.0f, "%.1f");
@@ -422,6 +422,7 @@ void App::RenderMainWindows(Graphics& gfx)
 		ImGui::Checkbox("TAA", &TAA);
 		ImGui::Checkbox("HBAO+", &HBAO);
 		ImGui::Checkbox("HDR", &HDR);
+		ImGui::SliderFloat("GI Scale", &GIScale, 0.0f, 2.0f, "%.3f");
 	}
 	ImGui::End();
 }

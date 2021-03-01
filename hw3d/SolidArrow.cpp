@@ -22,7 +22,7 @@ SolidArrow::SolidArrow(Graphics& gfx, float size)
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 	{
-		Technique solid{ "Arrow",Chan::main };
+		Technique solid{ "Arrow",Chan::main,false };
 		Step only("lambertian");
 
 		auto pvs = VertexShader::Resolve(gfx, "Solid_VS.cso");

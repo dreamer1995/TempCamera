@@ -77,9 +77,9 @@ Window::Window( int width,int height,const char* name )
 {
 	// calculate window size based on desired client region size
 	RECT wr;
-	wr.left = 100;
+	wr.left = 0;
 	wr.right = width + wr.left;
-	wr.top = 100;
+	wr.top = 0;
 	wr.bottom = height + wr.top;
 	if( AdjustWindowRect( &wr,WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,FALSE ) == 0 )
 	{

@@ -29,7 +29,7 @@ PhongSphere::PhongSphere(Graphics& gfx, float radius)
 
 	auto tcb = std::make_shared<TransformCbufScaling>(gfx);
 	{
-		Technique solid{ "Sphere",Chan::main };
+		Technique solid{ "Sphere",Chan::main,false };
 		Step only("lambertian");
 
 		auto pvs = VertexShader::Resolve(gfx, "PhongVSDirectional.cso");

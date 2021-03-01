@@ -24,7 +24,8 @@ namespace Rgph
 			FullscreenPass(std::move(name), gfx)
 		{
 			using namespace Bind;
-			AddBindSink<RenderTarget>("scratchIn");
+			AddBindSink<RenderTarget>("TAA0");
+			AddBindSink<RenderTarget>("TAA1");
 			AddBindSink<CachingPixelConstantBufferEx>("bloomParams");
 			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u,
 				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);

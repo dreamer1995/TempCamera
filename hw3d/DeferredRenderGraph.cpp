@@ -256,6 +256,11 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
+			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+			pass->SetSinkLinkage("scratchIn", "HBAOBlur.renderTarget");
+			AppendPass(std::move(pass));
+		}
+		{
 			Dcb::RawLayout l;
 			l.Add<Dcb::Float>("bloomThreshold");
 			Dcb::Buffer buf{ std::move(l) };
@@ -265,8 +270,9 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<DeferredBloomCatchPass>("bloomCatch", gfx, gfx.GetWidth(), gfx.GetHeight());
+			pass->SetSinkLinkage("TAA0", "TAA.renderTarget0");
+			pass->SetSinkLinkage("TAA1", "TAA.renderTarget1");
 			pass->SetSinkLinkage("bloomParams", "$.bloomParams");
-			pass->SetSinkLinkage("scratchIn", "HBAOBlur.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -287,19 +293,14 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<DeferredBloomMergePass>("bloomMerge", gfx);
-			pass->SetSinkLinkage("scratchIn", "bloomBlur.scratchOut");
-			pass->SetSinkLinkage("renderTarget", "HBAOBlur.renderTarget");
-			AppendPass(std::move(pass));
-		}
-		{
-			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("scratchIn", "bloomMerge.renderTarget");
+			pass->SetSinkLinkage("renderTarget", "bloomBlur.scratchOut");
+			pass->SetSinkLinkage("TAA0", "TAA.renderTarget0");
+			pass->SetSinkLinkage("TAA1", "TAA.renderTarget1");
 			AppendPass(std::move(pass));
 		}
 		{
 			auto pass = std::make_unique<DeferredHDRPass>("HDR", gfx);
-			pass->SetSinkLinkage("TAA0", "TAA.renderTarget0");
-			pass->SetSinkLinkage("TAA1", "TAA.renderTarget1");
+			pass->SetSinkLinkage("scratchIn", "bloomMerge.renderTarget");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			AppendPass(std::move(pass));
 		}

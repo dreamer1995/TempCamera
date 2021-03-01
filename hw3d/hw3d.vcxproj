@@ -755,6 +755,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="chili.ico" />
+    <Image Include="Fallshill.ico" />
+    <Image Include="icon2.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Algorithms.hlsli">

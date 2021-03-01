@@ -24,7 +24,8 @@ namespace Rgph
 			FullscreenPass(std::move(name), gfx)
 		{
 			using namespace Bind;
-			AddBindSink<RenderTarget>("scratchIn");
+			AddBindSink<RenderTarget>("TAA0");
+			AddBindSink<RenderTarget>("TAA1");
 			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
 			AddBind(PixelShader::Resolve(gfx, "BloomMerge.cso"));
 			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::Additive));

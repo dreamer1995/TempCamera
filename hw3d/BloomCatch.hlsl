@@ -1,6 +1,6 @@
 #include "Constants.hlsli"
 
-Texture2D sceneColor : register(t0);
+Texture2D sceneColor : register(t1);
 SamplerState splr;
 
 cbuffer CBufProperties : register(b10)

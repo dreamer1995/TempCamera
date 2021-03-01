@@ -10,9 +10,9 @@ PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 pos, float radius, UINT 
 {
 	home = {
 		pos,
-		{ 0.0f,0.0f,0.0f }, // Ambient
+		{ 1.0f,1.0f,1.0f }, // Ambient
 		{ 1.0f,1.0f,1.0f }, // Color
-		1.0f, // Intensity
+		5.79f, // Intensity
 		1.0f, // AttConst
 		0.045f, // Lin
 		0.0075f, // Quad
