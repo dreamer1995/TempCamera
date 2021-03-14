@@ -65,7 +65,8 @@ namespace Rgph
 			gfx.SetProjection(projmatrix);
 			for (unsigned char i = 0; i < pPShadowCameras.size(); i++)
 			{
-				const auto pos = XMLoadFloat3(&pPShadowCameras[i]->GetPos());
+				const auto _pos = pPShadowCameras[i]->GetPos();
+				const auto pos = XMLoadFloat3(&_pos);
 				SetDepthBuffer(shadowDepthStencils[i]);
 				depthStencil->Clear(gfx);
 				for (unsigned char j = 0; j < 6; j++)
