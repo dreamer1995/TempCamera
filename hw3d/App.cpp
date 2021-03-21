@@ -75,7 +75,7 @@ void App::DoFrame( float dt )
 	time += dt;
 	UpdateCommonVar(wnd.Gfx(), { time,DirectX::XMMatrixRotationRollPitchYaw(skybox.pitch, skybox.yaw, skybox.roll),
 		(unsigned int)pCams.size(),{(float)wnd.Gfx().GetWidth(),(float)wnd.Gfx().GetHeight(),1.0f / wnd.Gfx().GetWidth(),1.0f / wnd.Gfx().GetHeight()},
-		TAA,HBAO,HDR,GIScale });
+		TAA,HBAO,HDR,GIScale,volumetricRendering });
 	//wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().BeginFrame(0.1f, 0.1f, 0.1f);
 	//wnd.Gfx().SetCamera(cameras->GetMatrix() );
@@ -95,7 +95,7 @@ void App::DoFrame( float dt )
 	//pointLight3->Bind(wnd.Gfx());
 
 	dLight.Submit(Chan::main);
-	dLight.Bind(wnd.Gfx());
+	dLight.Bind(wnd.Gfx(), cameras->GetPos());
 	
 	cameras.Submit(Chan::main);
 
@@ -423,6 +423,7 @@ void App::RenderMainWindows(Graphics& gfx)
 		ImGui::Checkbox("HBAO+", &HBAO);
 		ImGui::Checkbox("HDR", &HDR);
 		ImGui::SliderFloat("GI Scale", &GIScale, 0.0f, 2.0f, "%.3f");
+		ImGui::Checkbox("Volumetric Rendering", &volumetricRendering);
 	}
 	ImGui::End();
 }

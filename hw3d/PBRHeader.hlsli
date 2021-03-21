@@ -5,7 +5,7 @@ Texture2D BRDFLUT : register(t13);
 SamplerState splr;
 SamplerState splrClamp : register(s1);
 
-static const float PI = 3.14159265359;
+static const float PI = 3.14159265359f;
 
 float DistributionGGX(float NdotH, float roughness)
 {

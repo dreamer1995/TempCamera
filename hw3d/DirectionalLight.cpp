@@ -11,7 +11,7 @@ DirectionalLight::DirectionalLight(Graphics& gfx, DirectX::XMFLOAT3 pos, float p
 	cbData = {
 	{ 0.0f,-1.0f,0.0f },
 	{ 1.0f,1.0f,1.0f }, // Color
-	5.79f, // Intensity
+	10.0f, // Intensity
 	};
 	home = { cbData,
 		pos,
@@ -82,7 +82,7 @@ void DirectionalLight::Submit(size_t channels) const noxnd
 	arrow.Submit(channels);
 }
 
-void DirectionalLight::Bind(Graphics& gfx) const noexcept
+void DirectionalLight::Bind(Graphics& gfx, DirectX::XMFLOAT3 cameraPos) const noexcept
 {
 	auto dataCopy = cbData;
 
@@ -98,6 +98,12 @@ void DirectionalLight::Bind(Graphics& gfx) const noexcept
 
 	cbuf.Update(gfx, dataCopy);
 	cbuf.Bind(gfx);
+
+	const float cameraHeight = 150.0f;
+	const DirectX::XMFLOAT3 relativedLightCamPos = { cameraPos.x + dataCopy.direction.x * cameraHeight,
+													 cameraPos.y + dataCopy.direction.y * cameraHeight,
+													 cameraPos.z + dataCopy.direction.z * cameraHeight };
+	pCamera->SetPos(relativedLightCamPos);
 }
 
 void DirectionalLight::LinkTechniques(Rgph::RenderGraph& rg)

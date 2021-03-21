@@ -37,6 +37,7 @@ cbuffer Time : register(b2)//VS, DS, PS
 	bool HBAO;
 	bool HDR;
 	float GIScale;
+	bool volumetricRendering;
 };
 
 cbuffer DirectionalLightCBuf : register(b3)//PS
@@ -44,7 +45,6 @@ cbuffer DirectionalLightCBuf : register(b3)//PS
 	float3 direction;
 	float3 DdiffuseColor;
 	float DdiffuseIntensity;
-};
 
 cbuffer PointLightCBuf : register(b4)//PS
 {

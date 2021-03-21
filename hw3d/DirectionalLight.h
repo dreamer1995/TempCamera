@@ -21,7 +21,7 @@ public:
 	void SpawnControlWindow() noexcept;
 	void Reset() noexcept;
 	void Submit(size_t channels) const noxnd;
-	void Bind(Graphics& gfx) const noexcept;
+	void Bind(Graphics& gfx, DirectX::XMFLOAT3 cameraPos) const noexcept;
 	void LinkTechniques(Rgph::RenderGraph&);
 	DirectX::XMFLOAT3 GetPos() noexcept;
 	DirectX::XMFLOAT3 GetDirection() noexcept;

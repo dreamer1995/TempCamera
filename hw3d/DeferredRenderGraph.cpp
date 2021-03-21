@@ -29,6 +29,7 @@
 #include "DeferredBloomCatchPass.h"
 #include "DeferredBloomBlurPass.h"
 #include "DeferredBloomMergePass.h"
+#include "DeferredVolumeCalPass.h"
 
 namespace Rgph
 {
@@ -256,8 +257,16 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
+			auto pass = std::make_unique<DeferredVolumeCalPass>("VolumeCal", gfx, masterDepth);
+			pass->SetSinkLinkage("renderTarget", "HBAOBlur.renderTarget");
+			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
+			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
+			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
+			AppendPass(std::move(pass));
+		}
+		{
 			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("scratchIn", "HBAOBlur.renderTarget");
+			pass->SetSinkLinkage("scratchIn", "VolumeCal.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -672,6 +681,7 @@ namespace Rgph
 		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindMainCamera(cam);
 		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindMainCamera(cam);
 		dynamic_cast<DeferredTAAPass&>(FindPassByName("TAA")).BindMainCamera(cam);
+		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("VolumeCal")).BindMainCamera(cam);
 	}
 	void Rgph::DeferredRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams)
 	{
@@ -680,5 +690,6 @@ namespace Rgph
 		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindShadowCamera(gfx, dCam, pCams);
 		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindShadowCamera(gfx, dCam);
 		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindShadowCamera(gfx, pCams);
+		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("VolumeCal")).BindShadowCamera(gfx, dCam);
 	}
 }

@@ -37,7 +37,8 @@ private:
 		BOOL HBAO;
 		BOOL HDR;
 		float GIScale;
-		float padding[2];
+		BOOL volumetricRendering;
+		float padding[1];
 	};
 	double time;
 	static std::unique_ptr<Bind::VertexConstantBuffer<CommonVar>> cVBuf;
@@ -87,4 +88,5 @@ private:
 	bool HBAO = true;
 	bool HDR = true;
 	float GIScale = 0.353f;
+	bool volumetricRendering = true;
 };
