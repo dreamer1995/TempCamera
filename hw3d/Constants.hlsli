@@ -45,6 +45,7 @@ cbuffer DirectionalLightCBuf : register(b3)//PS
 	float3 direction;
 	float3 DdiffuseColor;
 	float DdiffuseIntensity;
+};
 
 cbuffer PointLightCBuf : register(b4)//PS
 {
