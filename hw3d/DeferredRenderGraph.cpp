@@ -30,6 +30,7 @@
 #include "DeferredBloomBlurPass.h"
 #include "DeferredBloomMergePass.h"
 #include "DeferredVolumeCalPass.h"
+#include "DeferredVolumeBlurPass.h"
 
 namespace Rgph
 {
@@ -257,16 +258,34 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<DeferredVolumeCalPass>("VolumeCal", gfx, masterDepth);
-			pass->SetSinkLinkage("renderTarget", "HBAOBlur.renderTarget");
+			Dcb::RawLayout l;
+			l.Add<Dcb::Float>("numSteps");
+			l.Add<Dcb::Float>("mie");
+			l.Add<Dcb::Bool>("ditherSteps");
+			Dcb::Buffer buf{ std::move(l) };
+			buf["numSteps"] = 30;
+			buf["mie"] = 0.5f;
+			buf["ditherSteps"] = true;
+			volumeParams = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("volumeParams", volumeParams));
+		}
+		{
+			auto pass = std::make_unique<DeferredVolumeCalPass>("VolumeCal", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+			pass->SetSinkLinkage("volumeParams", "$.volumeParams");
 			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
 			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
 			AppendPass(std::move(pass));
 		}
 		{
+			auto pass = std::make_unique<DeferredVolumeBlurPass>("VolumeBlur", gfx, masterDepth);
+			pass->SetSinkLinkage("renderTarget", "HBAOBlur.renderTarget");
+			pass->SetSinkLinkage("scratchIn", "VolumeCal.scratchOut");
+			AppendPass(std::move(pass));
+		}
+		{
 			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("scratchIn", "VolumeCal.renderTarget");
+			pass->SetSinkLinkage("scratchIn", "VolumeBlur.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -406,6 +425,7 @@ namespace Rgph
 		// RenderWaterWindow(gfx);
 		RenderAOWindow(gfx);
 		RenderBloomWindow(gfx);
+		RenderVolumeWindow(gfx);
 	}
 
 	void DeferredRenderGraph::RenderKernelWindow(Graphics& gfx)
@@ -559,7 +579,6 @@ namespace Rgph
 		if (ImGui::Begin("WaterRipple"))
 		{
 			auto buf = waterRipple->GetBuffer();
-			namespace dx = DirectX;
 			float dirty = false;
 			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
 
@@ -650,7 +669,6 @@ namespace Rgph
 		if (ImGui::Begin("HDR"))
 		{
 			auto buf = bloomParams->GetBuffer();
-			namespace dx = DirectX;
 			float dirty = false;
 			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
 
@@ -663,6 +681,36 @@ namespace Rgph
 			if (dirty)
 			{
 				bloomParams->SetBuffer(buf);
+			}
+		}
+		ImGui::End();
+	}
+
+	void DeferredRenderGraph::RenderVolumeWindow(Graphics& gfx)
+	{
+		if (!gfx.isVolumiticRendering)
+			return;
+		if (ImGui::Begin("Volume"))
+		{
+			auto buf = volumeParams->GetBuffer();
+			float dirty = false;
+			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+			if (auto v = buf["numSteps"]; v.Exists())
+			{
+				dcheck(ImGui::SliderInt("Number of Steps", &v, 0, 100));
+			}
+			if (auto v = buf["mie"]; v.Exists())
+			{
+				dcheck(ImGui::SliderFloat("Mie", &v, 0.0f, 1.0f, "%.3f", 1.0f));
+			}
+			if (auto v = buf["ditherSteps"]; v.Exists())
+			{
+				dcheck(ImGui::Checkbox("Dither Steps", &v));
+			}
+
+			if (dirty)
+			{
+				volumeParams->SetBuffer(buf);
 			}
 		}
 		ImGui::End();

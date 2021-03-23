@@ -839,6 +839,9 @@
     <ClInclude Include="DeferredVolumeCalPass.h">
       <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
     </ClInclude>
+    <ClInclude Include="DeferredVolumeBlurPass.h">
+      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -1094,6 +1097,9 @@
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
     <FxCompile Include="VolumeCal.hlsl">
+      <Filter>Shader\Postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="VolumeBlur.hlsl">
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
   </ItemGroup>

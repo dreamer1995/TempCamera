@@ -36,6 +36,7 @@ namespace Rgph
 		void RenderWaterWindow(Graphics& gfx);
 		void RenderAOWindow(Graphics& gfx);
 		void RenderBloomWindow(Graphics& gfx);
+		void RenderVolumeWindow(Graphics& gfx);
 		// private data
 		enum class KernelType
 		{
@@ -69,5 +70,6 @@ namespace Rgph
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> bloomParams;
 		float bloomThreshold = 0.5f;
 		int bloomQuality = 6;
+		std::shared_ptr<Bind::CachingPixelConstantBufferEx> volumeParams;
 	};
 }

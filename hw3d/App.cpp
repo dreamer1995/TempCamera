@@ -15,7 +15,7 @@ namespace dx = DirectX;
 App::App( const std::string& commandLine )
 	:
 	commandLine( commandLine ),
-	wnd( 1920,1080,"Fallshill Engine Demo" ),
+	wnd( 1760,990,"Fallshill Engine Demo" ),
 	scriptCommander( TokenizeQuoted( commandLine ) ),
 	dLight(wnd.Gfx(), { 10.0f,9.0f,2.5f }, 46.0f * PI / 180.0f, 78.0f * PI / 180.0f)
 {
@@ -406,6 +406,7 @@ void App::UpdateCommonVar(Graphics& gfx, const CommonVar& cvar) noxnd
 	gfx.isTAA = TAA;
 	gfx.isHBAO = HBAO;
 	gfx.isHDR = HDR;
+	gfx.isVolumiticRendering = volumetricRendering;
 }
 std::unique_ptr<Bind::VertexConstantBuffer<App::CommonVar>> App::cVBuf;
 std::unique_ptr<Bind::PixelConstantBuffer<App::CommonVar>> App::cPBuf;

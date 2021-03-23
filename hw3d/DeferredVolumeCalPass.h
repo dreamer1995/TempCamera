@@ -19,24 +19,26 @@ namespace Rgph
 	class DeferredVolumeCalPass : public FullscreenPass
 	{
 	public:
-		DeferredVolumeCalPass(std::string name, Graphics& gfx, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
+		DeferredVolumeCalPass(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
 			:
 			FullscreenPass(std::move(name), gfx),
 			masterDepth(masterDepth)
 		{
 			using namespace Bind;
+			AddBindSink<Bind::CachingPixelConstantBufferEx>("volumeParams");
+			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth / 2, fullHeight / 2, 0u,
+				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);
 			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u, 0b1u);
 			AddBind(pDShadowCBuf);
 			AddBindSink<Bindable>("dShadowMap");
 			AddBind(PixelShader::Resolve(gfx, "VolumeCal.cso"));
-			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::Additive));
+			AddBind(Blender::Resolve(gfx, false));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u));
 			AddBind(masterDepth);
 			AddBindSink<Bindable>("shadowControl");
 			AddBindSink<Bindable>("shadowSampler");
-			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
-			RegisterSource(DirectBindableSource<RenderTarget>::Make("renderTarget", renderTarget));
+			RegisterSource(DirectBindableSource<RenderTarget>::Make("scratchOut", renderTarget));
 		}
 		void BindMainCamera(const Camera& cam) noexcept
 		{
