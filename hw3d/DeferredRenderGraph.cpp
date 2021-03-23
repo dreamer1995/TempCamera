@@ -258,14 +258,15 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
+			namespace dx = DirectX;
 			Dcb::RawLayout l;
 			l.Add<Dcb::Float>("numSteps");
 			l.Add<Dcb::Float>("mie");
-			l.Add<Dcb::Bool>("ditherSteps");
+			l.Add<Dcb::Bool>("enableDitherSteps");
 			Dcb::Buffer buf{ std::move(l) };
 			buf["numSteps"] = 30;
 			buf["mie"] = 0.5f;
-			buf["ditherSteps"] = true;
+			buf["enableDitherSteps"] = true;
 			volumeParams = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("volumeParams", volumeParams));
 		}
@@ -703,9 +704,9 @@ namespace Rgph
 			{
 				dcheck(ImGui::SliderFloat("Mie", &v, 0.0f, 1.0f, "%.3f", 1.0f));
 			}
-			if (auto v = buf["ditherSteps"]; v.Exists())
+			if (auto v = buf["enableDitherSteps"]; v.Exists())
 			{
-				dcheck(ImGui::Checkbox("Dither Steps", &v));
+				dcheck(ImGui::Checkbox("Enable Dither Steps", &v));
 			}
 
 			if (dirty)
