@@ -260,7 +260,7 @@ namespace Rgph
 		{
 			namespace dx = DirectX;
 			Dcb::RawLayout l;
-			l.Add<Dcb::Float>("numSteps");
+			l.Add<Dcb::Integer>("numSteps");
 			l.Add<Dcb::Float>("mie");
 			l.Add<Dcb::Bool>("enableDitherSteps");
 			Dcb::Buffer buf{ std::move(l) };
@@ -279,7 +279,7 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<DeferredVolumeBlurPass>("VolumeBlur", gfx, masterDepth);
+			auto pass = std::make_unique<DeferredVolumeBlurPass>("VolumeBlur", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
 			pass->SetSinkLinkage("renderTarget", "HBAOBlur.renderTarget");
 			pass->SetSinkLinkage("scratchIn", "VolumeCal.scratchOut");
 			AppendPass(std::move(pass));
