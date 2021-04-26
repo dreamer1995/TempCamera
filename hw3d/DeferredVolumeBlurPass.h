@@ -25,16 +25,15 @@ namespace Rgph
 			masterDepth(masterDepth)
 		{
 			using namespace Bind;
-			AddBindSink<RenderTarget>("scratchIn");
-			tempRT = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 1u,
+			tempRT = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth / 2, fullHeight / 2, 0u,
 				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);
 			AddBind(PixelShader::Resolve(gfx, "VolumeBlur.cso"));
-			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::Additive));
+			AddBind(Blender::Resolve(gfx, false));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u));
 			AddBind(masterDepth);
-			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
-			RegisterSource(DirectBindableSource<RenderTarget>::Make("renderTarget", renderTarget));
+			RegisterSink(DirectBindableSink<RenderTarget>::Make("scratchIn", renderTarget));
+			RegisterSource(DirectBindableSource<RenderTarget>::Make("scratchOut", renderTarget));
 
 			Dcb::RawLayout lay;
 			lay.Add<Dcb::Bool>("isHorizontal");
@@ -49,6 +48,7 @@ namespace Rgph
 			const_cast<DeferredVolumeBlurPass*>(this)->finalRT = renderTarget;
 
 			masterDepth->BreakRule();
+			finalRT->Bind(gfx);
 			
 			auto buf = direction->GetBuffer();
 			buf["isHorizontal"] = true;
@@ -67,7 +67,6 @@ namespace Rgph
 
 			FullscreenPass::Execute(gfx);
 
-			tempRT->Clear(gfx);
 			gfx.ClearShaderResources(8u);
 		}
 	private:

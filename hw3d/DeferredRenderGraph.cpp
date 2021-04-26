@@ -31,6 +31,7 @@
 #include "DeferredBloomMergePass.h"
 #include "DeferredVolumeCalPass.h"
 #include "DeferredVolumeBlurPass.h"
+#include "DeferredVolumeMergePass.h"
 
 namespace Rgph
 {
@@ -280,13 +281,18 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<DeferredVolumeBlurPass>("VolumeBlur", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("renderTarget", "HBAOBlur.renderTarget");
 			pass->SetSinkLinkage("scratchIn", "VolumeCal.scratchOut");
 			AppendPass(std::move(pass));
 		}
 		{
+			auto pass = std::make_unique<DeferredVolumeMergePass>("VolumeMerge", gfx);
+			pass->SetSinkLinkage("renderTarget", "HBAOBlur.renderTarget");
+			pass->SetSinkLinkage("scratchIn", "VolumeBlur.scratchOut");
+			AppendPass(std::move(pass));
+		}
+		{
 			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("scratchIn", "VolumeBlur.renderTarget");
+			pass->SetSinkLinkage("scratchIn", "VolumeMerge.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
