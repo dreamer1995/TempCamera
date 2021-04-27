@@ -48,6 +48,8 @@ namespace Rgph
 			const_cast<DeferredVolumeBlurPass*>(this)->finalRT = renderTarget;
 
 			masterDepth->BreakRule();
+
+			gfx.ClearRenderTarget();
 			finalRT->Bind(gfx);
 			
 			auto buf = direction->GetBuffer();

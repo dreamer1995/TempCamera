@@ -54,5 +54,11 @@ float4 main(float2 uv : Texcoord) : SV_Target
 	}
 	SumColor /= SumWeight;		
 	
-	return float4(volumeColor.SampleLevel(splr, uv, 0).rgb, 1.0f);
+	float3 OUT = 0;
+	if (volumetricRendering)
+		OUT = SumColor;
+	else
+		OUT = volumeColor.SampleLevel(splr, uv, 0).rgb;
+
+	return float4(OUT, 1.0f);
 }
