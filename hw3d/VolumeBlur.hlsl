@@ -7,6 +7,7 @@ static const float PI = 3.14159265359;
 cbuffer Control : register(b10)
 {
 	bool horizontal;
+	float4 scaledScreenInfo;
 }
 
 #include "Constants.hlsli"
@@ -35,9 +36,9 @@ float4 main(float2 uv : Texcoord) : SV_Target
 		float2 tempTC = uv;
 		
 		if (horizontal)
-			tempTC.x += s_offsets[i] * screenInfo.z * stepWidth;
+			tempTC.x += s_offsets[i] * scaledScreenInfo.z * stepWidth;
 		else
-			tempTC.y += s_offsets[i] * screenInfo.w * stepWidth;
+			tempTC.y += s_offsets[i] * scaledScreenInfo.w * stepWidth;
 
 		//uv = min(uv, g_pixelSize.zw - 0.5f*g_pixelSize.xy);
 		float4 ctmp = volumeColor.SampleLevel(splr, tempTC, 0);

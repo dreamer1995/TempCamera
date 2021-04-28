@@ -12,17 +12,18 @@ cbuffer CBufProperties : register(b10)
 	int numSteps;
 	float mie;
 	bool enableDitherSteps;
+	float4 scaledScreenInfo;
 };
 
-float RadicalInverse_VdC(uint bits)
-{
-	bits = (bits << 16u) | (bits >> 16u);
-	bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
-	bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
-	bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
-	bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
-	return float(bits) * 2.3283064365386963e-10; // / 0x100000000
-}
+//float RadicalInverse_VdC(uint bits)
+//{
+//	bits = (bits << 16u) | (bits >> 16u);
+//	bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
+//	bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
+//	bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
+//	bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
+//	return float(bits) * 2.3283064365386963e-10; // / 0x100000000
+//}
 
 // Mie scaterring approximated with Henyey-Greenstein phase function.
 float ComputeScattering(float lightDotView)
@@ -57,12 +58,10 @@ float4 main(float2 uv : Texcoord) : SV_Target
 	float3 currentPosition = startPosition;
 
 	float3 accumFog = 0.0f;
-	float3 ditherPattern[4] =
-	{
-		{ 0.0f, 0.5f, 0.125f },
-		{ 0.75f, 0.22f, 0.875f },
-		{ 0.1875f, 0.6875f, 0.0625f },
-		{ 0.9375f, 0.4375f, 0.8125f }
+	float ditherPattern[4][4] = {{0.0f, 0.5f, 0.125f, 0.625f},
+						  {0.75f, 0.22f, 0.875f, 0.375f},
+						  {0.1875f, 0.6875f, 0.0625f, 0.5625},
+						  {0.9375f, 0.4375f, 0.8125f, 0.3125}
 	};
 	for (int i = 0; i < numSteps; i++)
 	{
@@ -76,8 +75,8 @@ float4 main(float2 uv : Texcoord) : SV_Target
 		// Offset the start position.
 		if (enableDitherSteps)
 		{
-			uint seed = RadicalInverse_VdC(uv.x * screenInfo.x / 2) % 4;
-			currentPosition += step * ditherPattern[i % 4];
+			float ditherValue = ditherPattern[uv.x * screenInfo.x % 4][uv.y * screenInfo.y % 4];
+			currentPosition += step * ditherValue;
 		}
 		else
 			currentPosition += step;

@@ -267,7 +267,7 @@ namespace Rgph
 			Dcb::Buffer buf{ std::move(l) };
 			buf["numSteps"] = 30;
 			buf["mie"] = 0.5f;
-			buf["enableDitherSteps"] = false;
+			buf["enableDitherSteps"] = true;
 			volumeParams = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("volumeParams", volumeParams));
 		}

@@ -25,7 +25,9 @@ namespace Rgph
 			masterDepth(masterDepth)
 		{
 			using namespace Bind;
-			tempRT = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth / 2, fullHeight / 2, 0u,
+
+			int resolutionDivision = 4;
+			tempRT = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth / resolutionDivision, fullHeight / resolutionDivision, 0u,
 				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);
 			AddBind(PixelShader::Resolve(gfx, "VolumeBlur.cso"));
 			AddBind(Blender::Resolve(gfx, false));
@@ -37,7 +39,13 @@ namespace Rgph
 
 			Dcb::RawLayout lay;
 			lay.Add<Dcb::Bool>("isHorizontal");
+			lay.Add<Dcb::Float4>("scaledScreenInfo");
 			auto buf = Dcb::Buffer(std::move(lay));
+			buf["scaledScreenInfo"] = dx::XMFLOAT4((float)gfx.GetWidth() / resolutionDivision,
+												   (float)gfx.GetHeight() / resolutionDivision,
+												   1.0f / (gfx.GetWidth() / resolutionDivision),
+												   1.0f / (gfx.GetHeight() / resolutionDivision)
+			);
 			direction = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 			AddBind(direction);
 		}

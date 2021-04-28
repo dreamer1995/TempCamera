@@ -26,7 +26,7 @@ namespace Rgph
 		{
 			using namespace Bind;
 			AddBindSink<Bind::CachingPixelConstantBufferEx>("volumeParams");
-			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth / 2, fullHeight / 2, 0u,
+			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u,
 				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);
 			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u, 0b1u);
 			AddBind(pDShadowCBuf);
