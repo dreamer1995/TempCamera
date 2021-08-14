@@ -15,7 +15,7 @@ namespace Bind
 			DirectX::XMMATRIX ViewProj;
 		};
 	public:
-		ShadowCameraCBuf(Graphics& gfx, UINT slot = 0u, UINT shaderIndex = 0b1000u);
+		ShadowCameraCBuf(Graphics& gfx, UINT slot = 0u, UINT shaderIndex = 0b10000u);
 		void Bind( Graphics& gfx ) noxnd override;
 		void Update( Graphics& gfx );
 		void SetCamera( const Camera* pCamera ) noexcept;
@@ -26,6 +26,8 @@ namespace Bind
 		std::unique_ptr<HullConstantBuffer<Transform>> pHcbuf;
 		std::unique_ptr<DomainConstantBuffer<Transform>> pDcbuf;
 		std::unique_ptr<PixelConstantBuffer<Transform>> pPcbuf;
+		std::unique_ptr<ComputeConstantBuffer<Transform>> pCcbuf;
+		std::unique_ptr<GeometryConstantBuffer<Transform>> pGcbuf;
 		const Camera* pCamera = nullptr;
 		std::shared_ptr<PointLight> light;
 		UINT shaderIndex;

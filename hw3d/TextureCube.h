@@ -11,13 +11,14 @@ namespace Bind
 	class TextureCube : public Bindable
 	{
 	public:
-		TextureCube(Graphics& gfx, const std::string& path, UINT slot, bool manuallyGenerateMips);
+		TextureCube(Graphics& gfx, const std::string& path, UINT slot, bool manuallyGenerateMips, UINT shaderIndex);
 		void Bind( Graphics& gfx ) noxnd override;
-		static std::shared_ptr<TextureCube> Resolve(Graphics& gfx, const std::string& path, UINT slot = 0, bool manuallyGenerateMips = false);
-		static std::string GenerateUID(const std::string& path, UINT slot, bool manuallyGenerateMips);
+		static std::shared_ptr<TextureCube> Resolve(Graphics& gfx, const std::string& path, UINT slot = 0, bool manuallyGenerateMips = false, UINT shaderIndex = 0b1);
+		static std::string GenerateUID(const std::string& path, UINT slot, bool manuallyGenerateMips, UINT shaderIndex);
 		std::string GetUID() const noexcept override;
 	private:
 		unsigned int slot;
+		UINT shaderIndex;
 	protected:
 		std::string path;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureView;
@@ -46,6 +47,7 @@ namespace Bind
 		std::shared_ptr<OutputOnlyDepthStencil> GetDepthBuffer( size_t index ) const;
 	private:
 		unsigned int slot;
+		UINT shaderIndex;
 	protected:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureView;
 		std::vector<std::shared_ptr<OutputOnlyDepthStencil>> depthBuffers;

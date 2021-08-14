@@ -361,15 +361,16 @@ namespace Bind
 		return height;
 	}
 
-	ShaderInputDepthStencil::ShaderInputDepthStencil(Graphics& gfx, UINT slot, Usage usage, Type type)
+	ShaderInputDepthStencil::ShaderInputDepthStencil(Graphics& gfx, UINT slot, Usage usage, Type type, UINT shaderIndex)
 		:
-		ShaderInputDepthStencil(gfx, gfx.GetWidth(), gfx.GetHeight(), slot, usage, type)
+		ShaderInputDepthStencil(gfx, gfx.GetWidth(), gfx.GetHeight(), slot, usage, type, shaderIndex)
 	{}
 
-	ShaderInputDepthStencil::ShaderInputDepthStencil(Graphics& gfx, UINT width, UINT height, UINT slot, Usage usage, Type type)
+	ShaderInputDepthStencil::ShaderInputDepthStencil(Graphics& gfx, UINT width, UINT height, UINT slot, Usage usage, Type type, UINT shaderIndex)
 		:
 		DepthStencil(gfx, width, height, true, usage, type),
-		slot(slot)
+		slot(slot),
+		shaderIndex(shaderIndex)
 	{
 		INFOMAN(gfx);
 
@@ -403,8 +404,32 @@ namespace Bind
 
 	void ShaderInputDepthStencil::Bind( Graphics& gfx ) noxnd
 	{
+		assert(shaderIndex & 0b00111111);
 		INFOMAN_NOHR( gfx );
-		GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetShaderResources( slot,1u,pShaderResourceView.GetAddressOf() ) );
+		if (shaderIndex & 0b00010000)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00001000)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000100)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000010)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->GSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000001)
+		{
+			GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetShaderResources( slot,1u,pShaderResourceView.GetAddressOf() ) );
+		}		
+		if (shaderIndex & 0b00100000)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->CSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf()));
+		}
 	}
 
 

@@ -66,23 +66,31 @@ namespace Bind
 
 	void Texture::Bind( Graphics& gfx ) noxnd
 	{
+		assert(shaderIndex & 0b00111111);
 		INFOMAN_NOHR( gfx );
-		assert(shaderIndex & 0b00001111);
-		if (shaderIndex & 0b00001000)
+		if (shaderIndex & 0b00010000)
 		{
 			GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
 		}
-		if (shaderIndex & 0b00000100)
+		if (shaderIndex & 0b00001000)
 		{
 			GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
 		}
-		if (shaderIndex & 0b00000010)
+		if (shaderIndex & 0b00000100)
 		{
 			GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000010)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->GSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
 		}
 		if (shaderIndex & 0b00000001)
 		{
 			GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00100000)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->CSSetShaderResources(slot, 1, pTextureView.GetAddressOf()));
 		}
 	}
 	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::string& path, UINT slot, UINT shaderIndex)

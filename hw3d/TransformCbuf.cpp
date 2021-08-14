@@ -14,9 +14,21 @@ namespace Bind
 		{
 			pPcbuf = std::make_unique<PixelConstantBuffer<Transforms>>(gfx, 0);
 		}
-		if (!pDcbuf && otherShaderIndex & 0b00000001)
+		if (!pDcbuf && otherShaderIndex & 0b00000100)
 		{
 			pDcbuf = std::make_unique<DomainConstantBuffer<Transforms>>(gfx, 0);
+		}
+		if (!pHcbuf && otherShaderIndex & 0b00001000)
+		{
+			pHcbuf = std::make_unique<HullConstantBuffer<Transforms>>(gfx, 0);
+		}
+		if (!pCcbuf && otherShaderIndex & 0b00100000)
+		{
+			pCcbuf = std::make_unique<ComputeConstantBuffer<Transforms>>(gfx, 0);
+		}
+		if (!pGcbuf && otherShaderIndex & 0b00000010)
+		{
+			pGcbuf = std::make_unique<GeometryConstantBuffer<Transforms>>(gfx, 0);
 		}
 	}
 
@@ -43,10 +55,25 @@ namespace Bind
 		pVcbuf->Bind( gfx );
 		pPcbuf->Update(gfx, tf);
 		pPcbuf->Bind(gfx);
-		if (otherShaderIndex & 0b00000001)
+		if (otherShaderIndex & 0b00000100)
 		{
 			pDcbuf->Update(gfx, tf);
 			pDcbuf->Bind(gfx);
+		}
+		if (otherShaderIndex & 0b00001000)
+		{
+			pHcbuf->Update(gfx, tf);
+			pHcbuf->Bind(gfx);
+		}
+		if (otherShaderIndex & 0b00100000)
+		{
+			pCcbuf->Update(gfx, tf);
+			pCcbuf->Bind(gfx);
+		}
+		if (otherShaderIndex & 0b00000010)
+		{
+			pGcbuf->Update(gfx, tf);
+			pGcbuf->Bind(gfx);
 		}
 	}
 
@@ -80,5 +107,8 @@ namespace Bind
 
 	std::unique_ptr<VertexConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pVcbuf;
 	std::unique_ptr<PixelConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pPcbuf;
+	std::unique_ptr<HullConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pHcbuf;
 	std::unique_ptr<DomainConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pDcbuf;
+	std::unique_ptr<ComputeConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pCcbuf;
+	std::unique_ptr<GeometryConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pGcbuf;
 }

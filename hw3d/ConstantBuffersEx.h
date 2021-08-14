@@ -90,6 +90,17 @@ namespace Bind
 		}
 	};
 
+	class GeometryConstantBufferEx : public ConstantBufferEx
+	{
+	public:
+		using ConstantBufferEx::ConstantBufferEx;
+		void Bind(Graphics& gfx) noxnd override
+		{
+			INFOMAN_NOHR(gfx);
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->GSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf()));
+		}
+	}; 
+
 	class PixelConstantBufferEx : public ConstantBufferEx
 	{
 	public:
@@ -98,6 +109,17 @@ namespace Bind
 		{
 			INFOMAN_NOHR( gfx );
 			GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetConstantBuffers( slot,1u,pConstantBuffer.GetAddressOf() ) );
+		}
+	};
+
+	class ComputeConstantBufferEx : public ConstantBufferEx
+	{
+	public:
+		using ConstantBufferEx::ConstantBufferEx;
+		void Bind(Graphics& gfx) noxnd override
+		{
+			INFOMAN_NOHR(gfx);
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->CSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf()));
 		}
 	};
 
@@ -153,4 +175,6 @@ namespace Bind
 	using CachingHullConstantBufferEx = CachingConstantBufferEx<HullConstantBufferEx>;
 	using CachingDomainConstantBufferEx = CachingConstantBufferEx<DomainConstantBufferEx>;
 	using CachingPixelConstantBufferEx = CachingConstantBufferEx<PixelConstantBufferEx>;
+	using CachingComputeConstantBufferEx = CachingConstantBufferEx<ComputeConstantBufferEx>;
+	using CachingGeometryConstantBufferEx = CachingConstantBufferEx<GeometryConstantBufferEx>;
 }

@@ -100,10 +100,12 @@
     <ClCompile Include="CameraContainer.cpp" />
     <ClCompile Include="CameraIndicator.cpp" />
     <ClCompile Include="cnpy.cpp" />
+    <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="DeferredRenderGraph.cpp" />
     <ClCompile Include="DomainShader.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GbufferPass.cpp" />
+    <ClCompile Include="GeometryShader.cpp" />
     <ClCompile Include="HullShader.cpp" />
     <ClCompile Include="PlaneCaustics.cpp" />
     <ClCompile Include="PreCalBlurCube.cpp" />
@@ -633,6 +635,7 @@
     <ClInclude Include="CameraIndicator.h" />
     <ClInclude Include="Channels.h" />
     <ClInclude Include="cnpy.h" />
+    <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="DebugDeferredPass.h" />
     <ClInclude Include="DeferredBloomBlurPass.h" />
     <ClInclude Include="DeferredBloomCatchPass.h" />
@@ -650,6 +653,7 @@
     <ClInclude Include="DomainShader.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GbufferPass.h" />
+    <ClInclude Include="GeometryShader.h" />
     <ClInclude Include="HullShader.h" />
     <ClInclude Include="LambertianPass_Water.h" />
     <ClInclude Include="PlaneCaustics.h" />

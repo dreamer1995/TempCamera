@@ -20,7 +20,7 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 	pIndices = IndexBuffer::Resolve(gfx, geometryTag, model.indices);
 	pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 
-	auto tcb = std::make_shared<TransformCbufScaling>(gfx, 1.0f, 0b1u);
+	auto tcb = std::make_shared<TransformCbufScaling>(gfx, 1.0f, 0b100u);
 
 	{
 		Technique shade("Shade", Chan::main);
@@ -31,7 +31,7 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 			only.AddBindable(InputLayout::Resolve(gfx, model.vertices.GetLayout(), *vs));
 			only.AddBindable(std::move(vs));
 
-			only.AddBindable(Texture::Resolve(gfx, "Images\\white.jpg", 0u, 0b10u));
+			only.AddBindable(Texture::Resolve(gfx, "Images\\white.jpg", 0u, 0b100u));
 
 			only.AddBindable(HullShader::Resolve(gfx, "CausticHS.cso"));
 			only.AddBindable(DomainShader::Resolve(gfx, "CausticDS.cso"));
@@ -62,7 +62,7 @@ PlaneCaustics::PlaneCaustics(Graphics& gfx, float size)
 				only.AddBindable(dmc);
 			}
 			
-			only.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Wrap, 0u, 0b10));
+			only.AddBindable(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Wrap, 0u, 0b100));
 
 			only.AddBindable(std::move(tcb));
 

@@ -702,47 +702,63 @@ namespace Bind
 	{
 		if (banToBind)
 			return;
-		INFOMAN_NOHR( gfx );
-		assert(shaderIndex & 0b00001111);
+		assert(shaderIndex & 0b00111111);
+		INFOMAN_NOHR(gfx);
 		switch (type)
 		{
 		case Type::GBuffer:
 		{
-			if (shaderIndex & 0b00001000)
+			if (shaderIndex & 0b00010000)
 			{
 				GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 8, pShaderResourceGBufferViews->GetAddressOf()));
 			}
-			if (shaderIndex & 0b00000100)
+			if (shaderIndex & 0b00001000)
 			{
 				GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 8, pShaderResourceGBufferViews->GetAddressOf()));
-			}															  
-			if (shaderIndex & 0b00000010)								  
+			}
+			if (shaderIndex & 0b00000100)
 			{															  
 				GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 8, pShaderResourceGBufferViews->GetAddressOf()));
-			}															  
+			}
+			if (shaderIndex & 0b00000010)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->GSSetShaderResources(slot, 8, pShaderResourceGBufferViews->GetAddressOf()));
+			}
 			if (shaderIndex & 0b00000001)								  
 			{															  
 				GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 8, pShaderResourceGBufferViews->GetAddressOf()));
+			}
+			if (shaderIndex & 0b00100000)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->CSSetShaderResources(slot, 8, pShaderResourceGBufferViews->GetAddressOf()));
 			}
 			break;
 		}
 		default:
 		{
-			if (shaderIndex & 0b00001000)
+			if (shaderIndex & 0b00010000)
 			{
 				GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
 			}
-			if (shaderIndex & 0b00000100)
+			if (shaderIndex & 0b00001000)
 			{
 				GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
 			}
-			if (shaderIndex & 0b00000010)
+			if (shaderIndex & 0b00000100)
 			{
 				GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
+			}
+			if (shaderIndex & 0b00000010)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->GSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
 			}
 			if (shaderIndex & 0b00000001)
 			{
 				GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
+			}
+			if (shaderIndex & 0b00100000)
+			{
+				GFX_THROW_INFO_ONLY(GetContext(gfx)->CSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
 			}
 		}
 		}	

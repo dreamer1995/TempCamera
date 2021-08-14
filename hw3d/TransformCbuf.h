@@ -35,6 +35,9 @@ namespace Bind
 		static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;
 		static std::unique_ptr<PixelConstantBuffer<Transforms>> pPcbuf;
 		const Drawable* pParent = nullptr;
+		static std::unique_ptr<HullConstantBuffer<Transforms>> pHcbuf;
 		static std::unique_ptr<DomainConstantBuffer<Transforms>> pDcbuf;
+		static std::unique_ptr<ComputeConstantBuffer<Transforms>> pCcbuf;
+		static std::unique_ptr<GeometryConstantBuffer<Transforms>> pGcbuf;
 	};
 }

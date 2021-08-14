@@ -266,7 +266,7 @@ namespace Rgph
 			l.Add<Dcb::Bool>("enableDitherSteps");
 			Dcb::Buffer buf{ std::move(l) };
 			buf["numSteps"] = 30;
-			buf["mie"] = 0.5f;
+			buf["mie"] = 0.749f;
 			buf["enableDitherSteps"] = true;
 			volumeParams = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("volumeParams", volumeParams));
@@ -429,7 +429,7 @@ namespace Rgph
 	{
 		RenderShadowWindow(gfx);
 		RenderKernelWindow(gfx);
-		// RenderWaterWindow(gfx);
+		//RenderWaterWindow(gfx);
 		RenderAOWindow(gfx);
 		RenderBloomWindow(gfx);
 		RenderVolumeWindow(gfx);

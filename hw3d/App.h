@@ -17,7 +17,7 @@
 #include "DirectionalLight.h"
 #include "TestSphere.h"
 #include "ConstantBuffers.h"
-#include "PlaneWater.h"
+//#include "PlaneWater.h"
 
 class App
 {

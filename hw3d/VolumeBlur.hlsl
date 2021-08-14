@@ -16,6 +16,8 @@ cbuffer Control : register(b10)
 
 float4 main(float2 uv : Texcoord) : SV_Target
 {
+	if (!volumetricRendering)
+		return 0;
 	static const float s_offsets[5] = { -3.5, -1.5, 1.5, 3.5, 0 };
 	static const float s_weights[5] = { 1.0 / 16, 1.0 / 4, 1.0 / 4, 1.0 / 16, 3.0 / 8 };
 	float c_phi0 = 3.3f;
@@ -55,11 +57,5 @@ float4 main(float2 uv : Texcoord) : SV_Target
 	}
 	SumColor /= SumWeight;		
 	
-	float3 OUT = 0;
-	if (volumetricRendering)
-		OUT = SumColor;
-	else
-		OUT = volumeColor.SampleLevel(splr, uv, 0).rgb;
-
-	return float4(OUT, 1.0f);
+	return float4(SumColor, 1.0f);
 }

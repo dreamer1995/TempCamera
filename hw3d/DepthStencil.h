@@ -50,12 +50,13 @@ namespace Bind
 	class ShaderInputDepthStencil : public DepthStencil
 	{
 	public:
-		ShaderInputDepthStencil(Graphics& gfx, UINT slot, Usage usage = Usage::DepthStencil, Type type = Type::Default);
+		ShaderInputDepthStencil(Graphics& gfx, UINT slot, Usage usage = Usage::DepthStencil, Type type = Type::Default, UINT shaderIndex = 0b1);
 		ShaderInputDepthStencil(Graphics& gfx, UINT width, UINT height, UINT slot,
-			Usage usage = Usage::DepthStencil, Type type = Type::Default);
+			Usage usage = Usage::DepthStencil, Type type = Type::Default, UINT shaderIndex = 0b1);
 		void Bind( Graphics& gfx ) noxnd override;
 	private:
 		UINT slot;
+		UINT shaderIndex;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
 	};
 

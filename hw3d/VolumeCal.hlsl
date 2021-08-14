@@ -35,8 +35,8 @@ float ComputeScattering(float lightDotView)
 
 float4 main(float2 uv : Texcoord) : SV_Target
 {
-	//if (!volumetricRendering)
-	//	return 0;
+	if (!volumetricRendering)
+		return 0;
 	float sceneZ = depth.SampleLevel(splr, uv, 0).x;
 	sceneZ = ConvertToLinearDepth(sceneZ);	
 	float3 D = CalcHomogeneousPos(sceneZ, uv);

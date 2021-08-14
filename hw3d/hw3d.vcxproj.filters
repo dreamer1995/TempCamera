@@ -396,6 +396,12 @@
     <ClCompile Include="ScaleOutlineRenderGraph.cpp">
       <Filter>Source Files\Jobber\Graphlib</Filter>
     </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryShader.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -844,6 +850,12 @@
     </ClInclude>
     <ClInclude Include="DeferredVolumeMergePass.h">
       <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryShader.h">
+      <Filter>Header Files\Bindable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

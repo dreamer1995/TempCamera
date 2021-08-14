@@ -18,3 +18,5 @@
 #include "DomainShader.h"
 #include "ConstantBuffersEX.h"
 #include "TextureCube.h"
+#include "ComputeShader.h"
+#include "GeometryShader.h"

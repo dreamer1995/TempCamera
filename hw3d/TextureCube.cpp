@@ -10,11 +10,12 @@ namespace Bind
 {
 	namespace wrl = Microsoft::WRL;
 
-	TextureCube::TextureCube(Graphics& gfx, const std::string& path, UINT slot, bool manuallyGenerateMips)
+	TextureCube::TextureCube(Graphics& gfx, const std::string& path, UINT slot, bool manuallyGenerateMips, UINT shaderIndex)
 		:
 		path( path ),
 		slot( slot ),
-		manuallyGenerateMips(manuallyGenerateMips)
+		manuallyGenerateMips(manuallyGenerateMips),
+		shaderIndex(shaderIndex)
 	{
 		INFOMAN( gfx );
 
@@ -121,22 +122,46 @@ namespace Bind
 
 	void TextureCube::Bind( Graphics& gfx ) noxnd
 	{
+		assert(shaderIndex & 0b00111111);
 		INFOMAN_NOHR( gfx );
-		GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetShaderResources( slot,1u,pTextureView.GetAddressOf() ) );
+		if (shaderIndex & 0b00010000)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00001000)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000100)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000010)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->GSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000001)
+		{
+			GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetShaderResources( slot,1u,pTextureView.GetAddressOf() ) );
+		}
+		if (shaderIndex & 0b00100000)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->CSSetShaderResources(slot, 1u, pTextureView.GetAddressOf()));
+		}
 	}
 
-	std::shared_ptr<TextureCube> TextureCube::Resolve(Graphics& gfx, const std::string& path, UINT slot, bool manuallyGenerateMips)
+	std::shared_ptr<TextureCube> TextureCube::Resolve(Graphics& gfx, const std::string& path, UINT slot, bool manuallyGenerateMips, UINT shaderIndex)
 	{
-		return Codex::Resolve<TextureCube>(gfx, path, slot, manuallyGenerateMips);
+		return Codex::Resolve<TextureCube>(gfx, path, slot, manuallyGenerateMips, shaderIndex);
 	}
-	std::string TextureCube::GenerateUID(const std::string& path, UINT slot, bool manuallyGenerateMips)
+	std::string TextureCube::GenerateUID(const std::string& path, UINT slot, bool manuallyGenerateMips, UINT shaderIndex)
 	{
 		using namespace std::string_literals;
-		return typeid(TextureCube).name() + "#"s + path + "#" + std::to_string(slot) + std::to_string(manuallyGenerateMips);
+		return typeid(TextureCube).name() + "#"s + path + "#" + std::to_string(slot) + std::to_string(manuallyGenerateMips) + std::to_string(shaderIndex);
 	}
 	std::string TextureCube::GetUID() const noexcept
 	{
-		return GenerateUID(path, slot, manuallyGenerateMips);
+		return GenerateUID(path, slot, manuallyGenerateMips, shaderIndex);
 	}
 
 

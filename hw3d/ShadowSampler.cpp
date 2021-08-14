@@ -4,9 +4,10 @@
 
 namespace Bind
 {
-	ShadowSampler::ShadowSampler(Graphics& gfx, UINT slot)
+	ShadowSampler::ShadowSampler(Graphics& gfx, UINT slot, UINT shaderIndex)
 		:
-		slot(slot)
+		slot(slot),
+		shaderIndex(shaderIndex)
 	{
 		for( size_t i = 0; i < 4; i++ )
 		{
@@ -77,8 +78,32 @@ namespace Bind
 	}
 
 	void ShadowSampler::Bind( Graphics& gfx ) noxnd
-	{
-		INFOMAN_NOHR( gfx );
-		GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetSamplers( GetCurrentSlot(),1,samplers[curSampler].GetAddressOf() ) );
+	{		
+		assert(shaderIndex & 0b00111111);
+		INFOMAN_NOHR(gfx);
+		if (shaderIndex & 0b00010000)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetSamplers(GetCurrentSlot(), 1, samplers[curSampler].GetAddressOf()));
+		}
+		if (shaderIndex & 0b00001000)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->HSSetSamplers(GetCurrentSlot(), 1, samplers[curSampler].GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000100)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->DSSetSamplers(GetCurrentSlot(), 1, samplers[curSampler].GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000010)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->GSSetSamplers(GetCurrentSlot(), 1, samplers[curSampler].GetAddressOf()));
+		}
+		if (shaderIndex & 0b00000001)
+		{
+			GFX_THROW_INFO_ONLY( GetContext( gfx )->PSSetSamplers( GetCurrentSlot(),1,samplers[curSampler].GetAddressOf() ) );
+		}
+		if (shaderIndex & 0b00100000)
+		{
+			GFX_THROW_INFO_ONLY(GetContext(gfx)->CSSetSamplers(GetCurrentSlot(), 1, samplers[curSampler].GetAddressOf()));
+		}
 	}
 } 
