@@ -32,6 +32,8 @@
 #include "DeferredVolumeCalPass.h"
 #include "DeferredVolumeBlurPass.h"
 #include "DeferredVolumeMergePass.h"
+#include "DeferredVolumeFog3DTexturePass.h"
+#include "DeferredVolumeFogApplyPass.h"
 
 namespace Rgph
 {
@@ -272,7 +274,7 @@ namespace Rgph
 			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("volumeParams", volumeParams));
 		}
 		{
-			auto pass = std::make_unique<DeferredVolumeCalPass>("VolumeCal", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+			auto pass = std::make_unique<DeferredVolumeCalPass>("volumeCal", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
 			pass->SetSinkLinkage("volumeParams", "$.volumeParams");
 			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
@@ -280,19 +282,19 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<DeferredVolumeBlurPass>("VolumeBlur", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("scratchIn", "VolumeCal.scratchOut");
+			auto pass = std::make_unique<DeferredVolumeBlurPass>("volumeBlur", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+			pass->SetSinkLinkage("scratchIn", "volumeCal.scratchOut");
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<DeferredVolumeMergePass>("VolumeMerge", gfx);
+			auto pass = std::make_unique<DeferredVolumeMergePass>("volumeMerge", gfx);
 			pass->SetSinkLinkage("renderTarget", "HBAOBlur.renderTarget");
-			pass->SetSinkLinkage("scratchIn", "VolumeBlur.scratchOut");
+			pass->SetSinkLinkage("scratchIn", "volumeBlur.scratchOut");
 			AppendPass(std::move(pass));
 		}
 		{
 			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("scratchIn", "VolumeMerge.renderTarget");
+			pass->SetSinkLinkage("scratchIn", "volumeMerge.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -334,17 +336,31 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<DeferredHDRPass>("HDR", gfx);
+			auto pass = std::make_unique<DeferredVolumeFog3DTexturePass>("volumeFog3DTexture", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
 			pass->SetSinkLinkage("scratchIn", "bloomMerge.renderTarget");
+			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
+			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
+			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
+			AppendPass(std::move(pass));
+		}
+		{
+			auto pass = std::make_unique<DeferredVolumeFogApplyPass>("volumeFogApply", gfx);
+			pass->SetSinkLinkage("scratchIn", "volumeFog3DTexture.scratchOut");
+			pass->SetSinkLinkage("renderTarget", "bloomMerge.renderTarget");
+			AppendPass(std::move(pass));
+		}
+		{
+			auto pass = std::make_unique<DeferredHDRPass>("HDR", gfx);
+			pass->SetSinkLinkage("scratchIn", "volumeFogApply.renderTarget");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			AppendPass(std::move(pass));
 		}
+
 		{
 			auto pass = std::make_unique<OutlineMaskGenerationPass>(gfx, "outlineMask");
 			pass->SetSinkLinkage("depthStencil", "water.depthStencil");
 			AppendPass(std::move(pass));
 		}
-
 		// setup blur constant buffers	
 		{
 			Dcb::RawLayout l;
@@ -380,13 +396,13 @@ namespace Rgph
 			pass->SetSinkLinkage("depthStencil", "vertical.depthStencil");
 			AppendPass(std::move(pass));
 		}
-		{
-			auto pass = std::make_unique<DebugDeferredPass>("debugDeferred", gfx, masterDepth);
-			pass->SetSinkLinkage("gbufferIn", "gbuffer.gbufferOut");
-			pass->SetSinkLinkage("renderTarget", "wireframe.renderTarget");
-			AppendPass(std::move(pass));
-		}
-		SetSinkTarget("backbuffer", "debugDeferred.renderTarget");
+		//{
+		//	auto pass = std::make_unique<DebugDeferredPass>("debugDeferred", gfx, masterDepth);
+		//	pass->SetSinkLinkage("gbufferIn", "gbuffer.gbufferOut");
+		//	pass->SetSinkLinkage("renderTarget", "wireframe.renderTarget");
+		//	AppendPass(std::move(pass));
+		//}
+		SetSinkTarget("backbuffer", "wireframe.renderTarget");
 		Finalize();
 	}
 
@@ -736,7 +752,8 @@ namespace Rgph
 		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindMainCamera(cam);
 		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindMainCamera(cam);
 		dynamic_cast<DeferredTAAPass&>(FindPassByName("TAA")).BindMainCamera(cam);
-		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("VolumeCal")).BindMainCamera(cam);
+		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("volumeCal")).BindMainCamera(cam);
+		dynamic_cast<DeferredVolumeFog3DTexturePass&>(FindPassByName("volumeFog3DTexture")).BindMainCamera(cam);
 	}
 	void Rgph::DeferredRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams)
 	{
@@ -745,6 +762,7 @@ namespace Rgph
 		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindShadowCamera(gfx, dCam, pCams);
 		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindShadowCamera(gfx, dCam);
 		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindShadowCamera(gfx, pCams);
-		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("VolumeCal")).BindShadowCamera(gfx, dCam);
+		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("volumeCal")).BindShadowCamera(gfx, dCam);
+		dynamic_cast<DeferredVolumeFog3DTexturePass&>(FindPassByName("volumeFog3DTexture")).BindShadowCamera(gfx, dCam);
 	}
 }
