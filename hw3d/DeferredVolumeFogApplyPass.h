@@ -32,5 +32,12 @@ namespace Rgph
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u));
 			RegisterSource(DirectBindableSource<RenderTarget>::Make("renderTarget", renderTarget));
 		}
+
+		void Execute(Graphics& gfx) const noxnd override
+		{
+			gfx.ClearShaderResources(0u);
+			BindAll(gfx);
+			gfx.DrawIndexed(6u);
+		}
 	};
 }

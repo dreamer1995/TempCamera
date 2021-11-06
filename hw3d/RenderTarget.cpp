@@ -52,6 +52,11 @@ namespace Bind
 			textureDesc.MiscFlags = 0;
 			break;
 		}
+		case Type::UVABuffer:
+		{
+
+			break;
+		}
 		case Type::PreBRDFPlane:
 		{
 			textureDesc.Format = DXGI_FORMAT_R32G32_FLOAT;

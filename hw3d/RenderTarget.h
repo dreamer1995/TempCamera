@@ -19,7 +19,8 @@ namespace Bind
 			PreCalSimpleCube,
 			PreCalMipCube,
 			PreBRDFPlane,
-			GBuffer
+			GBuffer,
+			UVABuffer
 		};
 	public:
 		void BindAsBuffer( Graphics& gfx ) noxnd override;

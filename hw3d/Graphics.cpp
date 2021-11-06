@@ -138,7 +138,9 @@ void Graphics::ClearShaderResources(UINT slot) noexcept
 	pContext->VSSetShaderResources(slot, 1, &pNullTex);
 	pContext->HSSetShaderResources(slot, 1, &pNullTex);
 	pContext->DSSetShaderResources(slot, 1, &pNullTex);
+	pContext->GSSetShaderResources(slot, 1, &pNullTex);
 	pContext->PSSetShaderResources(slot, 1, &pNullTex);
+	pContext->CSSetShaderResources(slot, 1, &pNullTex);
 }
 
 void Graphics::ClearConstantBuffers(UINT slot) noexcept
@@ -147,7 +149,9 @@ void Graphics::ClearConstantBuffers(UINT slot) noexcept
 	pContext->VSSetConstantBuffers(slot, 1, &pNullBuffer);
 	pContext->HSSetConstantBuffers(slot, 1, &pNullBuffer);
 	pContext->DSSetConstantBuffers(slot, 1, &pNullBuffer);
+	pContext->GSSetConstantBuffers(slot, 1, &pNullBuffer);
 	pContext->PSSetConstantBuffers(slot, 1, &pNullBuffer);
+	pContext->CSSetConstantBuffers(slot, 1, &pNullBuffer);
 }
 
 void Graphics::ClearRenderTarget() noexcept
