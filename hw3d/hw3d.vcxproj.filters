@@ -402,6 +402,12 @@
     <ClCompile Include="GeometryShader.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
+    <ClCompile Include="ComputeShaderPass.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
+    <ClCompile Include="UnorderedAccessView.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -862,6 +868,12 @@
     </ClInclude>
     <ClInclude Include="DeferredVolumeFogApplyPass.h">
       <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShaderPass.h">
+      <Filter>Header Files\Jobber\Passlib\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="UnorderedAccessView.h">
+      <Filter>Header Files\Bindable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

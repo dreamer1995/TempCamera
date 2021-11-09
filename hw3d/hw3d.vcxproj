@@ -101,6 +101,7 @@
     <ClCompile Include="CameraIndicator.cpp" />
     <ClCompile Include="cnpy.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
+    <ClCompile Include="ComputeShaderPass.cpp" />
     <ClCompile Include="DeferredRenderGraph.cpp" />
     <ClCompile Include="DomainShader.cpp" />
     <ClCompile Include="Frustum.cpp" />
@@ -580,6 +581,7 @@
     <ClCompile Include="Topology.cpp" />
     <ClCompile Include="TransformCbuf.cpp" />
     <ClCompile Include="TransformCbufScaling.cpp" />
+    <ClCompile Include="UnorderedAccessView.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="VertexShader.cpp" />
@@ -644,6 +646,7 @@
     <ClInclude Include="Channels.h" />
     <ClInclude Include="cnpy.h" />
     <ClInclude Include="ComputeShader.h" />
+    <ClInclude Include="ComputeShaderPass.h" />
     <ClInclude Include="DebugDeferredPass.h" />
     <ClInclude Include="DeferredBloomBlurPass.h" />
     <ClInclude Include="DeferredBloomCatchPass.h" />
@@ -777,6 +780,7 @@
     <ClInclude Include="Topology.h" />
     <ClInclude Include="TransformCbuf.h" />
     <ClInclude Include="TransformCbufScaling.h" />
+    <ClInclude Include="UnorderedAccessView.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexShader.h" />
