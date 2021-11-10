@@ -67,6 +67,7 @@ public:
 	void EndFrame();
 	void BeginFrame( float red,float green,float blue ) noexcept;
 	void DrawIndexed( UINT count ) noxnd;
+	void Dispatch(UINT x, UINT y, UINT group) noxnd;
 	void SetProjection( DirectX::FXMMATRIX proj ) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
 	void SetCamera( DirectX::FXMMATRIX cam ) noexcept;

@@ -16,6 +16,6 @@ namespace Rgph
 	void ComputeShaderPass::Execute(Graphics& gfx) const noxnd
 	{
 		BindAll(gfx);
-		gfx.DrawIndexed(6u);
+		gfx.Dispatch(8u, 8u, 1u);
 	}
 }

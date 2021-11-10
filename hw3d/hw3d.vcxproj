@@ -96,6 +96,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="BindingPassNoRTDS.cpp" />
     <ClCompile Include="BlurOutlineRenderGraph.cpp" />
     <ClCompile Include="CameraContainer.cpp" />
     <ClCompile Include="CameraIndicator.cpp" />
@@ -641,6 +642,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="BindingPassNoRTDS.h" />
     <ClInclude Include="CameraContainer.h" />
     <ClInclude Include="CameraIndicator.h" />
     <ClInclude Include="Channels.h" />

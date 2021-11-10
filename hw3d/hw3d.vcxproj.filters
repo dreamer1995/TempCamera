@@ -408,6 +408,9 @@
     <ClCompile Include="UnorderedAccessView.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
+    <ClCompile Include="BindingPassNoRTDS.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -874,6 +877,9 @@
     </ClInclude>
     <ClInclude Include="UnorderedAccessView.h">
       <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="BindingPassNoRTDS.h">
+      <Filter>Header Files\Jobber\Passlib\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
