@@ -1,7 +1,6 @@
 #include "BindingPassNoRTDS.h"
 #include "Bindable.h"
-#include "RenderTarget.h"
-#include "DepthStencil.h"
+#include "UnorderedAccessView.h"
 #include "RenderGraphCompileException.h"
 
 
@@ -21,21 +20,14 @@ namespace Rgph
 	void BindingPassNoRTDS::Finalize()
 	{
 		BindingPass::Finalize();
-		if (!renderTarget && !depthStencil)
+		if (!unorderedAccessView)
 		{
-			throw RGC_EXCEPTION("BindingPass [" + GetName() + "] needs at least one of a renderTarget or depthStencil");
+			throw RGC_EXCEPTION("BindingPass [" + GetName() + "] needs at least one of a unorderedAccessView");
 		}
 	}
 
 	void BindingPassNoRTDS::BindBufferResources(Graphics& gfx) const noxnd
 	{
-		if (renderTarget)
-		{
-			renderTarget->BindAsBuffer(gfx, depthStencil.get());
-		}
-		else
-		{
-			depthStencil->BindAsBuffer(gfx);
-		}
+		unorderedAccessView->Bind(gfx);
 	}
 }

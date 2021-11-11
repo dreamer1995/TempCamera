@@ -10,6 +10,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "DepthStencil.h"
 #include "RenderTarget.h"
+#include "UnorderedAccessView.h"
 
 namespace wrl = Microsoft::WRL;
 namespace dx = DirectX;

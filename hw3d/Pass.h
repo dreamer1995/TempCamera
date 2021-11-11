@@ -11,6 +11,8 @@ namespace Bind
 {
 	class RenderTarget;
 	class DepthStencil;
+	template <typename T>
+	class UnorderedAccessView;
 }
 
 namespace Rgph

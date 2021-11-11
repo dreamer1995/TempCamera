@@ -9,6 +9,7 @@
 #include "BufferResource.h"
 #include "RenderTarget.h"
 #include "DepthStencil.h"
+#include "UnorderedAccessView.h"
 #include <sstream>
 #include <cctype>
 #include <type_traits>
