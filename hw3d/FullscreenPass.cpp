@@ -8,7 +8,7 @@ namespace Rgph
 
 	FullscreenPass::FullscreenPass( const std::string name,Graphics& gfx ) noxnd
 		:
-	BindingPass( std::move( name ) )
+	BindingPassWithRTDS( std::move( name ) )
 	{
 		// setup fullscreen geometry
 		Dvtx::VertexLayout lay;

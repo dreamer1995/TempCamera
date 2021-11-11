@@ -1,5 +1,5 @@
 #pragma once
-#include "BindingPass.h"
+#include "BindingPassWithRTDS.h"
 
 namespace Bind
 {
@@ -11,7 +11,7 @@ namespace Bind
 
 namespace Rgph
 {
-	class FullscreenPass : public BindingPass
+	class FullscreenPass : public BindingPassWithRTDS
 	{
 	public:
 		FullscreenPass( const std::string name,Graphics& gfx ) noxnd;

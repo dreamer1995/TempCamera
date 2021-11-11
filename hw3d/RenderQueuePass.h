@@ -1,14 +1,14 @@
 #pragma once
-#include "BindingPass.h"
+#include "BindingPassWithRTDS.h"
 #include "Job.h"
 #include <vector>
 
 namespace Rgph
 {
-	class RenderQueuePass : public BindingPass
+	class RenderQueuePass : public BindingPassWithRTDS
 	{
 	public:
-		using BindingPass::BindingPass;
+		using BindingPassWithRTDS::BindingPassWithRTDS;
 		void Accept( Job job ) noexcept;
 		void Execute( Graphics& gfx ) const noxnd override;
 		void Reset() noxnd override;

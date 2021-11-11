@@ -411,6 +411,9 @@
     <ClCompile Include="BindingPassNoRTDS.cpp">
       <Filter>Source Files\Jobber\Passlib</Filter>
     </ClCompile>
+    <ClCompile Include="BindingPassWithRTDS.cpp">
+      <Filter>Source Files\Jobber\Passlib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -879,6 +882,9 @@
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="BindingPassNoRTDS.h">
+      <Filter>Header Files\Jobber\Passlib\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="BindingPassWithRTDS.h">
       <Filter>Header Files\Jobber\Passlib\Base</Filter>
     </ClInclude>
   </ItemGroup>

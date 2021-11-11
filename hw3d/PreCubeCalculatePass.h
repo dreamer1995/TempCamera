@@ -1,5 +1,5 @@
 #pragma once
-#include "BindingPass.h"
+#include "BindingPassWithRTDS.h"
 #include "ConstantBuffers.h"
 
 namespace dx = DirectX;
@@ -14,7 +14,7 @@ namespace Bind
 
 namespace Rgph
 {
-	class PreCubeCalculatePass : public BindingPass
+	class PreCubeCalculatePass : public BindingPassWithRTDS
 	{
 	public:
 		PreCubeCalculatePass(const std::string name, Graphics& gfx) noxnd;

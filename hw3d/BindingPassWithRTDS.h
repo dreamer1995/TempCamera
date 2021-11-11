@@ -10,10 +10,10 @@ namespace Bind
 
 namespace Rgph
 {
-	class BindingPassNoRTDS : public BindingPass
+	class BindingPassWithRTDS : public BindingPass
 	{
 	protected:
-		BindingPassNoRTDS(std::string name, std::vector<std::shared_ptr<Bind::Bindable>> binds = {});
+		BindingPassWithRTDS(std::string name, std::vector<std::shared_ptr<Bind::Bindable>> binds = {});
 		void BindAll(Graphics& gfx) const noxnd;
 		void Finalize() override;
 	protected:

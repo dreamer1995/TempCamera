@@ -8,7 +8,7 @@ namespace Rgph
 
 	PreCubeCalculatePass::PreCubeCalculatePass(const std::string name, Graphics& gfx) noxnd
 		:
-	BindingPass(std::move(name))
+	BindingPassWithRTDS(std::move(name))
 	{
 		pVcbuf = std::make_unique<Bind::VertexConstantBuffer<Transforms>>(gfx, 0u);
 		auto model = Cube::MakePosOnly();

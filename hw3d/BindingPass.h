@@ -24,11 +24,6 @@ namespace Rgph
 			binds.emplace_back();
 			RegisterSink( std::make_unique<ContainerBindableSink<T>>( std::move( name ),binds,index ) );
 		}
-		std::shared_ptr<Bind::RenderTarget> renderTarget;
-		std::shared_ptr<Bind::DepthStencil> depthStencil;
-	private:
-		void BindBufferResources( Graphics& gfx ) const noxnd;
-	private:
 		std::vector<std::shared_ptr<Bind::Bindable>> binds;
 	};
 }

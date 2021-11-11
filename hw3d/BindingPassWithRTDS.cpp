@@ -1,4 +1,4 @@
-#include "BindingPassNoRTDS.h"
+#include "BindingPassWithRTDS.h"
 #include "Bindable.h"
 #include "RenderTarget.h"
 #include "DepthStencil.h"
@@ -7,18 +7,18 @@
 
 namespace Rgph
 {
-	BindingPassNoRTDS::BindingPassNoRTDS(std::string name, std::vector<std::shared_ptr<Bind::Bindable>> binds)
+	BindingPassWithRTDS::BindingPassWithRTDS(std::string name, std::vector<std::shared_ptr<Bind::Bindable>> binds)
 		:
 		BindingPass(name, binds)
 	{}
 
-	void BindingPassNoRTDS::BindAll(Graphics& gfx) const noxnd
+	void BindingPassWithRTDS::BindAll(Graphics& gfx) const noxnd
 	{
 		BindBufferResources(gfx);
 		BindingPass::BindAll(gfx);
 	}
 
-	void BindingPassNoRTDS::Finalize()
+	void BindingPassWithRTDS::Finalize()
 	{
 		BindingPass::Finalize();
 		if (!renderTarget && !depthStencil)
@@ -27,7 +27,7 @@ namespace Rgph
 		}
 	}
 
-	void BindingPassNoRTDS::BindBufferResources(Graphics& gfx) const noxnd
+	void BindingPassWithRTDS::BindBufferResources(Graphics& gfx) const noxnd
 	{
 		if (renderTarget)
 		{
