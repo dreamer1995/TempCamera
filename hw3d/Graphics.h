@@ -84,6 +84,7 @@ public:
 	void SetFOV(float FOV) noexcept;
 	float GetFOV() const noexcept;
 	void ClearRenderTarget() noexcept;
+	void ClearUAV(UINT slot) noexcept;
 private:
 	UINT width;
 	UINT height;

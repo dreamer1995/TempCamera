@@ -1,47 +1,43 @@
 #pragma once
-#include "FullscreenPass.h"
+#include "ComputeShaderPass.h"
 #include "Sink.h"
 #include "Source.h"
-#include "PixelShader.h"
-#include "Blender.h"
-#include "Stencil.h"
 #include "Sampler.h"
 #include "ComputeShader.h"
 
 class Graphics;
 namespace Bind
 {
-	class PixelShader;
-	class RenderTarget;
+	class UnorderedAccessView;
 	class ComputeShader;
 }
 
 namespace Rgph
 {
-	class DeferredVolumeFog3DTexturePass : public FullscreenPass
+	class DeferredVolumeFog3DTexturePass : public ComputeShaderPass
 	{
 	public:
 		DeferredVolumeFog3DTexturePass(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
 			:
-			FullscreenPass(std::move(name), gfx),
+			ComputeShaderPass(std::move(name), gfx),
+			width(fullWidth),
+			height(fullHeight),
 			masterDepth(masterDepth)
 		{
 			using namespace Bind;
 			AddBindSink<RenderTarget>("scratchIn");
 			//AddBindSink<Bind::CachingPixelConstantBufferEx>("volumeParams");
-			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u,
-				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);
-			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u, 0b1u);
+			unorderedAccessView = std::make_shared<ShaderInputUAV>(gfx, fullWidth, fullHeight, 0u);
+			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u, 0b100000u);
 			AddBind(pDShadowCBuf);
 			AddBindSink<Bindable>("dShadowMap");
-			AddBind(PixelShader::Resolve(gfx, "VolumeFog3DTexture.cso"));
-			AddBind(Blender::Resolve(gfx, false));
-			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
-			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u, 0b1u));
+			AddBind(ComputeShader::Resolve(gfx, "VolumeFog3DTexture.cso"));
+			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u, 0b100000u));
 			AddBind(masterDepth);
+			AddBind(Blender::Resolve(gfx, false));
 			AddBindSink<Bindable>("shadowControl");
 			AddBindSink<Bindable>("shadowSampler");
-			RegisterSource(DirectBindableSource<RenderTarget>::Make("scratchOut", renderTarget));
+			RegisterSource(DirectBindableSource<UnorderedAccessView>::Make("scratchOut", unorderedAccessView));
 		}
 		void BindMainCamera(const Camera& cam) noexcept
 		{
@@ -59,14 +55,19 @@ namespace Rgph
 			pMainCamera->BindToGraphics(gfx);
 			masterDepth->BreakRule();
 			pDShadowCBuf->Update(gfx);
+			gfx.ClearRenderTarget();
 
-			FullscreenPass::Execute(gfx);
+			ComputeShaderPass::SetDispatchVector((width + 7u) >> 3u, (height + 7u) >> 3u, 1u);
+			ComputeShaderPass::Execute(gfx);
 
 			gfx.ClearShaderResources(8u);
+			gfx.ClearUAV(0u);
 		}
 	private:
 		std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth;
 		const Camera* pMainCamera = nullptr;
 		std::shared_ptr<Bind::ShadowCameraCBuf> pDShadowCBuf;
+		UINT width;
+		UINT height;
 	};
 }

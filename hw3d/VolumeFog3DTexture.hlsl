@@ -32,10 +32,18 @@ static const float PI = 3.14159265359;
 //	float result = 1.0f - mie * mie;
 //	result /= (4.0f * PI * pow(1.0f + mie * mie - (2.0f * mie) * lightDotView, 1.5f));
 //	return result;
-//}
+//} 
+  
+RWStructuredBuffer<float4> g_OutBuff;  
+  
+[numthreads(8, 8, 1)]
+void main( uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID ){  
+	float4 color = float4( (float)threadIDInGroup.x / 8 ,  
+	(float)threadIDInGroup.y / 8, 0, 1  
+	) * 255;  
+	int buffIndex = ( groupID.y * 8 + threadIDInGroup.y )  
+	* 8 * 8  
+	+ ( groupID.x * 8 + threadIDInGroup.x );  
 
-float4 main(float2 uv : Texcoord) : SV_Target
-{
-	float3 color = sceneColor.SampleLevel(splr, uv, 0).rgb;
-	return float4(float3(color.x, color.y, 0.0f), 1);
-}
+	g_OutBuff[buffIndex] = float4(1.0f,1.0f,1.0f,1.0f);  
+}  

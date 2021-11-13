@@ -59,8 +59,10 @@ namespace Bind
 
 	Texture::Texture(Graphics& gfx, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureViewIn, UINT slot)
 		:
-		pTextureView(pTextureViewIn)
+		pTextureView(pTextureViewIn),
+		slot(slot)
 	{
+		shaderIndex = 0b00000001;
 		GetContext(gfx)->GenerateMips(pTextureView.Get());
 	}
 

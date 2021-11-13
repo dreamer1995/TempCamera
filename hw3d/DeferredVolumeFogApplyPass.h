@@ -12,6 +12,7 @@ namespace Bind
 {
 	class PixelShader;
 	class RenderTarget;
+	class UnorderedAccessView;
 }
 
 namespace Rgph
@@ -24,9 +25,9 @@ namespace Rgph
 			FullscreenPass(std::move(name), gfx)
 		{
 			using namespace Bind;
-			AddBindSink<RenderTarget>("scratchIn");
+			AddBindSink<UnorderedAccessView>("scratchIn");
 			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
-			AddBind(PixelShader::Resolve(gfx, "VolumeMerge.cso"));
+			AddBind(PixelShader::Resolve(gfx, "VolumeFogMerge.cso"));
 			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::OneMinus));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u));

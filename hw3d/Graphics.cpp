@@ -160,6 +160,14 @@ void Graphics::ClearRenderTarget() noexcept
 	pContext->OMSetRenderTargets(0, nullptr, nullptr);
 }
 
+void Graphics::ClearUAV(UINT slot) noexcept
+{
+	UINT initCounts = 0;
+	ID3D11UnorderedAccessView* pNullUAV = NULL;
+
+	pContext->CSSetUnorderedAccessViews(slot, 1, &pNullUAV, &initCounts);
+}
+
 void Graphics::DrawIndexed( UINT count ) noxnd
 {
 	GFX_THROW_INFO_ONLY( pContext->DrawIndexed( count,0u,0u ) );

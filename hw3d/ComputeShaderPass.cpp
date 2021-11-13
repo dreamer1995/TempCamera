@@ -8,14 +8,23 @@ namespace Rgph
 
 	ComputeShaderPass::ComputeShaderPass(const std::string name, Graphics& gfx) noxnd
 		:
-	BindingPass(std::move(name))
+	BindingPassWithUAV(std::move(name))
 	{
-		
+		dataX = 8u;
+		dataY = 8u;
+		dataGroup = 1u;
 	}
 
 	void ComputeShaderPass::Execute(Graphics& gfx) const noxnd
 	{
 		BindAll(gfx);
-		gfx.Dispatch(8u, 8u, 1u);
+		gfx.Dispatch(dataX, dataY, dataGroup);
+	}
+
+	void ComputeShaderPass::SetDispatchVector(UINT x, UINT y, UINT group) const noxnd
+	{
+		const_cast<ComputeShaderPass*>(this)->dataX = x;
+		const_cast<ComputeShaderPass*>(this)->dataY = x;
+		const_cast<ComputeShaderPass*>(this)->dataGroup = group;
 	}
 }

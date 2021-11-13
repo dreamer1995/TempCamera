@@ -408,10 +408,10 @@
     <ClCompile Include="UnorderedAccessView.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="BindingPassNoRTDS.cpp">
+    <ClCompile Include="BindingPassWithRTDS.cpp">
       <Filter>Source Files\Jobber\Passlib</Filter>
     </ClCompile>
-    <ClCompile Include="BindingPassWithRTDS.cpp">
+    <ClCompile Include="BindingPassWithUAV.cpp">
       <Filter>Source Files\Jobber\Passlib</Filter>
     </ClCompile>
   </ItemGroup>
@@ -881,10 +881,10 @@
     <ClInclude Include="UnorderedAccessView.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="BindingPassNoRTDS.h">
+    <ClInclude Include="BindingPassWithRTDS.h">
       <Filter>Header Files\Jobber\Passlib\Base</Filter>
     </ClInclude>
-    <ClInclude Include="BindingPassWithRTDS.h">
+    <ClInclude Include="BindingPassWithUAV.h">
       <Filter>Header Files\Jobber\Passlib\Base</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1151,6 +1151,9 @@
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
     <FxCompile Include="VolumeFog3DTexture.hlsl">
+      <Filter>Shader\Postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="VolumeFogMerge.hlsl">
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
   </ItemGroup>

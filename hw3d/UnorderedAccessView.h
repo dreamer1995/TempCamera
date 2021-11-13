@@ -3,38 +3,41 @@
 
 namespace Bind
 {
-	template <typename T>
 	class UnorderedAccessView : public Bindable
 	{
 	public:
 		struct DataPerCell
 		{
-			T r;
-			T g;
-			T b;
-			T a;
+			float r;
+			float g;
+			float b;
+			float a;
 		};
 
-		UnorderedAccessView(Graphics& gfx, T& dataType, UINT width, UINT height, UINT slot);
-		void Bind(Graphics& gfx) noxnd override;
+		UnorderedAccessView(Graphics& gfx, UINT width, UINT height, UINT slot);
+		void BindAsBuffer(Graphics& gfx) noxnd;
 	private:
 		unsigned int slot;
 	protected:
 		Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUnorderedAccessView;
 	};
 
-	template <typename T>
-	class ShaderInputUAV : public UnorderedAccessView<T>
+	class ShaderInputUAV : public UnorderedAccessView
 	{
 	public:
-		ShaderInputUAV(Graphics& gfx, T& dataType, UINT width, UINT height, UINT slot, UINT shaderIndex);
+		ShaderInputUAV(Graphics& gfx, UINT width, UINT height, UINT slot = 0, UINT shaderIndex = 0b1u);
 		void Bind(Graphics& gfx) noxnd override;
-		static std::shared_ptr<ShaderInputUAV> Resolve(Graphics& gfx, T& dataType, UINT width, UINT height, UINT slot = 0, UINT shaderIndex = 0b1u);
-		static std::string GenerateUID(UINT slot, UINT shaderIndex);
+		static std::shared_ptr<ShaderInputUAV> Resolve(Graphics& gfx, UINT width, UINT height, UINT slot = 0, UINT shaderIndex = 0b1u);
+		static std::string GenerateUID(UINT width, UINT height, UINT slot, UINT shaderIndex);
 		std::string GetUID() const noexcept override;
+		void BanToBind() noxnd;
+		void ReleaseToBind() noxnd;
 	private:
+		UINT width;
+		UINT height;
 		UINT slot;
 		UINT shaderIndex;
+		bool banToBind = false;
 	public:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
 	};
