@@ -711,7 +711,7 @@ namespace Rgph
 
 	void DeferredRenderGraph::RenderVolumeWindow(Graphics& gfx)
 	{
-		if (!gfx.isVolumiticRendering)
+		if (!gfx.isVolumetricRendering)
 			return;
 		if (ImGui::Begin("Volume"))
 		{

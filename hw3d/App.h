@@ -44,6 +44,7 @@ private:
 	static std::unique_ptr<Bind::VertexConstantBuffer<CommonVar>> cVBuf;
 	static std::unique_ptr<Bind::PixelConstantBuffer<CommonVar>> cPBuf;
 	static std::unique_ptr<Bind::DomainConstantBuffer<CommonVar>> cDBuf;
+	static std::unique_ptr<Bind::ComputeConstantBuffer<CommonVar>> cCBuf;
 private:
 	void DoFrame( float dt );
 	void HandleInput( float dt );

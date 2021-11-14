@@ -24,7 +24,7 @@ namespace Rgph
 	void ComputeShaderPass::SetDispatchVector(UINT x, UINT y, UINT group) const noxnd
 	{
 		const_cast<ComputeShaderPass*>(this)->dataX = x;
-		const_cast<ComputeShaderPass*>(this)->dataY = x;
+		const_cast<ComputeShaderPass*>(this)->dataY = y;
 		const_cast<ComputeShaderPass*>(this)->dataGroup = group;
 	}
 }

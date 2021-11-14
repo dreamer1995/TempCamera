@@ -37,13 +37,11 @@ static const float PI = 3.14159265359;
 RWStructuredBuffer<float4> g_OutBuff;  
   
 [numthreads(8, 8, 1)]
-void main( uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID ){  
-	float4 color = float4( (float)threadIDInGroup.x / 8 ,  
-	(float)threadIDInGroup.y / 8, 0, 1  
-	) * 255;  
-	int buffIndex = ( groupID.y * 8 + threadIDInGroup.y )  
-	* 8 * 8  
-	+ ( groupID.x * 8 + threadIDInGroup.x );  
+void main(uint3 dispatchThreadID : SV_DispatchThreadID)
+{
+	float2 uv = (dispatchThreadID.xy + 0.5f) * screenInfo.zw;
+	float4 color = sceneColor.SampleLevel(splr, uv, 0);
+	int buffIndex = dispatchThreadID.y * screenInfo.x + dispatchThreadID.x;
 
-	g_OutBuff[buffIndex] = float4(1.0f,1.0f,1.0f,1.0f);  
+	g_OutBuff[buffIndex] = color;
 }  

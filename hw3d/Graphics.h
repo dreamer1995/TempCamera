@@ -104,5 +104,5 @@ public:
 	bool isTAA;
 	bool isHBAO;
 	bool isHDR;
-	bool isVolumiticRendering;
+	bool isVolumetricRendering;
 };

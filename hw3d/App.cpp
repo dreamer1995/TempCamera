@@ -28,6 +28,7 @@ App::App( const std::string& commandLine )
 	cVBuf = std::make_unique<Bind::VertexConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cPBuf = std::make_unique<Bind::PixelConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cDBuf = std::make_unique<Bind::DomainConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
+	cCBuf = std::make_unique<Bind::ComputeConstantBuffer<CommonVar>>(wnd.Gfx(), 2u);
 	cameras.AddCamera(std::make_unique<Camera>(wnd.Gfx(), "A", dx::XMFLOAT3{ -49.9f,7.7f,-5.6f }, -12.0f * PI / 180.0f, 75.0f * PI / 180.0f));
 	cameras.AddCamera( std::make_unique<Camera>( wnd.Gfx(),"B",dx::XMFLOAT3{ -13.5f,28.8f,-6.4f },PI / 180.0f * 13.0f,PI / 180.0f * 61.0f ) );
 	//pCam = std::make_unique<Camera>(wnd.Gfx(), "B", dx::XMFLOAT3{ -13.5f,28.8f,-6.4f }, PI / 180.0f * 13.0f, PI / 180.0f * 61.0f);
@@ -403,14 +404,17 @@ void App::UpdateCommonVar(Graphics& gfx, const CommonVar& cvar) noxnd
 	cPBuf->Bind(gfx);
 	cDBuf->Update(gfx, cvar);
 	cDBuf->Bind(gfx);
+	cCBuf->Update(gfx, cvar);
+	cCBuf->Bind(gfx);
 	gfx.isTAA = TAA;
 	gfx.isHBAO = HBAO;
 	gfx.isHDR = HDR;
-	gfx.isVolumiticRendering = volumetricRendering;
+	gfx.isVolumetricRendering = volumetricRendering;
 }
 std::unique_ptr<Bind::VertexConstantBuffer<App::CommonVar>> App::cVBuf;
 std::unique_ptr<Bind::PixelConstantBuffer<App::CommonVar>> App::cPBuf;
 std::unique_ptr<Bind::DomainConstantBuffer<App::CommonVar>> App::cDBuf;
+std::unique_ptr<Bind::ComputeConstantBuffer<App::CommonVar>> App::cCBuf;
 
 void App::RenderMainWindows(Graphics& gfx)
 {
