@@ -38,7 +38,7 @@ private:
 		BOOL HDR;
 		float GIScale;
 		BOOL volumetricRendering;
-		float padding[1];
+		BOOL skyRendering;
 	};
 	double time;
 	static std::unique_ptr<Bind::VertexConstantBuffer<CommonVar>> cVBuf;
@@ -74,7 +74,7 @@ private:
 	Model sponza{ wnd.Gfx(),"Models\\sponza\\sponza.obj",1.0f / 20.0f, true};
 	//Model gobber{ wnd.Gfx(),"Models\\gobber\\GoblinX.obj",4.0f };
 	Model nano{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj",2.0f };
-	SkyBox skybox{ wnd.Gfx(),4.0f };
+	//SkyBox skybox{ wnd.Gfx(),4.0f };
 	DirectionalLight dLight;
 	//bool savingDepth = false;
 	//std::shared_ptr<Camera> pCam;
@@ -90,4 +90,5 @@ private:
 	bool HDR = true;
 	float GIScale = 0.353f;
 	bool volumetricRendering = true;
+	bool skyRendering = true;
 };

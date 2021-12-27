@@ -53,6 +53,9 @@ namespace Rgph
 		AddGlobalSource(DirectBindableSource<Bind::TextureCube>::Make("cubeMapBlur", pPreCalBlurCube));
 		AddGlobalSource(DirectBindableSource<Bind::TextureCube>::Make("cubeMapMip", pPreCalMipCube));
 		AddGlobalSource(DirectBindableSource<Bind::Texture>::Make("planeBRDFLUT", pPreCalLUTPlane));
+		
+		skyAtmosphereParams = std::make_unique<SkyAtmosphereCommon>(gfx);
+
 		{
 			auto pass = std::make_unique<BufferClearPass>("clearRT");
 			pass->SetSinkLinkage("buffer", "$.backbuffer");
@@ -133,26 +136,31 @@ namespace Rgph
 			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
 			AppendPass(std::move(pass));
 		}
+		//{
+		//	auto pass = std::make_unique<EnvironmentPass>(gfx, "environment");
+		//	pass->SetSinkLinkage("cubeMapIn", "$.cubeMap");
+		//	pass->SetSinkLinkage("renderTarget", "lambertian.renderTarget");
+		//	pass->SetSinkLinkage("depthStencil", "lambertian.depthStencil");
+		//	AppendPass(std::move(pass));
+		//}
 		{
-			auto pass = std::make_unique<LambertianPass>(gfx, "lambertian");
+			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("AtmosphereSkyParamsPS",
+				skyAtmosphereParams->AtmosphereSkyParamsPS));
+			AddGlobalSource(DirectBindableSource<Bind::CachingComputeConstantBufferEx>::Make("AtmosphereSkyParamsCS",
+				skyAtmosphereParams->AtmosphereSkyParamsCS));
+		}
+		{
+			auto pass = std::make_unique<DeferredVolumeFog3DTexturePass>("volumeFog3DTexture", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+			pass->SetSinkLinkage("scratchIn", "deferredPointLighting.renderTarget");
 			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
-			pass->SetSinkLinkage("pShadowMap0", "shadowMap.pMap0");
-			pass->SetSinkLinkage("pShadowMap1", "shadowMap.pMap1");
-			pass->SetSinkLinkage("pShadowMap2", "shadowMap.pMap2");
-			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
-			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
-			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
-			pass->SetSinkLinkage("renderTarget", "deferredSunLighting.renderTarget");
-			pass->SetSinkLinkage("depthStencil", "gbuffer.depthStencil");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
 			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<EnvironmentPass>(gfx, "environment");
-			pass->SetSinkLinkage("cubeMapIn", "$.cubeMap");
-			pass->SetSinkLinkage("renderTarget", "lambertian.renderTarget");
-			pass->SetSinkLinkage("depthStencil", "lambertian.depthStencil");
+			auto pass = std::make_unique<DeferredVolumeFogApplyPass>("volumeFogApply", gfx);
+			pass->SetSinkLinkage("scratchIn", "volumeFog3DTexture.scratchOut");
+			pass->SetSinkLinkage("renderTarget", "deferredPointLighting.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -220,8 +228,23 @@ namespace Rgph
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
 			pass->SetSinkLinkage("waterCausticMap", "waterCaustic.waterCausticOut");
-			pass->SetSinkLinkage("renderTarget", "environment.renderTarget");
-			pass->SetSinkLinkage("depthStencil", "environment.depthStencil");
+			pass->SetSinkLinkage("renderTarget", "deferredPointLighting.renderTarget");
+			pass->SetSinkLinkage("depthStencil", "gbuffer.depthStencil");
+			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
+			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
+			AppendPass(std::move(pass));
+		}
+		{
+			auto pass = std::make_unique<LambertianPass>(gfx, "lambertian");
+			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
+			pass->SetSinkLinkage("pShadowMap0", "shadowMap.pMap0");
+			pass->SetSinkLinkage("pShadowMap1", "shadowMap.pMap1");
+			pass->SetSinkLinkage("pShadowMap2", "shadowMap.pMap2");
+			pass->SetSinkLinkage("cubeMapBlurIn", "$.cubeMapBlur");
+			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
+			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
+			pass->SetSinkLinkage("renderTarget", "water.renderTarget");
+			pass->SetSinkLinkage("depthStencil", "water.depthStencil");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
 			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
 			AppendPass(std::move(pass));
@@ -257,7 +280,7 @@ namespace Rgph
 			auto pass = std::make_unique<DeferredHBAOBlurPass>("HBAOBlur", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
 			pass->SetSinkLinkage("AOParams", "$.AOParams");
 			pass->SetSinkLinkage("scratchIn", "HBAO.scratchOut");
-			pass->SetSinkLinkage("renderTarget", "water.renderTarget");
+			pass->SetSinkLinkage("renderTarget", "lambertian.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -336,29 +359,14 @@ namespace Rgph
 			AppendPass(std::move(pass));
 		}
 		{
-			auto pass = std::make_unique<DeferredVolumeFog3DTexturePass>("volumeFog3DTexture", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("scratchIn", "bloomMerge.renderTarget");
-			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
-			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
-			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
-			AppendPass(std::move(pass));
-		}
-		{
-			auto pass = std::make_unique<DeferredVolumeFogApplyPass>("volumeFogApply", gfx);
-			pass->SetSinkLinkage("scratchIn", "volumeFog3DTexture.scratchOut");
-			pass->SetSinkLinkage("renderTarget", "bloomMerge.renderTarget");
-			AppendPass(std::move(pass));
-		}
-		{
 			auto pass = std::make_unique<DeferredHDRPass>("HDR", gfx);
-			pass->SetSinkLinkage("scratchIn", "volumeFogApply.renderTarget");
+			pass->SetSinkLinkage("scratchIn", "bloomMerge.renderTarget");
 			pass->SetSinkLinkage("renderTarget", "clearRT.buffer");
 			AppendPass(std::move(pass));
 		}
-
 		{
 			auto pass = std::make_unique<OutlineMaskGenerationPass>(gfx, "outlineMask");
-			pass->SetSinkLinkage("depthStencil", "water.depthStencil");
+			pass->SetSinkLinkage("depthStencil", "lambertian.depthStencil");
 			AppendPass(std::move(pass));
 		}
 		// setup blur constant buffers	
@@ -739,13 +747,27 @@ namespace Rgph
 		ImGui::End();
 	}
 
+	void DeferredRenderGraph::RenderSkyWindow(Graphics& gfx)
+	{
+		if (!gfx.isSkyRendering)
+			return;
+
+		float dirty = skyAtmosphereParams->RenderUI();
+
+		if (dirty)
+		{
+			skyAtmosphereParams->ConvertUItoPhysical();
+			skyAtmosphereParams->UpdateConstants();
+		}
+	}
+
 	void Rgph::DeferredRenderGraph::DumpShadowMap(Graphics& gfx, const std::string& path)
 	{
 		dynamic_cast<ShadowMappingPass&>(FindPassByName("shadowMap")).DumpShadowMap(gfx, path);
 	}
 	void Rgph::DeferredRenderGraph::BindMainCamera(Camera& cam)
 	{
-		dynamic_cast<EnvironmentPass&>(FindPassByName("environment")).BindMainCamera(cam);
+		//dynamic_cast<EnvironmentPass&>(FindPassByName("environment")).BindMainCamera(cam);
 		dynamic_cast<LambertianPass&>(FindPassByName("lambertian")).BindMainCamera(cam);
 		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindMainCamera(cam);
 		dynamic_cast<GbufferPass&>(FindPassByName("gbuffer")).BindMainCamera(cam);

@@ -414,6 +414,9 @@
     <ClCompile Include="BindingPassWithUAV.cpp">
       <Filter>Source Files\Jobber\Passlib</Filter>
     </ClCompile>
+    <ClCompile Include="SkyAtmosphereCommon.cpp">
+      <Filter>Source Files\Gizmo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -886,6 +889,9 @@
     </ClInclude>
     <ClInclude Include="BindingPassWithUAV.h">
       <Filter>Header Files\Jobber\Passlib\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyAtmosphereCommon.h">
+      <Filter>Header Files\Gizmo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

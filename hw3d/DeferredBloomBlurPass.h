@@ -31,7 +31,7 @@ namespace Rgph
 			tempRT1 = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u,
 				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);
 			finalRT = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u,
-				RenderTarget::Type::Default, 0b100001u, DXGI_FORMAT_R32G32B32A32_FLOAT);
+				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);
 			renderTarget = finalRT;
 			AddBind(PixelShader::Resolve(gfx, "BloomBlur.cso"));
 			AddBind(Blender::Resolve(gfx, false));

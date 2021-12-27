@@ -51,6 +51,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)dxtex\include;$(ProjectDir)assimp\include</IncludePath>
     <LibraryPath>$(ProjectDir)dxtex\bin;$(ProjectDir)assimp\bin\x64;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)hw3d</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -122,6 +123,7 @@
     <ClCompile Include="ShadowCameraCBuf.cpp" />
     <ClCompile Include="ShadowRasterizer.cpp" />
     <ClCompile Include="ShadowSampler.cpp" />
+    <ClCompile Include="SkyAtmosphereCommon.cpp" />
     <ClCompile Include="SolidArrow.cpp" />
     <ClCompile Include="BindingPass.cpp" />
     <ClCompile Include="Blender.cpp" />
@@ -693,6 +695,7 @@
     <ClInclude Include="ShadowMappingPass.h" />
     <ClInclude Include="ShadowRasterizer.h" />
     <ClInclude Include="ShadowSampler.h" />
+    <ClInclude Include="SkyAtmosphereCommon.h" />
     <ClInclude Include="SolidArrow.h" />
     <ClInclude Include="Bindable.h" />
     <ClInclude Include="BindableCodex.h" />

@@ -38,6 +38,7 @@ cbuffer Time : register(b2)//VS, DS, PS
 	bool HDR;
 	float GIScale;
 	bool volumetricRendering;
+	bool skyRendering;
 };
 
 cbuffer DirectionalLightCBuf : register(b3)//PS

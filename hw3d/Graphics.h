@@ -105,4 +105,5 @@ public:
 	bool isHBAO;
 	bool isHDR;
 	bool isVolumetricRendering;
+	bool isSkyRendering;
 };

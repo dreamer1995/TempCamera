@@ -40,7 +40,7 @@ namespace Rgph
 			AddBindSink<Bindable>("cubeMapMipIn");
 			AddBindSink<Bindable>("planeBRDFLUTIn");
 			renderTarget = std::make_shared<Bind::ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u,
-				RenderTarget::Type::Default, 0b1u, DXGI_FORMAT_R32G32B32A32_FLOAT);
+				RenderTarget::Type::Default, 0b100001u, DXGI_FORMAT_R32G32B32A32_FLOAT);
 			RegisterSource(DirectBindableSource<RenderTarget>::Make("renderTarget", renderTarget));
 		}
 		void BindMainCamera(const Camera& cam) noexcept

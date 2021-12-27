@@ -49,7 +49,7 @@ App::App( const std::string& commandLine )
 	//	dx::XMMatrixTranslation( -8.f,10.f,0.f )
 	//);
 
-	skybox.LinkTechniques(rg);
+	//skybox.LinkTechniques(rg);
 	cameras.LinkTechniques(rg);
 	pointLight->LinkTechniques( rg );
 	//pointLight2->LinkTechniques(rg);
@@ -74,9 +74,9 @@ App::App( const std::string& commandLine )
 void App::DoFrame( float dt )
 {
 	time += dt;
-	UpdateCommonVar(wnd.Gfx(), { time,DirectX::XMMatrixRotationRollPitchYaw(skybox.pitch, skybox.yaw, skybox.roll),
+	UpdateCommonVar(wnd.Gfx(), { time,DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f),
 		(unsigned int)pCams.size(),{(float)wnd.Gfx().GetWidth(),(float)wnd.Gfx().GetHeight(),1.0f / wnd.Gfx().GetWidth(),1.0f / wnd.Gfx().GetHeight()},
-		TAA,HBAO,HDR,GIScale,volumetricRendering });
+		TAA,HBAO,HDR,GIScale,volumetricRendering }); // Note IBL EnvMap rotation be replaced to (0,0,0)
 	//wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().BeginFrame(0.1f, 0.1f, 0.1f);
 	//wnd.Gfx().SetCamera(cameras->GetMatrix() );
@@ -86,7 +86,7 @@ void App::DoFrame( float dt )
 	GameLogic(dt, time);
 
 	//skybox.SetPos({ cameras->pos });
-	skybox.Submit(Chan::main);
+	//skybox.Submit(Chan::main);
 
 	pointLight->Submit(Chan::main);
 	pointLight->Bind(wnd.Gfx());
@@ -141,7 +141,7 @@ void App::DoFrame( float dt )
 	//pointLight3->SpawnControlWindow("PointLight3");
 	dLight.SpawnControlWindow();
 	ShowImguiDemoWindow();
-	skybox.SpawnControlWindow(wnd.Gfx(), "SkyBox");
+	//skybox.SpawnControlWindow(wnd.Gfx(), "SkyBox");
 
 	static MP sponzeProbe{ "Sponza" };
 	static MP gobberProbe{ "Gobber" };
@@ -410,6 +410,7 @@ void App::UpdateCommonVar(Graphics& gfx, const CommonVar& cvar) noxnd
 	gfx.isHBAO = HBAO;
 	gfx.isHDR = HDR;
 	gfx.isVolumetricRendering = volumetricRendering;
+	gfx.isSkyRendering = skyRendering;
 }
 std::unique_ptr<Bind::VertexConstantBuffer<App::CommonVar>> App::cVBuf;
 std::unique_ptr<Bind::PixelConstantBuffer<App::CommonVar>> App::cPBuf;
@@ -429,6 +430,7 @@ void App::RenderMainWindows(Graphics& gfx)
 		ImGui::Checkbox("HDR", &HDR);
 		ImGui::SliderFloat("GI Scale", &GIScale, 0.0f, 2.0f, "%.3f");
 		ImGui::Checkbox("Volumetric Rendering", &volumetricRendering);
+		ImGui::Checkbox("Sky Rendering", &skyRendering);
 	}
 	ImGui::End();
 }

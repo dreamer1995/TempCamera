@@ -5,6 +5,7 @@
 #include "RenderTarget.h"
 #include "PreCalculateRenderGraph.h"
 #include "PointLight.h"
+#include "SkyAtmosphereCommon.h"
 
 class Graphics;
 class Camera;
@@ -37,6 +38,7 @@ namespace Rgph
 		void RenderAOWindow(Graphics& gfx);
 		void RenderBloomWindow(Graphics& gfx);
 		void RenderVolumeWindow(Graphics& gfx);
+		void RenderSkyWindow(Graphics& gfx);
 		// private data
 		enum class KernelType
 		{
@@ -71,5 +73,6 @@ namespace Rgph
 		float bloomThreshold = 0.5f;
 		int bloomQuality = 6;
 		std::shared_ptr<Bind::CachingPixelConstantBufferEx> volumeParams;
+		std::unique_ptr<SkyAtmosphereCommon> skyAtmosphereParams;
 	};
 }
