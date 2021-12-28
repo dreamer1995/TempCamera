@@ -32,7 +32,7 @@
 #include "DeferredVolumeCalPass.h"
 #include "DeferredVolumeBlurPass.h"
 #include "DeferredVolumeMergePass.h"
-#include "DeferredVolumeFog3DTexturePass.h"
+#include "DeferredTransmittanceLutPass.h"
 #include "DeferredVolumeFogApplyPass.h"
 
 namespace Rgph
@@ -150,7 +150,7 @@ namespace Rgph
 				skyAtmosphereParams->AtmosphereSkyParamsCS));
 		}
 		{
-			auto pass = std::make_unique<DeferredVolumeFog3DTexturePass>("volumeFog3DTexture", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+			auto pass = std::make_unique<DeferredTransmittanceLutPass>("transmittanceLut", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
 			pass->SetSinkLinkage("scratchIn", "deferredPointLighting.renderTarget");
 			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
@@ -159,7 +159,7 @@ namespace Rgph
 		}
 		{
 			auto pass = std::make_unique<DeferredVolumeFogApplyPass>("volumeFogApply", gfx);
-			pass->SetSinkLinkage("scratchIn", "volumeFog3DTexture.scratchOut");
+			pass->SetSinkLinkage("scratchIn", "transmittanceLut.scratchOut");
 			pass->SetSinkLinkage("renderTarget", "deferredPointLighting.renderTarget");
 			AppendPass(std::move(pass));
 		}
@@ -775,7 +775,7 @@ namespace Rgph
 		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindMainCamera(cam);
 		dynamic_cast<DeferredTAAPass&>(FindPassByName("TAA")).BindMainCamera(cam);
 		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("volumeCal")).BindMainCamera(cam);
-		dynamic_cast<DeferredVolumeFog3DTexturePass&>(FindPassByName("volumeFog3DTexture")).BindMainCamera(cam);
+		dynamic_cast<DeferredTransmittanceLutPass&>(FindPassByName("transmittanceLut")).BindMainCamera(cam);
 	}
 	void Rgph::DeferredRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams)
 	{
@@ -785,6 +785,6 @@ namespace Rgph
 		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindShadowCamera(gfx, dCam);
 		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindShadowCamera(gfx, pCams);
 		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("volumeCal")).BindShadowCamera(gfx, dCam);
-		dynamic_cast<DeferredVolumeFog3DTexturePass&>(FindPassByName("volumeFog3DTexture")).BindShadowCamera(gfx, dCam);
+		dynamic_cast<DeferredTransmittanceLutPass&>(FindPassByName("transmittanceLut")).BindShadowCamera(gfx, dCam);
 	}
 }

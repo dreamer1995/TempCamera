@@ -872,12 +872,6 @@
     <ClInclude Include="GeometryShader.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="DeferredVolumeFog3DTexturePass.h">
-      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
-    </ClInclude>
-    <ClInclude Include="DeferredVolumeFogApplyPass.h">
-      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
-    </ClInclude>
     <ClInclude Include="ComputeShaderPass.h">
       <Filter>Header Files\Jobber\Passlib\Base</Filter>
     </ClInclude>
@@ -892,6 +886,12 @@
     </ClInclude>
     <ClInclude Include="SkyAtmosphereCommon.h">
       <Filter>Header Files\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredVolumeFogApplyPass.h">
+      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredTransmittanceLutPass.h">
+      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

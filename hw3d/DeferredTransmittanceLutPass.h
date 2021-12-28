@@ -14,10 +14,10 @@ namespace Bind
 
 namespace Rgph
 {
-	class DeferredVolumeFog3DTexturePass : public ComputeShaderPass
+	class DeferredTransmittanceLutPass : public ComputeShaderPass
 	{
 	public:
-		DeferredVolumeFog3DTexturePass(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
+		DeferredTransmittanceLutPass(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
 			:
 			ComputeShaderPass(std::move(name), gfx),
 			width(fullWidth),

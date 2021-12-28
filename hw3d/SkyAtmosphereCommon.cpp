@@ -43,7 +43,7 @@ SkyAtmosphereCommon::SkyAtmosphereCommon(Graphics& gfx)
 	l.Add<Dcb::Float3>("mie_extinctionc");
 	l.Add<Dcb::Float>("top_radius");
 	l.Add<Dcb::Float3>("mie_absorption");
-	l.Add<Dcb::Float3>("Ground albedo");
+	l.Add<Dcb::Float3>("ground_albedo");
 	l.Add<Dcb::Array>("rayleigh_density");
 	l["rayleigh_density"].Set<Dcb::Float>(10);
 	l.Add<Dcb::Array>("mie_density");
@@ -68,7 +68,10 @@ SkyAtmosphereCommon::SkyAtmosphereCommon(Graphics& gfx)
 	//l.Add<Dcb::Float3>("view_ray");
 	l.Add<Dcb::Float>("MultipleScatteringFactor");
 	l.Add<Dcb::Float>("MultiScatteringLUTRes");
+	l.Add<Dcb::Array>("RayMarchMinMaxSPP");
+	l["RayMarchMinMaxSPP"].Set<Dcb::Float>(2);
 	Dcb::Buffer buf{ std::move(l) };
+	l.Add<Dcb::Float>("gScatteringMaxPathDepth");
 	AtmosphereSkyParamsPS = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 	AtmosphereSkyParamsCS = std::make_shared<Bind::CachingComputeConstantBufferEx>(gfx, buf, 10u);
 }
@@ -220,5 +223,10 @@ void SkyAtmosphereCommon::UpdateConstants()
 	buf["SKY_SPECTRAL_RADIANCE_TO_LUMINANCE"] = dx::XMFLOAT3{ 114974.916437f,71305.954816f,65310.548555f };
 	buf["SUN_SPECTRAL_RADIANCE_TO_LUMINANCE"] = dx::XMFLOAT3{ 98242.786222f,69954.398112f,66475.012354f };
 
+	uiViewRayMarchMaxSPP = uiViewRayMarchMinSPP >= uiViewRayMarchMaxSPP ? uiViewRayMarchMinSPP + 1 : uiViewRayMarchMaxSPP;
+	buf["RayMarchMinMaxSPP"][0] = uiViewRayMarchMinSPP;
+	buf["RayMarchMinMaxSPP"][1] = uiViewRayMarchMaxSPP;
+
+	buf["gScatteringMaxPathDepth"] = NumScatteringOrder;
 	AtmosphereSkyParamsPS->SetBuffer(buf);
 }
