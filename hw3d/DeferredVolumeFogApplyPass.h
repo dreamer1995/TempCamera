@@ -25,7 +25,7 @@ namespace Rgph
 			FullscreenPass(std::move(name), gfx)
 		{
 			using namespace Bind;
-			AddBindSink<UnorderedAccessView>("scratchIn");
+			AddBindSink<ShaderInputRenderTarget>("scratchIn");
 			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
 			AddBind(PixelShader::Resolve(gfx, "VolumeFogMerge.cso"));
 			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::OneMinus));

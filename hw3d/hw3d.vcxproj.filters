@@ -959,6 +959,9 @@
     <None Include="DeferredCommon.hlsli">
       <Filter>Shader\Common</Filter>
     </None>
+    <None Include="SkyAtmosphereCommon.hlsli">
+      <Filter>Shader\Common</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="LightVectorData.hlsli">
@@ -1163,6 +1166,9 @@
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
     <FxCompile Include="VolumeFogMerge.hlsl">
+      <Filter>Shader\Postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="TransmittanceLUT.hlsl">
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
   </ItemGroup>
