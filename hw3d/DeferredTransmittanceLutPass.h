@@ -1,72 +1,45 @@
 #pragma once
-#include "ComputeShaderPass.h"
+#include "FullscreenPass.h"
 #include "Sink.h"
 #include "Source.h"
-#include "Sampler.h"
-#include "ComputeShader.h"
+#include "PixelShader.h"
 
 class Graphics;
 namespace Bind
 {
-	class UnorderedAccessView;
-	class ComputeShader;
+	class PixelShader;
+	class RenderTarget;
 }
 
 namespace Rgph
 {
-	class DeferredTransmittanceLutPass : public ComputeShaderPass
+	class DeferredTransmittanceLutPass : public FullscreenPass
 	{
 	public:
-		DeferredTransmittanceLutPass(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
+		DeferredTransmittanceLutPass(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight)
 			:
-			ComputeShaderPass(std::move(name), gfx),
+			FullscreenPass(std::move(name), gfx),
 			width(fullWidth),
-			height(fullHeight),
-			masterDepth(masterDepth)
+			height(fullHeight)
 		{
 			using namespace Bind;
-			AddBindSink<RenderTarget>("scratchIn");
 			//AddBindSink<Bind::CachingPixelConstantBufferEx>("volumeParams");
-			unorderedAccessView = std::make_shared<ShaderInputUAV>(gfx, fullWidth, fullHeight, 0u);
-			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u, 0b100000u);
-			AddBind(pDShadowCBuf);
-			AddBindSink<Bindable>("dShadowMap");
-			AddBind(ComputeShader::Resolve(gfx, "VolumeFog3DTexture.cso"));
-			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u, 0b100000u));
-			AddBind(masterDepth);
+			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u);
+			AddBind(PixelShader::Resolve(gfx, "VolumeFogMerge.cso"));
+			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 			AddBind(Blender::Resolve(gfx, false));
-			AddBindSink<Bindable>("shadowControl");
-			AddBindSink<Bindable>("shadowSampler");
-			RegisterSource(DirectBindableSource<UnorderedAccessView>::Make("scratchOut", unorderedAccessView));
-		}
-		void BindMainCamera(const Camera& cam) noexcept
-		{
-			pMainCamera = &cam;
-		}
-		void BindShadowCamera(Graphics& gfx, const Camera& dCam) noexcept
-		{
-			pDShadowCBuf->SetCamera(&dCam);
+			RegisterSource(DirectBindableSource<RenderTarget>::Make("scratchOut", renderTarget));
 		}
 		// this override is necessary because we cannot (yet) link input bindables directly into
 		// the container of bindables (mainly because vector growth buggers references)
 		void Execute(Graphics& gfx) const noxnd override
 		{
-			assert(pMainCamera);
-			pMainCamera->BindToGraphics(gfx);
-			masterDepth->BreakRule();
-			pDShadowCBuf->Update(gfx);
 			gfx.ClearRenderTarget();
-
-			ComputeShaderPass::SetDispatchVector((width + 7u) >> 3u, (height + 7u) >> 3u, 1u);
-			ComputeShaderPass::Execute(gfx);
-
-			gfx.ClearShaderResources(8u);
-			gfx.ClearUAV(0u);
+			gfx.ClearShaderResources(0u);
+			BindAll(gfx);
+			gfx.DrawIndexed(6u);
 		}
 	private:
-		std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth;
-		const Camera* pMainCamera = nullptr;
-		std::shared_ptr<Bind::ShadowCameraCBuf> pDShadowCBuf;
 		UINT width;
 		UINT height;
 	};

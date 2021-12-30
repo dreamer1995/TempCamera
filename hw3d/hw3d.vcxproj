@@ -675,6 +675,7 @@
     <ClInclude Include="DeferredVolumeBlurPass.h" />
     <ClInclude Include="DeferredVolumeCalPass.h" />
     <ClInclude Include="DeferredTransmittanceLutPass.h" />
+    <ClInclude Include="DeferredVolumeFog3DTexturePass.h" />
     <ClInclude Include="DeferredVolumeFogApplyPass.h" />
     <ClInclude Include="DeferredVolumeMergePass.h" />
     <ClInclude Include="DomainShader.h" />
