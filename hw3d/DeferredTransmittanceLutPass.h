@@ -16,15 +16,13 @@ namespace Rgph
 	class DeferredTransmittanceLutPass : public FullscreenPass
 	{
 	public:
-		DeferredTransmittanceLutPass(std::string name, Graphics& gfx, unsigned int fullWidth, unsigned int fullHeight)
+		DeferredTransmittanceLutPass(std::string name, Graphics& gfx)
 			:
-			FullscreenPass(std::move(name), gfx),
-			width(fullWidth),
-			height(fullHeight)
+			FullscreenPass(std::move(name), gfx)
 		{
 			using namespace Bind;
 			//AddBindSink<Bind::CachingPixelConstantBufferEx>("volumeParams");
-			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 0u, RenderTarget::Type::Default,
+			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, 256u, 64u, 0u, RenderTarget::Type::Default,
 				0b1u, DXGI_FORMAT_R16G16B16A16_FLOAT);
 			AddBindSink<CachingPixelConstantBufferEx>("skyConstants");
 			AddBind(PixelShader::Resolve(gfx, "TransmittanceLUT.cso"));
@@ -41,8 +39,5 @@ namespace Rgph
 			BindAll(gfx);
 			gfx.DrawIndexed(6u);
 		}
-	private:
-		UINT width;
-		UINT height;
 	};
 }

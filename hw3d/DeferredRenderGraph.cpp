@@ -150,7 +150,7 @@ namespace Rgph
 				skyAtmosphereParams->AtmosphereSkyParamsCS));
 		}
 		{
-			auto pass = std::make_unique<DeferredTransmittanceLutPass>("transmittanceLut", gfx, gfx.GetWidth(), gfx.GetHeight());
+			auto pass = std::make_unique<DeferredTransmittanceLutPass>("transmittanceLut", gfx);
 			pass->SetSinkLinkage("skyConstants", "$.atmosphereSkyParamsPS");
 			AppendPass(std::move(pass));
 		}
@@ -454,6 +454,7 @@ namespace Rgph
 		RenderAOWindow(gfx);
 		RenderBloomWindow(gfx);
 		RenderVolumeWindow(gfx);
+		RenderSkyWindow(gfx);
 	}
 
 	void DeferredRenderGraph::RenderKernelWindow(Graphics& gfx)
@@ -750,11 +751,13 @@ namespace Rgph
 			return;
 
 		float dirty = skyAtmosphereParams->RenderUI();
-
-		if (dirty)
+		
+		static bool firstFrame = true;
+		if (dirty || true)
 		{
 			skyAtmosphereParams->ConvertUItoPhysical();
 			skyAtmosphereParams->UpdateConstants();
+			firstFrame = false;
 		}
 	}
 

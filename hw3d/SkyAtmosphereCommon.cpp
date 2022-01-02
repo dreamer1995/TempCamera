@@ -40,16 +40,10 @@ SkyAtmosphereCommon::SkyAtmosphereCommon(Graphics& gfx)
 	l.Add<Dcb::Float>("mie_phase_function_g");
 	l.Add<Dcb::Float3>("mie_scattering");
 	l.Add<Dcb::Float>("bottom_radius");
-	l.Add<Dcb::Float3>("mie_extinctionc");
+	l.Add<Dcb::Float3>("mie_extinction");
 	l.Add<Dcb::Float>("top_radius");
 	l.Add<Dcb::Float3>("mie_absorption");
 	l.Add<Dcb::Float3>("ground_albedo");
-	l.Add<Dcb::Array>("rayleigh_density");
-	l["rayleigh_density"].Set<Dcb::Float>(10);
-	l.Add<Dcb::Array>("mie_density");
-	l["mie_density"].Set<Dcb::Float>(10);
-	l.Add<Dcb::Array>("absorption_density");
-	l["absorption_density"].Set<Dcb::Float>(10);
 	l.Add<Dcb::Integer>("TRANSMITTANCE_TEXTURE_WIDTH");
 	l.Add<Dcb::Integer>("TRANSMITTANCE_TEXTURE_HEIGHT");
 	l.Add<Dcb::Integer>("IRRADIANCE_TEXTURE_WIDTH");
@@ -68,10 +62,16 @@ SkyAtmosphereCommon::SkyAtmosphereCommon(Graphics& gfx)
 	//l.Add<Dcb::Float3>("view_ray");
 	l.Add<Dcb::Float>("MultipleScatteringFactor");
 	l.Add<Dcb::Float>("MultiScatteringLUTRes");
-	l.Add<Dcb::Array>("RayMarchMinMaxSPP");
-	l["RayMarchMinMaxSPP"].Set<Dcb::Float>(2);
+	l.Add<Dcb::Float2>("RayMarchMinMaxSPP");
+	l.Add<Dcb::Integer>("gScatteringMaxPathDepth");
+
+	l.Add<Dcb::Array>("rayleigh_density");
+	l["rayleigh_density"].Set<Dcb::Float>(10);
+	l.Add<Dcb::Array>("mie_density");
+	l["mie_density"].Set<Dcb::Float>(10);
+	l.Add<Dcb::Array>("absorption_density");
+	l["absorption_density"].Set<Dcb::Float>(10);
 	Dcb::Buffer buf{ std::move(l) };
-	l.Add<Dcb::Float>("gScatteringMaxPathDepth");
 	AtmosphereSkyParamsPS = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
 	AtmosphereSkyParamsCS = std::make_shared<Bind::CachingComputeConstantBufferEx>(gfx, buf, 10u);
 }
@@ -177,26 +177,26 @@ void SkyAtmosphereCommon::UpdateConstants()
 	for (unsigned char i = 0; i < 2; i++)
 	{
 		buf["rayleigh_density"][i * 5 + 0] = atmosphereInfos.rayleigh_density.layers[i].width;
-		buf["rayleigh_density"][i * 5 + 1] = atmosphereInfos.rayleigh_density.layers[i].width;
-		buf["rayleigh_density"][i * 5 + 2] = atmosphereInfos.rayleigh_density.layers[i].width;
-		buf["rayleigh_density"][i * 5 + 3] = atmosphereInfos.rayleigh_density.layers[i].width;
-		buf["rayleigh_density"][i * 5 + 4] = atmosphereInfos.rayleigh_density.layers[i].width;
+		buf["rayleigh_density"][i * 5 + 1] = atmosphereInfos.rayleigh_density.layers[i].exp_term;
+		buf["rayleigh_density"][i * 5 + 2] = atmosphereInfos.rayleigh_density.layers[i].exp_scale;
+		buf["rayleigh_density"][i * 5 + 3] = atmosphereInfos.rayleigh_density.layers[i].linear_term;
+		buf["rayleigh_density"][i * 5 + 4] = atmosphereInfos.rayleigh_density.layers[i].constant_term;
 	}
 	for (unsigned char i = 0; i < 2; i++)
 	{
 		buf["mie_density"][i * 5 + 0] = atmosphereInfos.mie_density.layers[i].width;
-		buf["mie_density"][i * 5 + 1] = atmosphereInfos.mie_density.layers[i].width;
-		buf["mie_density"][i * 5 + 2] = atmosphereInfos.mie_density.layers[i].width;
-		buf["mie_density"][i * 5 + 3] = atmosphereInfos.mie_density.layers[i].width;
-		buf["mie_density"][i * 5 + 4] = atmosphereInfos.mie_density.layers[i].width;
+		buf["mie_density"][i * 5 + 1] = atmosphereInfos.mie_density.layers[i].exp_term;
+		buf["mie_density"][i * 5 + 2] = atmosphereInfos.mie_density.layers[i].exp_scale;
+		buf["mie_density"][i * 5 + 3] = atmosphereInfos.mie_density.layers[i].linear_term;
+		buf["mie_density"][i * 5 + 4] = atmosphereInfos.mie_density.layers[i].constant_term;
 	}
 	for (unsigned char i = 0; i < 2; i++)
 	{
 		buf["absorption_density"][i * 5 + 0] = atmosphereInfos.absorption_density.layers[i].width;
-		buf["absorption_density"][i * 5 + 1] = atmosphereInfos.absorption_density.layers[i].width;
-		buf["absorption_density"][i * 5 + 2] = atmosphereInfos.absorption_density.layers[i].width;
-		buf["absorption_density"][i * 5 + 3] = atmosphereInfos.absorption_density.layers[i].width;
-		buf["absorption_density"][i * 5 + 4] = atmosphereInfos.absorption_density.layers[i].width;
+		buf["absorption_density"][i * 5 + 1] = atmosphereInfos.absorption_density.layers[i].exp_term;
+		buf["absorption_density"][i * 5 + 2] = atmosphereInfos.absorption_density.layers[i].exp_scale;
+		buf["absorption_density"][i * 5 + 3] = atmosphereInfos.absorption_density.layers[i].linear_term;
+		buf["absorption_density"][i * 5 + 4] = atmosphereInfos.absorption_density.layers[i].constant_term;
 	}
 
 	buf["mie_phase_function_g"] = atmosphereInfos.mie_phase_function_g;
@@ -224,8 +224,7 @@ void SkyAtmosphereCommon::UpdateConstants()
 	buf["SUN_SPECTRAL_RADIANCE_TO_LUMINANCE"] = dx::XMFLOAT3{ 98242.786222f,69954.398112f,66475.012354f };
 
 	uiViewRayMarchMaxSPP = uiViewRayMarchMinSPP >= uiViewRayMarchMaxSPP ? uiViewRayMarchMinSPP + 1 : uiViewRayMarchMaxSPP;
-	buf["RayMarchMinMaxSPP"][0] = uiViewRayMarchMinSPP;
-	buf["RayMarchMinMaxSPP"][1] = uiViewRayMarchMaxSPP;
+	buf["RayMarchMinMaxSPP"] = dx::XMFLOAT2{ (float)uiViewRayMarchMinSPP,(float)uiViewRayMarchMaxSPP };
 
 	buf["gScatteringMaxPathDepth"] = NumScatteringOrder;
 	AtmosphereSkyParamsPS->SetBuffer(buf);

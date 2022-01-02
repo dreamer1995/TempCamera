@@ -91,6 +91,7 @@ namespace Bind
 		const auto matrix_IT_MV = DirectX::XMMatrixInverse(nullptr, matrix_T_MV);
 		const auto matrix_I_V = DirectX::XMMatrixInverse(nullptr, matrix_V);
 		const auto matrix_I_P = DirectX::XMMatrixInverse(nullptr, matrix_P);
+		const auto matrix_I_MVP = DirectX::XMMatrixInverse(nullptr, matrix_MVP);
 		return {matrix_MVP,
 				matrix_MV,
 				matrix_V,
@@ -101,7 +102,8 @@ namespace Bind
 				matrix_M2W,
 				matrix_W2M,
 				matrix_I_V,
-				matrix_I_P
+				matrix_I_P,
+				matrix_I_MVP
 		};
 	}
 
