@@ -30,10 +30,15 @@ namespace Rgph
 			AddBind(Blender::Resolve(gfx, false));
 			RegisterSource(DirectBindableSource<RenderTarget>::Make("scratchOut", renderTarget));
 		}
+		void BindMainCamera(const Camera& cam) noexcept
+		{
+			pMainCamera = &cam;
+		}
 		// this override is necessary because we cannot (yet) link input bindables directly into
 		// the container of bindables (mainly because vector growth buggers references)
 		void Execute(Graphics& gfx) const noxnd override
 		{
+			assert(pMainCamera);
 			gfx.ClearRenderTarget();
 			gfx.ClearShaderResources(0u);
 			BindAll(gfx);

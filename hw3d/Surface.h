@@ -25,6 +25,8 @@
 #include <optional>
 #include "ConditionalNoexcept.h"
 #include <dxtex/DirectXTex.h>
+#include <dxtex/DirectXTexEXR.h>
+#include <dxtex/DirectXTexP.h>
 
 
 class Surface

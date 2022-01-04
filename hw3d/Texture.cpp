@@ -2,6 +2,7 @@
 #include "Surface.h"
 #include "GraphicsThrowMacros.h"
 #include "BindableCodex.h"
+#include <filesystem>
 
 namespace Bind
 {
@@ -23,10 +24,15 @@ namespace Bind
 		D3D11_TEXTURE2D_DESC textureDesc = {};
 		textureDesc.Width = s.GetWidth();
 		textureDesc.Height = s.GetHeight();
-		textureDesc.MipLevels
-			= 0;
+		textureDesc.MipLevels = 0;
 		textureDesc.ArraySize = 1;
-		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		std::filesystem::path filepath = path;
+		if (filepath.extension() == ".exr")
+		{
+			textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		}
+		else
+			textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;

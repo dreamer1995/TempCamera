@@ -108,6 +108,8 @@ Surface Surface::FromFile( const std::string& name )
 	HRESULT hr;
 	if (path.extension().string() == ".tga")
 		hr = DirectX::LoadFromTGAFile(ToWide(name).c_str(), nullptr, scratch);
+	else if(path.extension().string() == ".exr")
+		hr = DirectX::LoadFromEXRFile(ToWide(name).c_str(), nullptr, scratch);
 	else
 		hr = DirectX::LoadFromWICFile( ToWide( name ).c_str(),DirectX::WIC_FLAGS_IGNORE_SRGB,nullptr,scratch );
 	if( FAILED( hr ) )
