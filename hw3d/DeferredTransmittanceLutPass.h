@@ -39,10 +39,14 @@ namespace Rgph
 		void Execute(Graphics& gfx) const noxnd override
 		{
 			assert(pMainCamera);
+			pMainCamera->BindToGraphics(gfx);
 			gfx.ClearRenderTarget();
 			gfx.ClearShaderResources(0u);
 			BindAll(gfx);
 			gfx.DrawIndexed(6u);
 		}
+
+	private:
+		const Camera* pMainCamera = nullptr;
 	};
 }
