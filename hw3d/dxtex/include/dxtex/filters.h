@@ -3,7 +3,7 @@
 //  
 // Utility header with helpers for implementing image filters
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ struct LinearFilter
     float   weight1;
 };
 
-inline void _CreateLinearFilter(_In_ size_t source, _In_ size_t dest, _In_ bool wrap, _Out_writes_(dest) LinearFilter* lf)
+inline void _CreateLinearFilter(_In_ size_t source, _In_ size_t dest, _In_ bool wrap, _Out_writes_(dest) LinearFilter* lf) noexcept
 {
     assert(source > 0);
     assert(dest > 0);
@@ -76,6 +76,8 @@ inline void _CreateLinearFilter(_In_ size_t source, _In_ size_t dest, _In_ bool 
         ptrdiff_t isrcB = ptrdiff_t(srcB);
         ptrdiff_t isrcA = isrcB - 1;
 
+        float weight = 1.0f + float(isrcB) - srcB;
+
         if (isrcA < 0)
         {
             isrcA = (wrap) ? (ptrdiff_t(source) - 1) : 0;
@@ -85,8 +87,6 @@ inline void _CreateLinearFilter(_In_ size_t source, _In_ size_t dest, _In_ bool 
         {
             isrcB = (wrap) ? 0 : (ptrdiff_t(source) - 1);
         }
-
-        float weight = 1.0f + float(isrcB) - srcB;
 
         auto& entry = lf[u];
         entry.u0 = size_t(isrcA);
@@ -118,7 +118,7 @@ XMGLOBALCONST XMVECTORF32 g_cubicThird = { { { 1.f / 3.f, 1.f / 3.f, 1.f / 3.f, 
 XMGLOBALCONST XMVECTORF32 g_cubicSixth = { { { 1.f / 6.f, 1.f / 6.f, 1.f / 6.f, 1.f / 6.f } } };
 XMGLOBALCONST XMVECTORF32 g_cubicHalf  = { { { 1.f / 2.f, 1.f / 2.f, 1.f / 2.f, 1.f / 2.f } } };
 
-inline ptrdiff_t bounduvw(ptrdiff_t u, ptrdiff_t maxu, bool wrap, bool mirror)
+inline ptrdiff_t bounduvw(ptrdiff_t u, ptrdiff_t maxu, bool wrap, bool mirror) noexcept
 {
     if (wrap)
     {
@@ -159,7 +159,7 @@ struct CubicFilter
     float   x;
 };
 
-inline void _CreateCubicFilter(_In_ size_t source, _In_ size_t dest, _In_ bool wrap, _In_ bool mirror, _Out_writes_(dest) CubicFilter* cf)
+inline void _CreateCubicFilter(_In_ size_t source, _In_ size_t dest, _In_ bool wrap, _In_ bool mirror, _Out_writes_(dest) CubicFilter* cf) noexcept
 {
     assert(source > 0);
     assert(dest > 0);
@@ -240,13 +240,13 @@ namespace TriangleFilter
         TriangleRow() noexcept : remaining(0), next(nullptr) {}
     };
 
-    static const size_t TF_FILTER_SIZE = sizeof(Filter) - sizeof(FilterFrom);
-    static const size_t TF_FROM_SIZE = sizeof(FilterFrom) - sizeof(FilterTo);
-    static const size_t TF_TO_SIZE = sizeof(FilterTo);
+    constexpr size_t TF_FILTER_SIZE = sizeof(Filter) - sizeof(FilterFrom);
+    constexpr size_t TF_FROM_SIZE = sizeof(FilterFrom) - sizeof(FilterTo);
+    constexpr size_t TF_TO_SIZE = sizeof(FilterTo);
 
-    static const float TF_EPSILON = 0.00001f;
+    constexpr float TF_EPSILON = 0.00001f;
 
-    inline HRESULT _Create(_In_ size_t source, _In_ size_t dest, _In_ bool wrap, _Inout_ std::unique_ptr<Filter>& tf)
+    inline HRESULT _Create(_In_ size_t source, _In_ size_t dest, _In_ bool wrap, _Inout_ std::unique_ptr<Filter>& tf) noexcept
     {
         assert(source > 0);
         assert(dest > 0);
