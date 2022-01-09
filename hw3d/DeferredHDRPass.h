@@ -27,6 +27,7 @@ namespace Rgph
 			AddBindSink<RenderTarget>("scratchIn");
 			RegisterSink(DirectBufferSink<RenderTarget>::Make("renderTarget", renderTarget));
 			AddBind(PixelShader::Resolve(gfx, "HDR.cso"));
+			AddBind(Texture::Resolve(gfx, "Images\\georgentor_2k.exr", 1u));
 			AddBind(Blender::Resolve(gfx, false));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u));

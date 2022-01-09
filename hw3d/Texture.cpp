@@ -29,7 +29,7 @@ namespace Bind
 		std::filesystem::path filepath = path;
 		if (filepath.extension() == ".exr")
 		{
-			textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 		}
 		else
 			textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;

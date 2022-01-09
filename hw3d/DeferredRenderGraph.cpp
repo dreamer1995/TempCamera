@@ -155,15 +155,15 @@ namespace Rgph
 			pass->SetSinkLinkage("skyConstants", "$.atmosphereSkyParamsPS");
 			AppendPass(std::move(pass));
 		}
-		{
-			auto pass = std::make_unique<DeferredScatteringLutPass>("scatteringLut", gfx, masterDepth);
-			pass->SetSinkLinkage("transmittanceLutIn", "transmittanceLut.scratchOut");
-			pass->SetSinkLinkage("skyConstants", "$.atmosphereSkyParamsPS");
-			AppendPass(std::move(pass));
-		}
+		//{
+		//	auto pass = std::make_unique<DeferredScatteringLutPass>("scatteringLut", gfx, masterDepth);
+		//	pass->SetSinkLinkage("transmittanceLutIn", "transmittanceLut.scratchOut");
+		//	pass->SetSinkLinkage("skyConstants", "$.atmosphereSkyParamsPS");
+		//	AppendPass(std::move(pass));
+		//}
 		{
 			auto pass = std::make_unique<DeferredVolumeFogApplyPass>("volumeFogApply", gfx);
-			pass->SetSinkLinkage("scratchIn", "scatteringLut.scratchOut");
+			pass->SetSinkLinkage("transmittanceLutIn", "transmittanceLut.scratchOut");
 			pass->SetSinkLinkage("renderTarget", "deferredPointLighting.renderTarget");
 			AppendPass(std::move(pass));
 		}
@@ -783,7 +783,7 @@ namespace Rgph
 		dynamic_cast<DeferredTAAPass&>(FindPassByName("TAA")).BindMainCamera(cam);
 		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("volumeCal")).BindMainCamera(cam);
 		dynamic_cast<DeferredTransmittanceLutPass&>(FindPassByName("transmittanceLut")).BindMainCamera(cam);
-		dynamic_cast<DeferredScatteringLutPass&>(FindPassByName("scatteringLut")).BindMainCamera(cam);
+		//dynamic_cast<DeferredScatteringLutPass&>(FindPassByName("scatteringLut")).BindMainCamera(cam);
 	}
 	void Rgph::DeferredRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams)
 	{
@@ -793,6 +793,6 @@ namespace Rgph
 		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindShadowCamera(gfx, dCam);
 		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindShadowCamera(gfx, pCams);
 		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("volumeCal")).BindShadowCamera(gfx, dCam);
-		dynamic_cast<DeferredScatteringLutPass&>(FindPassByName("scatteringLut")).BindShadowCamera(gfx, dCam);
+		//dynamic_cast<DeferredScatteringLutPass&>(FindPassByName("scatteringLut")).BindShadowCamera(gfx, dCam);
 	}
 }
