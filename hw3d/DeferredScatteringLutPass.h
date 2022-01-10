@@ -24,7 +24,7 @@ namespace Rgph
 			masterDepth(masterDepth)
 		{
 			using namespace Bind;
-			AddBindSink<RenderTarget>("scratchIn");
+			AddBindSink<RenderTarget>("transmittanceLutIn");
 			AddBindSink<CachingComputeConstantBufferEx>("skyConstants");
 			//AddBindSink<Bind::CachingPixelConstantBufferEx>("volumeParams");
 			width = 32u;
@@ -34,7 +34,7 @@ namespace Rgph
 			AddBind(pDShadowCBuf);
 			AddBindSink<Bindable>("dShadowMap");
 			AddBind(Texture::Resolve(gfx, "Images\\bluenoise.exr", 2u));
-			AddBind(ComputeShader::Resolve(gfx, "VolumeFog3DTexture.cso"));
+			AddBind(ComputeShader::Resolve(gfx, "ScatteringLUT.cso"));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u, 0b100000u));
 			AddBind(masterDepth);
 			AddBind(Blender::Resolve(gfx, false));

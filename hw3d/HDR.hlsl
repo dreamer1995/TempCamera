@@ -1,7 +1,7 @@
 #include "Constants.hlsli"
 
 Texture2D sceneColor : register(t0);
-Texture2D HDRColor : register(t1);
+//Texture2D HDRColor : register(t1);
 SamplerState splr;
 
 #define EncodeGamma(x) pow(x, 1.0f / 2.2f)
@@ -11,9 +11,9 @@ SamplerState splr;
 float4 main(float2 uv : Texcoord) : SV_Target
 {
 
-	//float3 color = sceneColor.SampleLevel(splr, uv, 0).rgb;
+	float3 color = sceneColor.SampleLevel(splr, uv, 0).rgb;
     
-    float3 color = DecodeGamma(HDRColor.SampleLevel(splr, uv, 0).rgb);
+    //float3 color = DecodeGamma(HDRColor.SampleLevel(splr, uv, 0).rgb);
 	
     if (HDR)
     {

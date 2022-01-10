@@ -13,32 +13,32 @@ namespace Bind
 		INFOMAN(gfx);
 
 		// The compute shader will need to output to some buffer so here we create a GPU buffer for that.
-		D3D11_BUFFER_DESC uabd;
-		uabd.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
-		uabd.CPUAccessFlags = 0;
+		D3D11_TEXTURE2D_DESC uatd;
+		//DataPerCell dataCell;
 
-		DataPerCell dataCell;
+		uatd.Width = width;
+		uatd.Height = height;
+		uatd.MipLevels = 1;
+		uatd.ArraySize = 1;
+		uatd.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+		uatd.SampleDesc.Count = 1;
+		uatd.SampleDesc.Quality = 0;
+		uatd.Usage = D3D11_USAGE_DEFAULT;
+		uatd.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE | D3D10_BIND_RENDER_TARGET;
+		uatd.CPUAccessFlags = 0;
+		uatd.MiscFlags = 0;
 
-		uabd.ByteWidth = sizeof(dataCell) * width * height;
-		uabd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-		uabd.StructureByteStride = sizeof(dataCell);	// We assume the output data is in the RGBA format, 8 bits per channel
-
-		uabd.Usage = D3D11_USAGE_DEFAULT;
-
-		ID3D11Buffer* UAGPUBuffer;
+		ID3D11Texture2D* UAVTex;
 		D3D11_SUBRESOURCE_DATA uasd = {};
-		uasd.pSysMem = &(dataCell);
 
-		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&uabd, NULL, &UAGPUBuffer));
+		GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(&uatd, NULL, &UAVTex));
 
 		D3D11_UNORDERED_ACCESS_VIEW_DESC uavd;
-		uavd.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-		uavd.Buffer.FirstElement = 0;
-		uavd.Buffer.Flags = 0;
-		uavd.Format = DXGI_FORMAT_UNKNOWN;      // Format must be must be DXGI_FORMAT_UNKNOWN, when creating a View of a Structured Buffer
-		uavd.Buffer.NumElements = uabd.ByteWidth / uabd.StructureByteStride;
+		uavd.Format = uatd.Format;
+		uavd.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+		uavd.Texture2D.MipSlice = 0;
 
-		GFX_THROW_INFO(GetDevice(gfx)->CreateUnorderedAccessView(UAGPUBuffer, &uavd, &pUnorderedAccessView));
+		GFX_THROW_INFO(GetDevice(gfx)->CreateUnorderedAccessView(UAVTex, &uavd, &pUnorderedAccessView));
 	}
 
 	void UnorderedAccessView::BindAsBuffer(Graphics& gfx) noxnd
@@ -65,13 +65,12 @@ namespace Bind
 		UnorderedAccessView::pUnorderedAccessView->GetResource(&pRes);
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 
-		UnorderedAccessView::DataPerCell dataCell;
+		//UnorderedAccessView::DataPerCell dataCell;
 
-		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-		srvDesc.Buffer.ElementWidth = sizeof(dataCell);
-		srvDesc.Buffer.FirstElement = 0;
-		srvDesc.Buffer.NumElements = width * height;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		srvDesc.Format = uavd.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		srvDesc.Texture2D.MipLevels = UINT32_MAX;
 		
 		GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
 			pRes.Get(), &srvDesc, &pShaderResourceView

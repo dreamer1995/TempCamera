@@ -6,13 +6,13 @@ namespace Bind
 	class UnorderedAccessView : public Bindable
 	{
 	public:
-		struct DataPerCell
-		{
-			float r;
-			float g;
-			float b;
-			float a;
-		};
+		//struct DataPerCell
+		//{
+		//	float r;
+		//	float g;
+		//	float b;
+		//	float a;
+		//};
 
 		UnorderedAccessView(Graphics& gfx, UINT width, UINT height, UINT slot);
 		void BindAsBuffer(Graphics& gfx) noxnd;
