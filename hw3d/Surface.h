@@ -139,7 +139,7 @@ public:
 	bool AlphaLoaded() const noexcept;
 private:
 	Surface( DirectX::ScratchImage scratch ) noexcept;
-private:
 	static constexpr DXGI_FORMAT format = DXGI_FORMAT::DXGI_FORMAT_B8G8R8A8_UNORM;
+public:
 	DirectX::ScratchImage scratch;
 };

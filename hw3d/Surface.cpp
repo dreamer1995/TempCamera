@@ -117,24 +117,24 @@ Surface Surface::FromFile( const std::string& name )
 		throw Surface::Exception( __LINE__,__FILE__,name,"Failed to load image",hr );
 	}
 
-	if( scratch.GetImage( 0,0,0 )->format != format )
-	{
-		DirectX::ScratchImage converted;
-		hr = DirectX::Convert(
-			*scratch.GetImage( 0,0,0 ),
-			format,
-			DirectX::TEX_FILTER_DEFAULT,
-			DirectX::TEX_THRESHOLD_DEFAULT,
-			converted
-		);
-		
-		if( FAILED( hr ) )
-		{
-			throw Surface::Exception( __LINE__,__FILE__,name,"Failed to convert image",hr );
-		}
+	//if( scratch.GetImage( 0,0,0 )->format != format )
+	//{
+	//	DirectX::ScratchImage converted;
+	//	hr = DirectX::Convert(
+	//		*scratch.GetImage( 0,0,0 ),
+	//		format,
+	//		DirectX::TEX_FILTER_DEFAULT,
+	//		DirectX::TEX_THRESHOLD_DEFAULT,
+	//		converted
+	//	);
+	//	
+	//	if( FAILED( hr ) )
+	//	{
+	//		throw Surface::Exception( __LINE__,__FILE__,name,"Failed to convert image",hr );
+	//	}
 
-		return Surface( std::move( converted ) );
-	}
+	//	return Surface( std::move( converted ) );
+	//}
 
 	return Surface( std::move( scratch ) );
 }

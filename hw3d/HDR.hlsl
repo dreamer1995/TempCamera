@@ -5,12 +5,15 @@ Texture2D HDRColor : register(t1);
 SamplerState splr;
 
 #define EncodeGamma(x) pow(x, 1.0f / 2.2f)
+#define DecodeGamma(x) pow(x, 2.2f)
 #define EncodeGammaWithAtten(x) pow(x / (x + 1.0f), 1.0f / 2.2f)
 
 float4 main(float2 uv : Texcoord) : SV_Target
 {
 
-	float3 color = sceneColor.SampleLevel(splr, uv, 0).rgb;
+	//float3 color = sceneColor.SampleLevel(splr, uv, 0).rgb;
+    
+    float3 color = DecodeGamma(HDRColor.SampleLevel(splr, uv, 0).rgb);
 	
     if (HDR)
     {

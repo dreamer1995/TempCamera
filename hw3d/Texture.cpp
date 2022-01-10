@@ -27,12 +27,7 @@ namespace Bind
 		textureDesc.MipLevels = 0;
 		textureDesc.ArraySize = 1;
 		std::filesystem::path filepath = path;
-		if (filepath.extension() == ".exr")
-		{
-			textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-		}
-		else
-			textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		textureDesc.Format = s.scratch.GetImage(0, 0, 0)->format;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -43,10 +38,10 @@ namespace Bind
 		GFX_THROW_INFO( GetDevice( gfx )->CreateTexture2D(
 			&textureDesc,nullptr,&pTexture
 		) );
-
 		// write image data into top mip level
 		GetContext( gfx )->UpdateSubresource(
-			pTexture.Get(),0u,nullptr,s.GetBufferPtrConst(),s.GetWidth() * sizeof( Surface::Color ),0u
+			pTexture.Get(),0u,nullptr,s.GetBufferPtrConst(),
+			static_cast<UINT>(s.scratch.GetImage(0, 0, 0)->rowPitch),0u
 		);
 
 		// create the resource view on the texture
