@@ -160,6 +160,7 @@ bool SkyAtmosphereCommon::RenderUI()
 
 		dcheck(ImGui::SliderInt("Min SPP", &uiViewRayMarchMinSPP, 1, 30));
 		dcheck(ImGui::SliderInt("Max SPP", &uiViewRayMarchMaxSPP, 2, 31));
+		dcheck(ImGui::SliderFloat("Multi-Scattering approx", &currentMultipleScatteringFactor, 0.0f, 1.0f));
 	}
 	ImGui::End();
 
@@ -228,4 +229,5 @@ void SkyAtmosphereCommon::UpdateConstants()
 
 	buf["gScatteringMaxPathDepth"] = NumScatteringOrder;
 	AtmosphereSkyParamsPS->SetBuffer(buf);
+	AtmosphereSkyParamsCS->SetBuffer(buf);
 }

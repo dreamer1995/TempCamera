@@ -48,7 +48,8 @@ private:
 	DirectionalLightCBuf cbData;
 	mutable PhongSphere mesh;
 	mutable SolidArrow arrow;
-	mutable Bind::PixelConstantBuffer<DirectionalLightCBuf> cbuf;
+	mutable Bind::PixelConstantBuffer<DirectionalLightCBuf> cbufPS;
+	mutable Bind::ComputeConstantBuffer<DirectionalLightCBuf> cbufCS;
 	DirectX::XMFLOAT3 pos;
 	float pitch;
 	float yaw;

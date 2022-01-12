@@ -6,7 +6,8 @@ DirectionalLight::DirectionalLight(Graphics& gfx, DirectX::XMFLOAT3 pos, float p
 	:
 	mesh(gfx, radius),
 	arrow(gfx, size),
-	cbuf(gfx, 3u)
+	cbufPS(gfx, 3u),
+	cbufCS(gfx, 3u)
 {
 	cbData = {
 	{ 0.0f,-1.0f,0.0f },
@@ -96,8 +97,10 @@ void DirectionalLight::Bind(Graphics& gfx, DirectX::XMFLOAT3 cameraPos) const no
 				))));
 	//const auto lightPos = XMVectorSet(pos.x, pos.y, pos.z, 0.0f);
 
-	cbuf.Update(gfx, dataCopy);
-	cbuf.Bind(gfx);
+	cbufPS.Update(gfx, dataCopy);
+	cbufPS.Bind(gfx);
+	cbufCS.Update(gfx, dataCopy);
+	cbufCS.Bind(gfx);
 
 	const float cameraHeight = 150.0f;
 	const DirectX::XMFLOAT3 relativedLightCamPos = { cameraPos.x + dataCopy.direction.x * cameraHeight,

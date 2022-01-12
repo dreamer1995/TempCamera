@@ -60,7 +60,7 @@ namespace Rgph
 			pDShadowCBuf->Update(gfx);
 			gfx.ClearRenderTarget();
 
-			ComputeShaderPass::SetDispatchVector((width + 7u) >> 3u, (height + 7u) >> 3u, 1u);
+			ComputeShaderPass::SetDispatchVector(width, height, 1u);
 			ComputeShaderPass::Execute(gfx);
 
 			gfx.ClearShaderResources(8u);

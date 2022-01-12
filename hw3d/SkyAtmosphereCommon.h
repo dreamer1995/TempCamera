@@ -161,7 +161,7 @@ public:
 	int uiViewRayMarchMinSPP = 4;
 	int uiViewRayMarchMaxSPP = 14;
 
-	float currentMultipleScatteringFactor = 0.0f;
+	float currentMultipleScatteringFactor = 1.0f;
 	float MultiScatteringLUTRes = 32;
 
 	std::shared_ptr<Bind::CachingPixelConstantBufferEx> AtmosphereSkyParamsPS;
