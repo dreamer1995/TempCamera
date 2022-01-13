@@ -1180,5 +1180,8 @@
     <FxCompile Include="ScatteringLUT.hlsl">
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
+    <FxCompile Include="SkyViewLUT.hlsl">
+      <Filter>Shader\Postprocess</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

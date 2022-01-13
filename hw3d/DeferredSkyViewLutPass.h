@@ -22,10 +22,10 @@ namespace Rgph
 		{
 			using namespace Bind;
 			//AddBindSink<Bind::CachingPixelConstantBufferEx>("volumeParams");
-			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, 256u, 64u, 0u, RenderTarget::Type::Default,
-				0b100001u, DXGI_FORMAT_R16G16B16A16_FLOAT);
+			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, 192u, 108u, 0u, RenderTarget::Type::Default,
+				0b100001u, DXGI_FORMAT_R11G11B10_FLOAT);
 			AddBindSink<CachingPixelConstantBufferEx>("skyConstants");
-			AddBind(PixelShader::Resolve(gfx, "TransmittanceLUT.cso"));
+			AddBind(PixelShader::Resolve(gfx, "SkyViewLUT.cso"));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 			AddBind(Blender::Resolve(gfx, false));
 			RegisterSource(DirectBindableSource<RenderTarget>::Make("scratchOut", renderTarget));
