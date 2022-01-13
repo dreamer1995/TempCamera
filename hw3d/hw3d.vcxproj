@@ -689,6 +689,7 @@
     <ClInclude Include="DeferredPointLightPass.h" />
     <ClInclude Include="DeferredRenderGraph.h" />
     <ClInclude Include="DeferredScatteringLutPass.h" />
+    <ClInclude Include="DeferredSkyViewLutPass.h" />
     <ClInclude Include="DeferredSunLightPass.h" />
     <ClInclude Include="DeferredTAAPass.h" />
     <ClInclude Include="DeferredVolumeBlurPass.h" />
