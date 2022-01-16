@@ -29,11 +29,11 @@ namespace Rgph
 			//AddBindSink<Bind::CachingPixelConstantBufferEx>("volumeParams");
 			width = 32u;
 			height = 32u;
-			unorderedAccessView = std::make_shared<ShaderInputUAV>(gfx, width, height, 1u, 0b100001u);
+			unorderedAccessView = std::make_shared<ShaderInputUAV>(gfx, 32u, 32u, 1u, 0b100001u);
 			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u, 0b100000u);
 			AddBind(pDShadowCBuf);
 			AddBindSink<Bindable>("dShadowMap");
-			AddBind(Texture::Resolve(gfx, "Images\\bluenoise.exr", 2u));
+			AddBind(Texture::Resolve(gfx, "Images\\bluenoise.exr", 10u));
 			AddBind(ComputeShader::Resolve(gfx, "ScatteringLUT.cso"));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u, 0b100000u));
 			AddBind(masterDepth);
@@ -41,10 +41,6 @@ namespace Rgph
 			AddBindSink<Bindable>("shadowControl");
 			AddBindSink<Bindable>("shadowSampler");
 			RegisterSource(DirectBindableSource<UnorderedAccessView>::Make("scratchOut", unorderedAccessView));
-		}
-		void BindMainCamera(const Camera& cam) noexcept
-		{
-			pMainCamera = &cam;
 		}
 		void BindShadowCamera(Graphics& gfx, const Camera& dCam) noexcept
 		{
@@ -54,8 +50,6 @@ namespace Rgph
 		// the container of bindables (mainly because vector growth buggers references)
 		void Execute(Graphics& gfx) const noxnd override
 		{
-			assert(pMainCamera);
-			pMainCamera->BindToGraphics(gfx);
 			masterDepth->BreakRule();
 			pDShadowCBuf->Update(gfx);
 			gfx.ClearRenderTarget();
@@ -68,7 +62,6 @@ namespace Rgph
 		}
 	private:
 		std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth;
-		const Camera* pMainCamera = nullptr;
 		std::shared_ptr<Bind::ShadowCameraCBuf> pDShadowCBuf;
 		UINT width;
 		UINT height;

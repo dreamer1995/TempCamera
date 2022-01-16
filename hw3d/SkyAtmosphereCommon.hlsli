@@ -1,7 +1,11 @@
 Texture2D TransmittanceLutTexture : register(t0);
+Texture2D MultiScatTexture : register(t1);
 
 #define PI 3.1415926535897932384626433832795f
 #define PLANET_RADIUS_OFFSET 0.01f
+#define USE_CornetteShanks
+
+#define MULTISCATAPPROX_ENABLED 1
 
 cbuffer SKYATMOSPHERE_BUFFER : register(b10)
 {
@@ -316,6 +320,25 @@ MediumSampleRGB sampleMediumRGB(in float3 WorldPos, in AtmosphereParameters Atmo
 	return s;
 }
 
+// We should precompute those terms from resolutions (Or set resolution as #defined constants)
+float fromUnitToSubUvs(float u, float resolution)
+{
+	return (u + 0.5f / resolution) * (resolution / (resolution + 1.0f));
+}
+float fromSubUvsToUnit(float u, float resolution)
+{
+	return (u - 0.5f / resolution) * (resolution / (resolution - 1.0f));
+}
+
+float3 GetMultipleScattering(AtmosphereParameters Atmosphere, float3 scattering, float3 extinction, float3 worlPos, float viewZenithCosAngle)
+{
+	float2 uv = saturate(float2(viewZenithCosAngle * 0.5f + 0.5f, (length(worlPos) - Atmosphere.BottomRadius) / (Atmosphere.TopRadius - Atmosphere.BottomRadius)));
+	uv = float2(fromUnitToSubUvs(uv.x, MultiScatteringLUTRes), fromUnitToSubUvs(uv.y, MultiScatteringLUTRes));
+
+	float3 multiScatteredLuminance = MultiScatTexture.SampleLevel(splr, uv, 0).rgb;
+	return multiScatteredLuminance;
+}
+
 SingleScatteringResult IntegrateScatteredLuminance(
 	in float2 pixPos, in float3 WorldPos, in float3 WorldDir, in float3 SunDir, in AtmosphereParameters Atmosphere,
 	in bool ground, in float SampleCountIni, in float DepthBufferValue, in bool VariableSampleCount,
@@ -356,10 +379,10 @@ SingleScatteringResult IntegrateScatteredLuminance(
 		ClipSpace.z = DepthBufferValue;
 		if (ClipSpace.z < 1.0f)
 		{
-			float4 DepthBufferWorldPos = mul(matrix_I_MVP, float4(ClipSpace, 1.0));
+			float4 DepthBufferWorldPos = mul(matrix_I_VP, float4(ClipSpace, 1.0f));
 			DepthBufferWorldPos /= DepthBufferWorldPos.w;
 
-			float tDepth = length(DepthBufferWorldPos.xyz - (WorldPos + float3(0.0, 0.0, -Atmosphere.BottomRadius))); // apply earth offset to go back to origin as top of earth mode. 
+			float tDepth = length(DepthBufferWorldPos.xyz - (WorldPos + float3(0.0f, -Atmosphere.BottomRadius, 0.0f))); // apply earth offset to go back to origin as top of earth mode. 
 			if (tDepth < tMax)
 			{
 				tMax = tDepth;
@@ -440,7 +463,7 @@ SingleScatteringResult IntegrateScatteredLuminance(
 		}
 		float3 P = WorldPos + t * WorldDir;
 
-#if DEBUGENABLED 
+#if DEBUGENABLED
 		if (debugEnabled)
 		{
 			float3 Pprev = WorldPos + tPrev * WorldDir;
@@ -554,12 +577,58 @@ SingleScatteringResult IntegrateScatteredLuminance(
 	return result;
 }
 
-// We should precompute those terms from resolutions (Or set resolution as #defined constants)
-float fromUnitToSubUvs(float u, float resolution)
+bool MoveToTopAtmosphere(inout float3 WorldPos, in float3 WorldDir, in float AtmosphereTopRadius)
 {
-	return (u + 0.5f / resolution) * (resolution / (resolution + 1.0f));
+	float viewHeight = length(WorldPos);
+	if (viewHeight > AtmosphereTopRadius)
+	{
+		float tTop = raySphereIntersectNearest(WorldPos, WorldDir, float3(0.0f, 0.0f, 0.0f), AtmosphereTopRadius);
+		if (tTop >= 0.0f)
+		{
+			float3 UpVector = WorldPos / viewHeight;
+			float3 UpOffset = UpVector * -PLANET_RADIUS_OFFSET;
+			WorldPos = WorldPos + WorldDir * tTop + UpOffset;
+		}
+		else
+		{
+			// Ray is not intersecting the atmosphere
+			return false;
+		}
+	}
+	return true; // ok to start tracing
 }
-float fromSubUvsToUnit(float u, float resolution)
+
+#define NONLINEARSKYVIEWLUT 1
+void UvToSkyViewLutParams(AtmosphereParameters Atmosphere, out float viewZenithCosAngle, out float lightViewCosAngle, in float viewHeight, in float2 uv)
 {
-	return (u - 0.5f / resolution) * (resolution / (resolution - 1.0f));
+	// Constrain uvs to valid sub texel range (avoid zenith derivative issue making LUT usage visible)
+	uv = float2(fromSubUvsToUnit(uv.x, 192.0f), fromSubUvsToUnit(uv.y, 108.0f));
+
+	float Vhorizon = sqrt(viewHeight * viewHeight - Atmosphere.BottomRadius * Atmosphere.BottomRadius);
+	float CosBeta = Vhorizon / viewHeight; // GroundToHorizonCos
+	float Beta = acos(CosBeta);
+	float ZenithHorizonAngle = PI - Beta;
+
+	if (uv.y < 0.5f)
+	{
+		float coord = 2.0 * uv.y;
+		coord = 1.0 - coord;
+#if NONLINEARSKYVIEWLUT
+		coord *= coord;
+#endif
+		coord = 1.0 - coord;
+		viewZenithCosAngle = cos(ZenithHorizonAngle * coord);
+	}
+	else
+	{
+		float coord = uv.y * 2.0 - 1.0;
+#if NONLINEARSKYVIEWLUT
+		coord *= coord;
+#endif
+		viewZenithCosAngle = cos(ZenithHorizonAngle + Beta * coord);
+	}
+
+	float coord = uv.x;
+	coord *= coord;
+	lightViewCosAngle = -(coord * 2.0 - 1.0);
 }

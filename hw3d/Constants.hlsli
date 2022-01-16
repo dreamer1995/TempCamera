@@ -13,6 +13,7 @@ cbuffer TransformCBuf : register(b0)//VS, PS
 	matrix matrix_W2M;
 	matrix matrix_I_V;
 	matrix matrix_I_P;
+	matrix matrix_I_VP;
 	matrix matrix_I_MVP;
 };
 

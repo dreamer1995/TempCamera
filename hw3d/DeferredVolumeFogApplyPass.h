@@ -27,6 +27,7 @@ namespace Rgph
 			using namespace Bind;
 			AddBindSink<ShaderInputRenderTarget>("transmittanceLutIn");
 			AddBindSink<UnorderedAccessView>("scatteringLutIn");
+			AddBindSink<ShaderInputRenderTarget>("skyViewLutIn");
 			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
 			AddBind(PixelShader::Resolve(gfx, "VolumeFogMerge.cso"));
 			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::OneMinus));
@@ -39,7 +40,7 @@ namespace Rgph
 		{
 			gfx.ClearShaderResources(0u);
 			BindAll(gfx);
-			gfx.DrawIndexed(6u);
+			FullscreenPass::Execute(gfx);
 		}
 	};
 }

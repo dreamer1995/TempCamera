@@ -23,12 +23,12 @@ void main(uint3 ThreadId : SV_DispatchThreadID)
 	AtmosphereParameters Atmosphere = GetAtmosphereParameters();
 
 	float cosSunZenithAngle = uv.x * 2.0f - 1.0f;
-	float3 sunDir = float3(0.0f, sqrt(saturate(1.0f - cosSunZenithAngle * cosSunZenithAngle)), cosSunZenithAngle);
+	float3 sunDir = float3(0.0f, cosSunZenithAngle, sqrt(saturate(1.0f - cosSunZenithAngle * cosSunZenithAngle)));
 	// We adjust again viewHeight according to PLANET_RADIUS_OFFSET to be in a valid range.
 	float viewHeight = Atmosphere.BottomRadius + saturate(uv.y + PLANET_RADIUS_OFFSET) * (Atmosphere.TopRadius - Atmosphere.BottomRadius - PLANET_RADIUS_OFFSET);
 
-	float3 WorldPos = float3(0.0f, 0.0f, viewHeight);
-	float3 WorldDir = float3(0.0f, 0.0f, 1.0f);
+	float3 WorldPos = float3(0.0f, viewHeight, 0.0f);
+	float3 WorldDir = float3(0.0f, 1.0f, 0.0f);
 
 
 	const bool ground = true;
@@ -56,8 +56,8 @@ void main(uint3 ThreadId : SV_DispatchThreadID)
 		float cosTheta = cos(theta);
 		float sinTheta = sin(theta);
 		WorldDir.x = cosTheta * sinPhi;
-		WorldDir.y = sinTheta * sinPhi;
-		WorldDir.z = cosPhi;
+		WorldDir.y = cosPhi;
+		WorldDir.z = sinTheta * sinPhi;
 		SingleScatteringResult result = IntegrateScatteredLuminance(pixPos, WorldPos, WorldDir, sunDir, Atmosphere,
 			ground, SampleCountIni, DepthBufferValue, VariableSampleCount, MieRayPhase);
 
