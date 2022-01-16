@@ -902,6 +902,9 @@
     <ClInclude Include="DeferredSkyViewLutPass.h">
       <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
     </ClInclude>
+    <ClInclude Include="DeferredSkyCameraVolumePass.h">
+      <Filter>Header Files\Jobber\Passlib\Deferred</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -1181,6 +1184,12 @@
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
     <FxCompile Include="SkyViewLUT.hlsl">
+      <Filter>Shader\Postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyCameraVolumeGS.hlsl">
+      <Filter>Shader\Postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyCameraVolumePS.hlsl">
       <Filter>Shader\Postprocess</Filter>
     </FxCompile>
   </ItemGroup>

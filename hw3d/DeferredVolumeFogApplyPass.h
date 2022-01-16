@@ -28,6 +28,7 @@ namespace Rgph
 			AddBindSink<ShaderInputRenderTarget>("transmittanceLutIn");
 			AddBindSink<UnorderedAccessView>("scatteringLutIn");
 			AddBindSink<ShaderInputRenderTarget>("skyViewLutIn");
+			AddBindSink<ShaderInputRenderTarget>("skyCameraVolumeIn");
 			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
 			AddBind(PixelShader::Resolve(gfx, "VolumeFogMerge.cso"));
 			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::OneMinus));

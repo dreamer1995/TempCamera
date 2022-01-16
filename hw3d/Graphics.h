@@ -67,6 +67,7 @@ public:
 	void EndFrame();
 	void BeginFrame( float red,float green,float blue ) noexcept;
 	void DrawIndexed( UINT count ) noxnd;
+	void DrawInstanced(UINT vertexCount, UINT instanceCount) noxnd;
 	void Dispatch(UINT x, UINT y, UINT group) noxnd;
 	void SetProjection( DirectX::FXMMATRIX proj ) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
@@ -85,6 +86,7 @@ public:
 	float GetFOV() const noexcept;
 	void ClearRenderTarget() noexcept;
 	void ClearUAV(UINT slot) noexcept;
+	void ClearShader() noexcept;
 private:
 	UINT width;
 	UINT height;

@@ -3,6 +3,8 @@ Texture2D transmittanceLUT : register(t0);
 Texture2D scatteringLUT : register(t1);
 SamplerState splr;
 
+#define MULTISCATAPPROX_ENABLED 1
+
 #include "Constants.hlsli"
 #include "SkyAtmosphereCommon.hlsli"
 
@@ -12,10 +14,11 @@ float4 main(float2 uv : Texcoord) : SV_Target
 	AtmosphereParameters Atmosphere = GetAtmosphereParameters();
 
 	float3 ClipSpace = float3(uv * float2(2.0f, -2.0f) - float2(1.0f, -1.0f), 1.0f);
-	float4 HPos = mul(matrix_I_VP, float4(ClipSpace, 1.0));
-
-	float3 WorldDir = normalize(HPos.xyz / HPos.w - cameraPos);
-	float3 WorldPos = cameraPos + float3(0, Atmosphere.BottomRadius, 0);
+	float4 HPos = mul(matrix_I_VP, float4(ClipSpace, 1.0f));
+	HPos.xyz = HPos.xzy;
+	
+	float3 WorldDir = normalize(HPos.xyz / HPos.w - cameraPos.xzy);
+	float3 WorldPos = cameraPos.xzy + float3(0, 0, Atmosphere.BottomRadius);
 
 	float viewHeight = length(WorldPos);
 
@@ -27,19 +30,19 @@ float4 main(float2 uv : Texcoord) : SV_Target
 	float3 SunDir;
 	{
 		float3 UpVector = WorldPos / viewHeight;
-		float sunZenithCosAngle = dot(UpVector, direction);
-		SunDir = normalize(float3(sqrt(1.0f - sunZenithCosAngle * sunZenithCosAngle), sunZenithCosAngle, 0.0f));
+		float sunZenithCosAngle = dot(UpVector, direction.xzy);
+		SunDir = normalize(float3(sqrt(1.0f - sunZenithCosAngle * sunZenithCosAngle), 0.0f, sunZenithCosAngle));
 	}
 
 
 
-	WorldPos = float3(0.0f, viewHeight, 0.0f);
+	WorldPos = float3(0.0f, 0.0f, viewHeight);
 
 	float viewZenithSinAngle = sqrt(1 - viewZenithCosAngle * viewZenithCosAngle);
 	WorldDir = float3(
 		viewZenithSinAngle * lightViewCosAngle,
-		viewZenithCosAngle,
-		viewZenithSinAngle * sqrt(1.0f - lightViewCosAngle * lightViewCosAngle));
+		viewZenithSinAngle * sqrt(1.0 - lightViewCosAngle * lightViewCosAngle),
+		viewZenithCosAngle);
 
 
 	// Move to top atmospehre
@@ -51,7 +54,7 @@ float4 main(float2 uv : Texcoord) : SV_Target
 
 	const bool ground = false;
 	const float SampleCountIni = 30;
-	const float DepthBufferValue = -1.0;
+	const float DepthBufferValue = -1.0f;
 	const bool VariableSampleCount = true;
 	const bool MieRayPhase = true;
 	SingleScatteringResult ss = IntegrateScatteredLuminance(pixPos, WorldPos, WorldDir, SunDir, Atmosphere, ground, SampleCountIni, DepthBufferValue, VariableSampleCount, MieRayPhase);

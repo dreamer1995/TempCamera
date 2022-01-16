@@ -168,9 +168,24 @@ void Graphics::ClearUAV(UINT slot) noexcept
 	pContext->CSSetUnorderedAccessViews(slot, 1, &pNullUAV, &initCounts);
 }
 
+void Graphics::ClearShader() noexcept
+{
+	pContext->VSSetShader(nullptr, nullptr, 0);
+	pContext->HSSetShader(nullptr, nullptr, 0);
+	pContext->DSSetShader(nullptr, nullptr, 0);
+	pContext->GSSetShader(nullptr, nullptr, 0);
+	pContext->PSSetShader(nullptr, nullptr, 0);
+	pContext->CSSetShader(nullptr, nullptr, 0);
+}
+
 void Graphics::DrawIndexed( UINT count ) noxnd
 {
 	GFX_THROW_INFO_ONLY( pContext->DrawIndexed( count,0u,0u ) );
+}
+
+void Graphics::DrawInstanced(UINT vertexCount, UINT instanceCount) noxnd
+{
+	GFX_THROW_INFO_ONLY(pContext->DrawInstanced(vertexCount, instanceCount, 0u, 0u));
 }
 
 void Graphics::Dispatch(UINT x, UINT y, UINT group) noxnd

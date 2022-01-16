@@ -1,7 +1,7 @@
 Texture2D depth : register(t8);
 SamplerState splr;
 
-RWTexture2D<float4> OutputTexture : register(u0);
+#define ILLUMINANCE_IS_ONE 1
 
 #include "Constants.hlsli"
 #include "Algorithms.hlsli"
@@ -10,6 +10,8 @@ RWTexture2D<float4> OutputTexture : register(u0);
 
 groupshared float3 MultiScatAs1SharedMem[64];
 groupshared float3 LSharedMem[64];
+
+RWTexture2D<float4> OutputTexture : register(u0);
 
 [numthreads(1, 1, 64)]
 void main(uint3 ThreadId : SV_DispatchThreadID)
@@ -23,12 +25,12 @@ void main(uint3 ThreadId : SV_DispatchThreadID)
 	AtmosphereParameters Atmosphere = GetAtmosphereParameters();
 
 	float cosSunZenithAngle = uv.x * 2.0f - 1.0f;
-	float3 sunDir = float3(0.0f, cosSunZenithAngle, sqrt(saturate(1.0f - cosSunZenithAngle * cosSunZenithAngle)));
+	float3 sunDir = float3(0.0f, sqrt(saturate(1.0f - cosSunZenithAngle * cosSunZenithAngle)), cosSunZenithAngle);
 	// We adjust again viewHeight according to PLANET_RADIUS_OFFSET to be in a valid range.
 	float viewHeight = Atmosphere.BottomRadius + saturate(uv.y + PLANET_RADIUS_OFFSET) * (Atmosphere.TopRadius - Atmosphere.BottomRadius - PLANET_RADIUS_OFFSET);
 
-	float3 WorldPos = float3(0.0f, viewHeight, 0.0f);
-	float3 WorldDir = float3(0.0f, 1.0f, 0.0f);
+	float3 WorldPos = float3(0.0f, 0.0f, viewHeight);
+	float3 WorldDir = float3(0.0f, 0.0f, 1.0f);
 
 
 	const bool ground = true;
@@ -56,8 +58,8 @@ void main(uint3 ThreadId : SV_DispatchThreadID)
 		float cosTheta = cos(theta);
 		float sinTheta = sin(theta);
 		WorldDir.x = cosTheta * sinPhi;
-		WorldDir.y = cosPhi;
-		WorldDir.z = sinTheta * sinPhi;
+		WorldDir.y = sinTheta * sinPhi;
+		WorldDir.z = cosPhi;
 		SingleScatteringResult result = IntegrateScatteredLuminance(pixPos, WorldPos, WorldDir, sunDir, Atmosphere,
 			ground, SampleCountIni, DepthBufferValue, VariableSampleCount, MieRayPhase);
 

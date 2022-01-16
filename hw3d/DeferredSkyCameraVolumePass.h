@@ -9,14 +9,15 @@ namespace Bind
 {
 	class PixelShader;
 	class RenderTarget;
+	class GeometryShader;
 }
 
 namespace Rgph
 {
-	class DeferredSkyViewLutPass : public FullscreenPass
+	class DeferredSkyCameraVolumePass : public FullscreenPass
 	{
 	public:
-		DeferredSkyViewLutPass(std::string name, Graphics& gfx, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
+		DeferredSkyCameraVolumePass(std::string name, Graphics& gfx, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
 			:
 			FullscreenPass(std::move(name), gfx),
 			masterDepth(masterDepth)
@@ -25,13 +26,14 @@ namespace Rgph
 			AddBindSink<RenderTarget>("transmittanceLutIn");
 			AddBindSink<UnorderedAccessView>("scatteringLutIn");
 			AddBindSink<CachingPixelConstantBufferEx>("skyConstants");
-			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, 192u, 108u, 2u, RenderTarget::Type::Default,
-				0b100001u, DXGI_FORMAT_R11G11B10_FLOAT);
+			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, 32, 32, 3u, RenderTarget::Type::Default,
+				0b100001u, DXGI_FORMAT_R16G16B16A16_FLOAT);
 			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u, 0b1u);
 			AddBind(pDShadowCBuf);
 			AddBindSink<Bindable>("dShadowMap");
 			AddBind(Texture::Resolve(gfx, "Images\\bluenoise.exr", 10u));
-			AddBind(PixelShader::Resolve(gfx, "SkyViewLUT.cso"));
+			AddBind(GeometryShader::Resolve(gfx, "SkyCameraVolumeGS.cso"));
+			AddBind(PixelShader::Resolve(gfx, "SkyCameraVolumePS.cso"));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
 			AddBind(Blender::Resolve(gfx, false));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u, 0b1u));
@@ -51,9 +53,11 @@ namespace Rgph
 			masterDepth->BreakRule();
 			pDShadowCBuf->Update(gfx);
 
-			FullscreenPass::Execute(gfx);
+			BindAll(gfx);
+			gfx.DrawInstanced(4u, 1u);
 
 			gfx.ClearShaderResources(8u);
+			gfx.ClearShader();
 		}
 
 	private:

@@ -5,8 +5,6 @@ Texture2D MultiScatTexture : register(t1);
 #define PLANET_RADIUS_OFFSET 0.01f
 #define USE_CornetteShanks
 
-#define MULTISCATAPPROX_ENABLED 1
-
 cbuffer SKYATMOSPHERE_BUFFER : register(b10)
 {
 	//
@@ -347,7 +345,7 @@ SingleScatteringResult IntegrateScatteredLuminance(
 	//const bool debugEnabled = all(uint2(pixPos.xx) == gMouseLastDownPos.xx) && uint(pixPos.y) % 10 == 0 && DepthBufferValue != -1.0f;
 	SingleScatteringResult result = (SingleScatteringResult) 0;
 
-	float3 ClipSpace = float3((pixPos * screenInfo.zw) * float2(2.0, -2.0) - float2(1.0, -1.0), 1.0);
+	float3 ClipSpace = float3((pixPos * screenInfo.zw) * float2(2.0f, -2.0f) - float2(1.0f, -1.0f), 1.0f);
 
 	// Compute next intersection with atmosphere or ground 
 	float3 earthO = float3(0.0f, 0.0f, 0.0f);
@@ -380,9 +378,10 @@ SingleScatteringResult IntegrateScatteredLuminance(
 		if (ClipSpace.z < 1.0f)
 		{
 			float4 DepthBufferWorldPos = mul(matrix_I_VP, float4(ClipSpace, 1.0f));
+			DepthBufferWorldPos.xyz = DepthBufferWorldPos.xzy;
 			DepthBufferWorldPos /= DepthBufferWorldPos.w;
 
-			float tDepth = length(DepthBufferWorldPos.xyz - (WorldPos + float3(0.0f, -Atmosphere.BottomRadius, 0.0f))); // apply earth offset to go back to origin as top of earth mode. 
+			float tDepth = length(DepthBufferWorldPos.xyz - (WorldPos + float3(0.0, 0.0, -Atmosphere.BottomRadius))); // apply earth offset to go back to origin as top of earth mode. 
 			if (tDepth < tMax)
 			{
 				tMax = tDepth;
@@ -463,7 +462,7 @@ SingleScatteringResult IntegrateScatteredLuminance(
 		}
 		float3 P = WorldPos + t * WorldDir;
 
-#if DEBUGENABLED
+#if DEBUGENABLED 
 		if (debugEnabled)
 		{
 			float3 Pprev = WorldPos + tPrev * WorldDir;
