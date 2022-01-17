@@ -10,147 +10,185 @@ namespace wrl = Microsoft::WRL;
 
 namespace Bind
 {
-	RenderTarget::RenderTarget(Graphics& gfx, UINT width, UINT height, Type type, DXGI_FORMAT format)
+	RenderTarget::RenderTarget(Graphics& gfx, UINT width, UINT height, Type type, DXGI_FORMAT format, UINT depth)
 		:
 		width( width ),
 		height( height ),
-		type(type)
+		type(type),
+		depth(depth)
 	{
 		INFOMAN( gfx );
-
-		// create texture resource
-		D3D11_TEXTURE2D_DESC textureDesc = {};
-		textureDesc.Width = width;
-		textureDesc.Height = height;
-		textureDesc.Format = format;
-		textureDesc.SampleDesc.Count = 1;
-		textureDesc.SampleDesc.Quality = 0;
-		textureDesc.Usage = D3D11_USAGE_DEFAULT;
-		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE; // never do we not want to bind offscreen RTs as inputs
-		textureDesc.CPUAccessFlags = 0;
-
 		switch (type)
 		{
-		case Type::PreCalSimpleCube:
-		{
-			textureDesc.ArraySize = 6;
-			textureDesc.MipLevels = 1;
-			textureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-			break;
-		}
-		case Type::PreCalMipCube:
-		{
-			textureDesc.ArraySize = 6;
-			textureDesc.MipLevels = 5;
-			textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS | D3D11_RESOURCE_MISC_TEXTURECUBE;
-			break;
-		}
-		case Type::GBuffer:
-		{
-			textureDesc.ArraySize = 1;
-			textureDesc.MipLevels = 1;
-			textureDesc.MiscFlags = 0;
-			break;
-		}
-		case Type::UVABuffer:
-		{
-
-			break;
-		}
-		case Type::PreBRDFPlane:
-		{
-			textureDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
-		}
-		default:
-		{
-			textureDesc.ArraySize = 1;
-			textureDesc.MipLevels = 1;
-			textureDesc.MiscFlags = 0;
-		}
-		}
-
-		wrl::ComPtr<ID3D11Texture2D> pTexture;
-		wrl::ComPtr<ID3D11Texture2D> pTextures[8];
-		switch (type)
-		{
-		case Type::GBuffer:
-		{
-			for (unsigned char i = 0; i < 8; ++i)
+			case Type::RenderTarget3D:
 			{
-				if (i == 0)
-					textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-				else if (i == 2)
-					textureDesc.Format = DXGI_FORMAT_R10G10B10A2_UNORM;
-				//else if (i == 4)
-				//	textureDesc.Format = DXGI_FORMAT_R32_FLOAT;
-				else
-					textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-				GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
-					&textureDesc, nullptr, &pTextures[i]
+				// create texture resource
+				D3D11_TEXTURE3D_DESC textureDesc = {};
+				textureDesc.Width = width;
+				textureDesc.Height = height;
+				textureDesc.Depth = depth;
+				textureDesc.Format = format;
+				textureDesc.MipLevels = 1;
+				textureDesc.Usage = D3D11_USAGE_DEFAULT;
+				textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS; // never do we not want to bind offscreen RTs as inputs
+				textureDesc.CPUAccessFlags = 0;
+				textureDesc.MiscFlags = 0;
+
+				wrl::ComPtr<ID3D11Texture3D> pTexture;
+
+				GFX_THROW_INFO(GetDevice(gfx)->CreateTexture3D(
+					&textureDesc, nullptr, &pTexture
 				));
-			}
-			break;
-		}
-		default:
-		{
-			GFX_THROW_INFO( GetDevice( gfx )->CreateTexture2D(
-			&textureDesc,nullptr,&pTexture
-			) );
-		}
-		}
 
-		// create the target view on the texture
-		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-		rtvDesc.Format = textureDesc.Format;
-		rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
+				// create the target view on the texture
+				D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+				rtvDesc.Format = textureDesc.Format;
+				rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE3D;
+				rtvDesc.Texture3D.MipSlice = 0;
+				rtvDesc.Texture3D.FirstWSlice = 0;
+				rtvDesc.Texture3D.WSize = depth;
 
-		switch (type)
-		{
-		case Type::PreCalMipCube:
-			rtvDesc.Texture2DArray.MipSlice = 0;
-		case Type::PreCalSimpleCube:
-		{
-			rtvDesc.Texture2DArray.ArraySize = 1;
-			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-			for (unsigned char i = 0; i < 6; ++i)
-			{
-				// Create a render target view to the ith element.
-				rtvDesc.Texture2DArray.FirstArraySlice = i;
 				GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
-					pTexture.Get(), &rtvDesc, &pTargetCubeView[i]));
+					pTexture.Get(), &rtvDesc, &pTargetView));
+				break;
 			}
-			break;
-		}
-		case Type::GBuffer:
-		{
-			rtvDesc.Texture2DArray.MipSlice = 0;
-			rtvDesc.Texture2DArray.ArraySize = 1;
-			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-			for (unsigned char i = 0; i < 8; ++i)
+			default:
 			{
-				if (i == 0)
-					rtvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-				else if (i == 2)
-					rtvDesc.Format = DXGI_FORMAT_R10G10B10A2_UNORM;
-				//else if (i == 4)
-				//	rtvDesc.Format = DXGI_FORMAT_R32_FLOAT;
-				else
-					rtvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-				// Create a render target view to the ith element.
-				GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
-					pTextures[i].Get(), &rtvDesc, &pTargetGBufferView[i]));
+				// create texture resource
+				D3D11_TEXTURE2D_DESC textureDesc = {};
+				textureDesc.Width = width;
+				textureDesc.Height = height;
+				textureDesc.Format = format;
+				textureDesc.SampleDesc.Count = 1;
+				textureDesc.SampleDesc.Quality = 0;
+				textureDesc.Usage = D3D11_USAGE_DEFAULT;
+				textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE; // never do we not want to bind offscreen RTs as inputs
+				textureDesc.CPUAccessFlags = 0;
+
+				switch (type)
+				{
+				case Type::PreCalSimpleCube:
+				{
+					textureDesc.ArraySize = 6;
+					textureDesc.MipLevels = 1;
+					textureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+					break;
+				}
+				case Type::PreCalMipCube:
+				{
+					textureDesc.ArraySize = 6;
+					textureDesc.MipLevels = 5;
+					textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS | D3D11_RESOURCE_MISC_TEXTURECUBE;
+					break;
+				}
+				case Type::GBuffer:
+				{
+					textureDesc.ArraySize = 1;
+					textureDesc.MipLevels = 1;
+					textureDesc.MiscFlags = 0;
+					break;
+				}
+				case Type::UVABuffer:
+				{
+
+					break;
+				}
+				case Type::PreBRDFPlane:
+				{
+					textureDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
+				}
+				default:
+				{
+					textureDesc.ArraySize = 1;
+					textureDesc.MipLevels = 1;
+					textureDesc.MiscFlags = 0;
+				}
+				}
+
+				wrl::ComPtr<ID3D11Texture2D> pTexture;
+				wrl::ComPtr<ID3D11Texture2D> pTextures[8];
+				switch (type)
+				{
+				case Type::GBuffer:
+				{
+					for (unsigned char i = 0; i < 8; ++i)
+					{
+						if (i == 0)
+							textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+						else if (i == 2)
+							textureDesc.Format = DXGI_FORMAT_R10G10B10A2_UNORM;
+						//else if (i == 4)
+						//	textureDesc.Format = DXGI_FORMAT_R32_FLOAT;
+						else
+							textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+						GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+							&textureDesc, nullptr, &pTextures[i]
+						));
+					}
+					break;
+				}
+				default:
+				{
+					GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+						&textureDesc, nullptr, &pTexture
+					));
+				}
+				}
+
+				// create the target view on the texture
+				D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+				rtvDesc.Format = textureDesc.Format;
+				rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
+
+				switch (type)
+				{
+				case Type::PreCalMipCube:
+					rtvDesc.Texture2DArray.MipSlice = 0;
+				case Type::PreCalSimpleCube:
+				{
+					rtvDesc.Texture2DArray.ArraySize = 1;
+					rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+					for (unsigned char i = 0; i < 6; ++i)
+					{
+						// Create a render target view to the ith element.
+						rtvDesc.Texture2DArray.FirstArraySlice = i;
+						GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
+							pTexture.Get(), &rtvDesc, &pTargetCubeView[i]));
+					}
+					break;
+				}
+				case Type::GBuffer:
+				{
+					rtvDesc.Texture2DArray.MipSlice = 0;
+					rtvDesc.Texture2DArray.ArraySize = 1;
+					rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+					for (unsigned char i = 0; i < 8; ++i)
+					{
+						if (i == 0)
+							rtvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+						else if (i == 2)
+							rtvDesc.Format = DXGI_FORMAT_R10G10B10A2_UNORM;
+						//else if (i == 4)
+						//	rtvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+						else
+							rtvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+						// Create a render target view to the ith element.
+						GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
+							pTextures[i].Get(), &rtvDesc, &pTargetGBufferView[i]));
+					}
+					break;
+				}
+				case Type::PreBRDFPlane:
+				default:
+				{
+					rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+					GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
+						pTexture.Get(), &rtvDesc, &pTargetView
+					));
+				}
+				}
 			}
-			break;
-		}
-		case Type::PreBRDFPlane:
-		default:
-		{
-			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-			GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
-				pTexture.Get(), &rtvDesc, &pTargetView
-			));
-		}
-		}
+		}	
 	}
 
 	RenderTarget::RenderTarget( Graphics& gfx,ID3D11Texture2D* pTexture, std::optional<UINT> face)
@@ -442,9 +480,9 @@ namespace Bind
 		}
 	}
 
-	ShaderInputRenderTarget::ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type, UINT shaderIndex, DXGI_FORMAT format)
+	ShaderInputRenderTarget::ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type, UINT shaderIndex, DXGI_FORMAT format, UINT depth)
 		:
-		RenderTarget(gfx, width, height, type, format),
+		RenderTarget(gfx, width, height, type, format, depth),
 		slot( slot ),
 		shaderIndex(shaderIndex) 
 	{
@@ -453,7 +491,6 @@ namespace Bind
 		// create the resource view on the texture
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = format;
-		srvDesc.Texture2D.MostDetailedMip = 0;
 
 		switch (type)
 		{
@@ -462,6 +499,9 @@ namespace Bind
 			break;
 		case Type::PreCalMipCube:
 			srvDesc.TextureCube.MipLevels = 5;
+			break;
+		case Type::RenderTarget3D:
+			srvDesc.Texture3D.MipLevels = UINT32_MAX;
 			break;
 		case Type::GBuffer:
 		default:
@@ -489,6 +529,12 @@ namespace Bind
 			}
 			break;
 		}
+		case Type::RenderTarget3D:
+		{
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D;
+			pTargetView->GetResource(&pRes);
+			break;
+		}		
 		case Type::PreBRDFPlane:
 			srvDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
 		default:

@@ -19,15 +19,15 @@ namespace Rgph
 	public:
 		DeferredSkyCameraVolumePass(std::string name, Graphics& gfx, std::shared_ptr<Bind::OutputOnlyDepthStencil> masterDepth)
 			:
-			FullscreenPass(std::move(name), gfx),
+			FullscreenPass(std::move(name), gfx, D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP),
 			masterDepth(masterDepth)
 		{
 			using namespace Bind;
 			AddBindSink<RenderTarget>("transmittanceLutIn");
 			AddBindSink<UnorderedAccessView>("scatteringLutIn");
 			AddBindSink<CachingPixelConstantBufferEx>("skyConstants");
-			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, 32, 32, 3u, RenderTarget::Type::Default,
-				0b100001u, DXGI_FORMAT_R16G16B16A16_FLOAT);
+			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, 32, 32, 3u, RenderTarget::Type::RenderTarget3D,
+				0b100001u, DXGI_FORMAT_R16G16B16A16_FLOAT, 32u);
 			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u, 0b1u);
 			AddBind(pDShadowCBuf);
 			AddBindSink<Bindable>("dShadowMap");
@@ -54,7 +54,7 @@ namespace Rgph
 			pDShadowCBuf->Update(gfx);
 
 			BindAll(gfx);
-			gfx.DrawInstanced(4u, 1u);
+			gfx.DrawInstanced(4u, 32u);
 
 			gfx.ClearShaderResources(8u);
 			gfx.ClearShader();

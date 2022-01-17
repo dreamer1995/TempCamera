@@ -14,7 +14,7 @@ float4 main(float2 uv : Texcoord) : SV_Target
 	AtmosphereParameters Atmosphere = GetAtmosphereParameters();
 
 	float3 ClipSpace = float3(uv * float2(2.0f, -2.0f) - float2(1.0f, -1.0f), 1.0f);
-	float4 HPos = mul(matrix_I_VP, float4(ClipSpace, 1.0f));
+	float4 HPos = mul(float4(ClipSpace, 1.0f), matrix_I_VP);
 	HPos.xyz = HPos.xzy;
 	
 	float3 WorldDir = normalize(HPos.xyz / HPos.w - cameraPos.xzy);

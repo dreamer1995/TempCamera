@@ -20,7 +20,8 @@ namespace Bind
 			PreCalMipCube,
 			PreBRDFPlane,
 			GBuffer,
-			UVABuffer
+			UVABuffer,
+			RenderTarget3D
 		};
 	public:
 		void BindAsBuffer( Graphics& gfx ) noxnd override;
@@ -38,13 +39,14 @@ namespace Bind
 		void BindAsBuffer( Graphics& gfx,ID3D11DepthStencilView* pDepthStencilView ) noxnd;
 	protected:
 		RenderTarget( Graphics& gfx,ID3D11Texture2D* pTexture,std::optional<UINT> face );
-		RenderTarget(Graphics& gfx, UINT width, UINT height, Type type = Type::Default, DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM);
+		RenderTarget(Graphics& gfx, UINT width, UINT height, Type type = Type::Default, DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM, UINT depth = 0);
 		UINT width;
 		UINT height;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetView;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetCubeView[6];
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetGBufferView[8];
 		Type type;
+		UINT depth;
 	public:
 		UINT targetIndex = 0;
 		float _width = 256.0f;
@@ -54,7 +56,7 @@ namespace Bind
 	class ShaderInputRenderTarget : public RenderTarget
 	{
 	public:
-		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type = Type::Default, UINT shaderIndex = 0b1u, DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM);
+		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot, Type type = Type::Default, UINT shaderIndex = 0b1u, DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM, UINT depth = 0);
 		void Bind( Graphics& gfx ) noxnd override;
 		Surface ToSurface( Graphics& gfx ) const;
 		void ToCube(Graphics& gfx, const std::string& path) const;

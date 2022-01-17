@@ -377,7 +377,7 @@ SingleScatteringResult IntegrateScatteredLuminance(
 		ClipSpace.z = DepthBufferValue;
 		if (ClipSpace.z < 1.0f)
 		{
-			float4 DepthBufferWorldPos = mul(matrix_I_VP, float4(ClipSpace, 1.0f));
+			float4 DepthBufferWorldPos = mul(float4(ClipSpace, 1.0f), matrix_I_VP);
 			DepthBufferWorldPos.xyz = DepthBufferWorldPos.xzy;
 			DepthBufferWorldPos /= DepthBufferWorldPos.w;
 
@@ -630,4 +630,16 @@ void UvToSkyViewLutParams(AtmosphereParameters Atmosphere, out float viewZenithC
 	float coord = uv.x;
 	coord *= coord;
 	lightViewCosAngle = -(coord * 2.0 - 1.0);
+}
+
+#define AP_SLICE_COUNT 32.0f
+#define AP_KM_PER_SLICE 4.0f
+
+float AerialPerspectiveDepthToSlice(float depth)
+{
+	return depth * (1.0f / AP_KM_PER_SLICE);
+}
+float AerialPerspectiveSliceToDepth(float slice)
+{
+	return slice * AP_KM_PER_SLICE;
 }
