@@ -24,6 +24,8 @@ namespace Rgph
 			using namespace Bind;
 			AddBindSink<RenderTarget>("transmittanceLutIn");
 			AddBindSink<UnorderedAccessView>("scatteringLutIn");
+			AddBindSink<ShaderInputRenderTarget>("skyViewLutIn");
+			AddBindSink<ShaderInputRenderTarget>("skyCameraVolumeIn");
 			AddBindSink<CachingPixelConstantBufferEx>("skyConstants");
 			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 4u, RenderTarget::Type::Default,
 				0b100001u, DXGI_FORMAT_R32G32B32A32_FLOAT);
@@ -33,7 +35,7 @@ namespace Rgph
 			AddBind(Texture::Resolve(gfx, "Images\\bluenoise.exr", 10u));
 			AddBind(PixelShader::Resolve(gfx, "Sky.cso"));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
-			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::Additive));
+			AddBind(Blender::Resolve(gfx, false, Blender::BlendMode::Additive));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u, 0b1u));
 			AddBind(masterDepth);
 			AddBindSink<Bindable>("shadowControl");

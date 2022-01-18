@@ -200,8 +200,8 @@ void LutTransmittanceParamsToUv(AtmosphereParameters Atmosphere, in float viewHe
 	float H = sqrt(max(0.0f, Atmosphere.TopRadius * Atmosphere.TopRadius - Atmosphere.BottomRadius * Atmosphere.BottomRadius));
 	float rho = sqrt(max(0.0f, viewHeight * viewHeight - Atmosphere.BottomRadius * Atmosphere.BottomRadius));
 
-	float discriminant = viewHeight * viewHeight * (viewZenithCosAngle * viewZenithCosAngle - 1.0) + Atmosphere.TopRadius * Atmosphere.TopRadius;
-	float d = max(0.0, (-viewHeight * viewZenithCosAngle + sqrt(discriminant))); // Distance to atmosphere boundary
+	float discriminant = viewHeight * viewHeight * (viewZenithCosAngle * viewZenithCosAngle - 1.0f) + Atmosphere.TopRadius * Atmosphere.TopRadius;
+	float d = max(0.0f, (-viewHeight * viewZenithCosAngle + sqrt(discriminant))); // Distance to atmosphere boundary
 
 	float d_min = Atmosphere.TopRadius - viewHeight;
 	float d_max = rho + H;
@@ -222,34 +222,34 @@ float raySphereIntersectNearest(float3 r0, float3 rd, float3 s0, float sR)
 {
 	float a = dot(rd, rd);
 	float3 s0_r0 = r0 - s0;
-	float b = 2.0 * dot(rd, s0_r0);
+	float b = 2.0f * dot(rd, s0_r0);
 	float c = dot(s0_r0, s0_r0) - (sR * sR);
-	float delta = b * b - 4.0 * a * c;
-	if (delta < 0.0 || a == 0.0)
+	float delta = b * b - 4.0f * a * c;
+	if (delta < 0.0f || a == 0.0f)
 	{
-		return -1.0;
+		return -1.0f;
 	}
-	float sol0 = (-b - sqrt(delta)) / (2.0 * a);
-	float sol1 = (-b + sqrt(delta)) / (2.0 * a);
-	if (sol0 < 0.0 && sol1 < 0.0)
+	float sol0 = (-b - sqrt(delta)) / (2.0f * a);
+	float sol1 = (-b + sqrt(delta)) / (2.0f * a);
+	if (sol0 < 0.0f && sol1 < 0.0f)
 	{
-		return -1.0;
+		return -1.0f;
 	}
-	if (sol0 < 0.0)
+	if (sol0 < 0.0f)
 	{
-		return max(0.0, sol1);
+		return max(0.0f, sol1);
 	}
-	else if (sol1 < 0.0)
+	else if (sol1 < 0.0f)
 	{
-		return max(0.0, sol0);
+		return max(0.0f, sol0);
 	}
-	return max(0.0, min(sol0, sol1));
+	return max(0.0f, min(sol0, sol1));
 }
 
 float CornetteShanksMiePhaseFunction(float g, float cosTheta)
 {
-	float k = 3.0 / (8.0 * PI) * (1.0 - g * g) / (2.0 + g * g);
-	return k * (1.0 + cosTheta * cosTheta) / pow(1.0 + g * g - 2.0 * g * -cosTheta, 1.5);
+	float k = 3.0f / (8.0f * PI) * (1.0f - g * g) / (2.0f + g * g);
+	return k * (1.0f + cosTheta * cosTheta) / pow(1.0f + g * g - 2.0f * g * -cosTheta, 1.5f);
 }
 
 float hgPhase(float g, float cosTheta)
@@ -279,11 +279,11 @@ float RayleighPhase(float cosTheta)
 
 float getAlbedo(float scattering, float extinction)
 {
-	return scattering / max(0.001, extinction);
+	return scattering / max(0.001f, extinction);
 }
 float3 getAlbedo(float3 scattering, float3 extinction)
 {
-	return scattering / max(0.001, extinction);
+	return scattering / max(0.001f, extinction);
 }
 
 MediumSampleRGB sampleMediumRGB(in float3 WorldPos, in AtmosphereParameters Atmosphere)
@@ -306,7 +306,7 @@ MediumSampleRGB sampleMediumRGB(in float3 WorldPos, in AtmosphereParameters Atmo
 	s.absorptionRay = 0.0f;
 	s.extinctionRay = s.scatteringRay + s.absorptionRay;
 
-	s.scatteringOzo = 0.0;
+	s.scatteringOzo = 0.0f;
 	s.absorptionOzo = densityOzo * Atmosphere.AbsorptionExtinction;
 	s.extinctionOzo = s.scatteringOzo + s.absorptionOzo;
 
@@ -335,6 +335,20 @@ float3 GetMultipleScattering(AtmosphereParameters Atmosphere, float3 scattering,
 
 	float3 multiScatteredLuminance = MultiScatTexture.SampleLevel(splr, uv, 0).rgb;
 	return multiScatteredLuminance;
+}
+
+float getShadow(in AtmosphereParameters Atmosphere, float3 P)
+{
+	// First evaluate opaque shadow
+	float4 shadowUv = mul(float4(P + float3(0.0, 0.0, -Atmosphere.BottomRadius), 1.0).xzyw, shadowMatrix_VP);
+	//shadowUv /= shadowUv.w;	// not be needed as it is an ortho projection
+	shadowUv.x = shadowUv.x * 0.5 + 0.5;
+	shadowUv.y = -shadowUv.y * 0.5 + 0.5;
+	if (all(shadowUv.xyz >= 0.0) && all(shadowUv.xyz < 1.0))
+	{
+		return smap.SampleCmpLevelZero(ssamHw, shadowUv.xy, shadowUv.z);
+	}
+	return 1.0f;
 }
 
 SingleScatteringResult IntegrateScatteredLuminance(
@@ -381,7 +395,7 @@ SingleScatteringResult IntegrateScatteredLuminance(
 			DepthBufferWorldPos.xyz = DepthBufferWorldPos.xzy;
 			DepthBufferWorldPos /= DepthBufferWorldPos.w;
 
-			float tDepth = length(DepthBufferWorldPos.xyz - (WorldPos + float3(0.0, 0.0, -Atmosphere.BottomRadius))); // apply earth offset to go back to origin as top of earth mode. 
+			float tDepth = length(DepthBufferWorldPos.xyz - (WorldPos + float3(0.0f, 0.0f, -Atmosphere.BottomRadius))); // apply earth offset to go back to origin as top of earth mode. 
 			if (tDepth < tMax)
 			{
 				tMax = tDepth;
@@ -398,14 +412,14 @@ SingleScatteringResult IntegrateScatteredLuminance(
 	float tMaxFloor = tMax;
 	if (VariableSampleCount)
 	{
-		SampleCount = lerp(RayMarchMinMaxSPP.x, RayMarchMinMaxSPP.y, saturate(tMax * 0.01));
+		SampleCount = lerp(RayMarchMinMaxSPP.x, RayMarchMinMaxSPP.y, saturate(tMax * 0.01f));
 		SampleCountFloor = floor(SampleCount);
 		tMaxFloor = tMax * SampleCountFloor / SampleCount; // rescale tMax to map to the last entire step segment.
 	}
 	float dt = tMax / SampleCount;
 
 	// Phase functions
-	const float uniformPhase = 1.0 / (4.0 * PI);
+	const float uniformPhase = 1.0f / (4.0f * PI);
 	const float3 wi = SunDir;
 	const float3 wo = WorldDir;
 	float cosTheta = dot(wi, wo);
@@ -422,10 +436,10 @@ SingleScatteringResult IntegrateScatteredLuminance(
 
 	// Ray march the atmosphere to integrate optical depth
 	float3 L = 0.0f;
-	float3 throughput = 1.0;
-	float3 OpticalDepth = 0.0;
+	float3 throughput = 1.0f;
+	float3 OpticalDepth = 0.0f;
 	float t = 0.0f;
-	float tPrev = 0.0;
+	float tPrev = 0.0f;
 	const float SampleSegmentT = 0.3f;
 	for (float s = 0.0f; s < SampleCount; s += 1.0f)
 	{
@@ -439,7 +453,7 @@ SingleScatteringResult IntegrateScatteredLuminance(
 			t1 = t1 * t1;
 			// Make t0 and t1 world space distances.
 			t0 = tMaxFloor * t0;
-			if (t1 > 1.0)
+			if (t1 > 1.0f)
 			{
 				t1 = tMax;
 				//	t1 = tMaxFloor;	// this reveal depth slices
@@ -554,7 +568,7 @@ SingleScatteringResult IntegrateScatteredLuminance(
 		tPrev = t;
 	}
 
-	if (ground && tMax == tBottom && tBottom > 0.0)
+	if (ground && tMax == tBottom && tBottom > 0.0f)
 	{
 		// Account for bounced light off the earth
 		float3 P = WorldPos + tBottom * WorldDir;
@@ -610,17 +624,17 @@ void UvToSkyViewLutParams(AtmosphereParameters Atmosphere, out float viewZenithC
 
 	if (uv.y < 0.5f)
 	{
-		float coord = 2.0 * uv.y;
-		coord = 1.0 - coord;
+		float coord = 2.0f * uv.y;
+		coord = 1.0f - coord;
 #if NONLINEARSKYVIEWLUT
 		coord *= coord;
 #endif
-		coord = 1.0 - coord;
+		coord = 1.0f - coord;
 		viewZenithCosAngle = cos(ZenithHorizonAngle * coord);
 	}
 	else
 	{
-		float coord = uv.y * 2.0 - 1.0;
+		float coord = uv.y * 2.0f - 1.0f;
 #if NONLINEARSKYVIEWLUT
 		coord *= coord;
 #endif
@@ -629,7 +643,7 @@ void UvToSkyViewLutParams(AtmosphereParameters Atmosphere, out float viewZenithC
 
 	float coord = uv.x;
 	coord *= coord;
-	lightViewCosAngle = -(coord * 2.0 - 1.0);
+	lightViewCosAngle = -(coord * 2.0f - 1.0f);
 }
 
 #define AP_SLICE_COUNT 32.0f
@@ -642,4 +656,57 @@ float AerialPerspectiveDepthToSlice(float depth)
 float AerialPerspectiveSliceToDepth(float slice)
 {
 	return slice * AP_KM_PER_SLICE;
+}
+
+void SkyViewLutParamsToUv(AtmosphereParameters Atmosphere, in bool IntersectGround, in float viewZenithCosAngle, in float lightViewCosAngle, in float viewHeight, out float2 uv)
+{
+	float Vhorizon = sqrt(viewHeight * viewHeight - Atmosphere.BottomRadius * Atmosphere.BottomRadius);
+	float CosBeta = Vhorizon / viewHeight; // GroundToHorizonCos
+	float Beta = acos(CosBeta);
+	float ZenithHorizonAngle = PI - Beta;
+
+	if (!IntersectGround)
+	{
+		float coord = acos(viewZenithCosAngle) / ZenithHorizonAngle;
+		coord = 1.0f - coord;
+#if NONLINEARSKYVIEWLUT
+		coord = sqrt(coord);
+#endif
+		coord = 1.0f - coord;
+		uv.y = coord * 0.5f;
+	}
+	else
+	{
+		float coord = (acos(viewZenithCosAngle) - ZenithHorizonAngle) / Beta;
+#if NONLINEARSKYVIEWLUT
+		coord = sqrt(coord);
+#endif
+		uv.y = coord * 0.5f + 0.5f;
+	}
+
+	{
+		float coord = -lightViewCosAngle * 0.5f + 0.5f;
+		coord = sqrt(coord);
+		uv.x = coord;
+	}
+
+	// Constrain uvs to valid sub texel range (avoid zenith derivative issue making LUT usage visible)
+	uv = float2(fromUnitToSubUvs(uv.x, 192.0f), fromUnitToSubUvs(uv.y, 108.0f));
+}
+
+float3 GetSunLuminance(float3 WorldPos, float3 WorldDir, float PlanetRadius, float3 sunDir)
+{
+#if RENDER_SUN_DISK
+	if (dot(WorldDir, sunDir) > cos(0.5f * 0.505f * 3.14159f / 180.0f))
+	{
+		float t = raySphereIntersectNearest(WorldPos, WorldDir, float3(0.0f, 0.0f, 0.0f), PlanetRadius);
+		if (t < 0.0f) // no intersection
+		{
+			const float3 SunLuminance = 10.0f; // arbitrary. But fine, not use when comparing the models
+			//return SunLuminance * (1.0f - gScreenshotCaptureActive);
+			return SunLuminance;
+		}
+	}
+#endif
+	return 0;
 }

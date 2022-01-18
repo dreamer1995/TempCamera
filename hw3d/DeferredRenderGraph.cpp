@@ -191,6 +191,8 @@ namespace Rgph
 			auto pass = std::make_unique<DeferredSkyRenderPass>("sky", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
 			pass->SetSinkLinkage("transmittanceLutIn", "transmittanceLut.scratchOut");
 			pass->SetSinkLinkage("scatteringLutIn", "scatteringLut.scratchOut");
+			pass->SetSinkLinkage("skyViewLutIn", "skyViewLut.scratchOut");
+			pass->SetSinkLinkage("skyCameraVolumeIn", "skyCameraVolume.scratchOut");
 			pass->SetSinkLinkage("skyConstants", "$.atmosphereSkyParamsPS");
 			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
