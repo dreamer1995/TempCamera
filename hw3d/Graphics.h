@@ -106,6 +106,6 @@ public:
 	bool isTAA;
 	bool isHBAO;
 	bool isHDR;
-	bool isVolumetricRendering;
+	//bool isVolumetricRendering;
 	bool isSkyRendering;
 };

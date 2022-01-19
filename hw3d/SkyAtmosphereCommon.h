@@ -158,7 +158,7 @@ public:
 	float multipleScatteringFactorPrev = 0;
 
 	bool forceGenLut = false;
-	int uiViewRayMarchMinSPP = 4;
+	int uiViewRayMarchMinSPP = 100;
 	int uiViewRayMarchMaxSPP = 14;
 
 	float currentMultipleScatteringFactor = 1.0f;

@@ -37,7 +37,7 @@ private:
 		BOOL HBAO;
 		BOOL HDR;
 		float GIScale;
-		BOOL volumetricRendering;
+		//BOOL volumetricRendering;
 		BOOL skyRendering;
 	};
 	double time;
@@ -89,6 +89,6 @@ private:
 	bool HBAO = true;
 	bool HDR = true;
 	float GIScale = 0.353f;
-	bool volumetricRendering = true;
+	//bool volumetricRendering = true;
 	bool skyRendering = true;
 };

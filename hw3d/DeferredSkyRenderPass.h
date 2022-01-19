@@ -27,20 +27,21 @@ namespace Rgph
 			AddBindSink<ShaderInputRenderTarget>("skyViewLutIn");
 			AddBindSink<ShaderInputRenderTarget>("skyCameraVolumeIn");
 			AddBindSink<CachingPixelConstantBufferEx>("skyConstants");
-			renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 4u, RenderTarget::Type::Default,
-				0b100001u, DXGI_FORMAT_R32G32B32A32_FLOAT);
+			//renderTarget = std::make_shared<ShaderInputRenderTarget>(gfx, fullWidth, fullHeight, 4u, RenderTarget::Type::Default,
+			//	0b100001u, DXGI_FORMAT_R32G32B32A32_FLOAT);
+			RegisterSink(DirectBindableSink<RenderTarget>::Make("renderTarget", renderTarget));
 			pDShadowCBuf = std::make_shared<Bind::ShadowCameraCBuf>(gfx, 5u, 0b1u);
 			AddBind(pDShadowCBuf);
 			AddBindSink<Bindable>("dShadowMap");
 			AddBind(Texture::Resolve(gfx, "Images\\bluenoise.exr", 10u));
 			AddBind(PixelShader::Resolve(gfx, "Sky.cso"));
 			AddBind(Stencil::Resolve(gfx, Stencil::Mode::DepthOff));
-			AddBind(Blender::Resolve(gfx, false, Blender::BlendMode::Additive));
+			AddBind(Blender::Resolve(gfx, true, Blender::BlendMode::Additive));
 			AddBind(Sampler::Resolve(gfx, Sampler::Filter::Bilinear, Sampler::Address::Clamp, 0u, 0b1u));
 			AddBind(masterDepth);
 			AddBindSink<Bindable>("shadowControl");
 			AddBindSink<Bindable>("shadowSampler");
-			RegisterSource(DirectBindableSource<RenderTarget>::Make("scratchOut", renderTarget));
+			RegisterSource(DirectBindableSource<RenderTarget>::Make("renderTarget", renderTarget));
 		}
 		void BindShadowCamera(Graphics& gfx, const Camera& dCam) noexcept
 		{
@@ -53,6 +54,7 @@ namespace Rgph
 			masterDepth->BreakRule();
 			pDShadowCBuf->Update(gfx);
 
+			//renderTarget->Clear(gfx);
 			BindAll(gfx);
 			FullscreenPass::Execute(gfx);
 

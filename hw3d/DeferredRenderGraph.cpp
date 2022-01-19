@@ -29,10 +29,6 @@
 #include "DeferredBloomCatchPass.h"
 #include "DeferredBloomBlurPass.h"
 #include "DeferredBloomMergePass.h"
-#include "DeferredVolumeCalPass.h"
-#include "DeferredVolumeBlurPass.h"
-#include "DeferredVolumeMergePass.h"
-#include "DeferredVolumeFogApplyPass.h"
 #include "DeferredTransmittanceLutPass.h"
 #include "DeferredScatteringLutPass.h"
 #include "DeferredSkyViewLutPass.h"
@@ -197,18 +193,19 @@ namespace Rgph
 			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
 			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
-			AppendPass(std::move(pass));
-		}
-		{
-			auto pass = std::make_unique<DeferredVolumeFogApplyPass>("volumeFogApply", gfx);
-			pass->SetSinkLinkage("transmittanceLutIn", "transmittanceLut.scratchOut");
-			pass->SetSinkLinkage("scatteringLutIn", "scatteringLut.scratchOut");
-			pass->SetSinkLinkage("skyViewLutIn", "skyViewLut.scratchOut");
-			pass->SetSinkLinkage("skyCameraVolumeIn", "skyCameraVolume.scratchOut");
-			pass->SetSinkLinkage("skyMapIn", "sky.scratchOut");
 			pass->SetSinkLinkage("renderTarget", "deferredPointLighting.renderTarget");
 			AppendPass(std::move(pass));
 		}
+		//{
+		//	auto pass = std::make_unique<DeferredVolumeFogApplyPass>("volumeFogApply", gfx);
+		//	pass->SetSinkLinkage("transmittanceLutIn", "transmittanceLut.scratchOut");
+		//	pass->SetSinkLinkage("scatteringLutIn", "scatteringLut.scratchOut");
+		//	pass->SetSinkLinkage("skyViewLutIn", "skyViewLut.scratchOut");
+		//	pass->SetSinkLinkage("skyCameraVolumeIn", "skyCameraVolume.scratchOut");
+		//	pass->SetSinkLinkage("skyMapIn", "sky.scratchOut");
+		//	pass->SetSinkLinkage("renderTarget", "deferredPointLighting.renderTarget");
+		//	AppendPass(std::move(pass));
+		//}
 		{
 			namespace dx = DirectX;
 			Dcb::RawLayout l;
@@ -274,7 +271,7 @@ namespace Rgph
 			pass->SetSinkLinkage("cubeMapMipIn", "$.cubeMapMip");
 			pass->SetSinkLinkage("planeBRDFLUTIn", "$.planeBRDFLUT");
 			pass->SetSinkLinkage("waterCausticMap", "waterCaustic.waterCausticOut");
-			pass->SetSinkLinkage("renderTarget", "deferredPointLighting.renderTarget");
+			pass->SetSinkLinkage("renderTarget", "sky.renderTarget");
 			pass->SetSinkLinkage("depthStencil", "gbuffer.depthStencil");
 			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
 			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
@@ -329,41 +326,41 @@ namespace Rgph
 			pass->SetSinkLinkage("renderTarget", "lambertian.renderTarget");
 			AppendPass(std::move(pass));
 		}
-		{
-			namespace dx = DirectX;
-			Dcb::RawLayout l;
-			l.Add<Dcb::Integer>("numSteps");
-			l.Add<Dcb::Float>("mie");
-			l.Add<Dcb::Bool>("enableDitherSteps");
-			Dcb::Buffer buf{ std::move(l) };
-			buf["numSteps"] = 30;
-			buf["mie"] = 0.749f;
-			buf["enableDitherSteps"] = true;
-			volumeParams = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
-			AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("volumeParams", volumeParams));
-		}
-		{
-			auto pass = std::make_unique<DeferredVolumeCalPass>("volumeCal", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("volumeParams", "$.volumeParams");
-			pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
-			pass->SetSinkLinkage("shadowControl", "$.shadowControl");
-			pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
-			AppendPass(std::move(pass));
-		}
-		{
-			auto pass = std::make_unique<DeferredVolumeBlurPass>("volumeBlur", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("scratchIn", "volumeCal.scratchOut");
-			AppendPass(std::move(pass));
-		}
-		{
-			auto pass = std::make_unique<DeferredVolumeMergePass>("volumeMerge", gfx);
-			pass->SetSinkLinkage("renderTarget", "HBAOBlur.renderTarget");
-			pass->SetSinkLinkage("scratchIn", "volumeBlur.scratchOut");
-			AppendPass(std::move(pass));
-		}
+		//{
+		//	namespace dx = DirectX;
+		//	Dcb::RawLayout l;
+		//	l.Add<Dcb::Integer>("numSteps");
+		//	l.Add<Dcb::Float>("mie");
+		//	l.Add<Dcb::Bool>("enableDitherSteps");
+		//	Dcb::Buffer buf{ std::move(l) };
+		//	buf["numSteps"] = 30;
+		//	buf["mie"] = 0.749f;
+		//	buf["enableDitherSteps"] = true;
+		//	volumeParams = std::make_shared<Bind::CachingPixelConstantBufferEx>(gfx, buf, 10u);
+		//	AddGlobalSource(DirectBindableSource<Bind::CachingPixelConstantBufferEx>::Make("volumeParams", volumeParams));
+		//}
+		//{
+		//	auto pass = std::make_unique<DeferredVolumeCalPass>("volumeCal", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+		//	pass->SetSinkLinkage("volumeParams", "$.volumeParams");
+		//	pass->SetSinkLinkage("dShadowMap", "shadowMap.dMap");
+		//	pass->SetSinkLinkage("shadowControl", "$.shadowControl");
+		//	pass->SetSinkLinkage("shadowSampler", "$.shadowSampler");
+		//	AppendPass(std::move(pass));
+		//}
+		//{
+		//	auto pass = std::make_unique<DeferredVolumeBlurPass>("volumeBlur", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
+		//	pass->SetSinkLinkage("scratchIn", "volumeCal.scratchOut");
+		//	AppendPass(std::move(pass));
+		//}
+		//{
+		//	auto pass = std::make_unique<DeferredVolumeMergePass>("volumeMerge", gfx);
+		//	pass->SetSinkLinkage("renderTarget", "HBAOBlur.renderTarget");
+		//	pass->SetSinkLinkage("scratchIn", "volumeBlur.scratchOut");
+		//	AppendPass(std::move(pass));
+		//}
 		{
 			auto pass = std::make_unique<DeferredTAAPass>("TAA", gfx, gfx.GetWidth(), gfx.GetHeight(), masterDepth);
-			pass->SetSinkLinkage("scratchIn", "volumeMerge.renderTarget");
+			pass->SetSinkLinkage("scratchIn", "HBAOBlur.renderTarget");
 			AppendPass(std::move(pass));
 		}
 		{
@@ -502,7 +499,7 @@ namespace Rgph
 		//RenderWaterWindow(gfx);
 		RenderAOWindow(gfx);
 		RenderBloomWindow(gfx);
-		RenderVolumeWindow(gfx);
+		//RenderVolumeWindow(gfx);
 		RenderSkyWindow(gfx);
 	}
 
@@ -764,35 +761,35 @@ namespace Rgph
 		ImGui::End();
 	}
 
-	void DeferredRenderGraph::RenderVolumeWindow(Graphics& gfx)
-	{
-		if (!gfx.isVolumetricRendering)
-			return;
-		if (ImGui::Begin("Volume"))
-		{
-			auto buf = volumeParams->GetBuffer();
-			float dirty = false;
-			const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
-			if (auto v = buf["numSteps"]; v.Exists())
-			{
-				dcheck(ImGui::SliderInt("Number of Steps", &v, 0, 100));
-			}
-			if (auto v = buf["mie"]; v.Exists())
-			{
-				dcheck(ImGui::SliderFloat("Mie", &v, 0.0f, 1.0f, "%.3f", 1.0f));
-			}
-			if (auto v = buf["enableDitherSteps"]; v.Exists())
-			{
-				dcheck(ImGui::Checkbox("Enable Dither Steps", &v));
-			}
+	//void DeferredRenderGraph::RenderVolumeWindow(Graphics& gfx)
+	//{
+	//	if (!gfx.isVolumetricRendering)
+	//		return;
+	//	if (ImGui::Begin("Volume"))
+	//	{
+	//		auto buf = volumeParams->GetBuffer();
+	//		float dirty = false;
+	//		const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+	//		if (auto v = buf["numSteps"]; v.Exists())
+	//		{
+	//			dcheck(ImGui::SliderInt("Number of Steps", &v, 0, 100));
+	//		}
+	//		if (auto v = buf["mie"]; v.Exists())
+	//		{
+	//			dcheck(ImGui::SliderFloat("Mie", &v, 0.0f, 1.0f, "%.3f", 1.0f));
+	//		}
+	//		if (auto v = buf["enableDitherSteps"]; v.Exists())
+	//		{
+	//			dcheck(ImGui::Checkbox("Enable Dither Steps", &v));
+	//		}
 
-			if (dirty)
-			{
-				volumeParams->SetBuffer(buf);
-			}
-		}
-		ImGui::End();
-	}
+	//		if (dirty)
+	//		{
+	//			volumeParams->SetBuffer(buf);
+	//		}
+	//	}
+	//	ImGui::End();
+	//}
 
 	void DeferredRenderGraph::RenderSkyWindow(Graphics& gfx)
 	{
@@ -823,7 +820,7 @@ namespace Rgph
 		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindMainCamera(cam);
 		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindMainCamera(cam);
 		dynamic_cast<DeferredTAAPass&>(FindPassByName("TAA")).BindMainCamera(cam);
-		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("volumeCal")).BindMainCamera(cam);
+		//dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("volumeCal")).BindMainCamera(cam);
 		dynamic_cast<DeferredTransmittanceLutPass&>(FindPassByName("transmittanceLut")).BindMainCamera(cam);
 	}
 	void Rgph::DeferredRenderGraph::BindShadowCamera(Graphics& gfx, Camera& dCam, std::vector<std::shared_ptr<PointLight>> pCams)
@@ -833,7 +830,7 @@ namespace Rgph
 		dynamic_cast<LambertianPass_Water&>(FindPassByName("water")).BindShadowCamera(gfx, dCam, pCams);
 		dynamic_cast<DeferredSunLightPass&>(FindPassByName("deferredSunLighting")).BindShadowCamera(gfx, dCam);
 		dynamic_cast<DeferredPointLightPass&>(FindPassByName("deferredPointLighting")).BindShadowCamera(gfx, pCams);
-		dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("volumeCal")).BindShadowCamera(gfx, dCam);
+		//dynamic_cast<DeferredVolumeCalPass&>(FindPassByName("volumeCal")).BindShadowCamera(gfx, dCam);
 		dynamic_cast<DeferredScatteringLutPass&>(FindPassByName("scatteringLut")).BindShadowCamera(gfx, dCam);
 		dynamic_cast<DeferredSkyViewLutPass&>(FindPassByName("skyViewLut")).BindShadowCamera(gfx, dCam);
 		dynamic_cast<DeferredSkyCameraVolumePass&>(FindPassByName("skyCameraVolume")).BindShadowCamera(gfx, dCam);

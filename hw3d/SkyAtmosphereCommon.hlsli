@@ -340,11 +340,11 @@ float3 GetMultipleScattering(AtmosphereParameters Atmosphere, float3 scattering,
 float getShadow(in AtmosphereParameters Atmosphere, float3 P)
 {
 	// First evaluate opaque shadow
-	float4 shadowUv = mul(float4(P + float3(0.0, 0.0, -Atmosphere.BottomRadius), 1.0).xzyw, shadowMatrix_VP);
+	float4 shadowUv = mul(float4(P + float3(0.0f, 0.0f, -Atmosphere.BottomRadius), 1.0f).xzyw, shadowMatrix_VP);
 	//shadowUv /= shadowUv.w;	// not be needed as it is an ortho projection
-	shadowUv.x = shadowUv.x * 0.5 + 0.5;
-	shadowUv.y = -shadowUv.y * 0.5 + 0.5;
-	if (all(shadowUv.xyz >= 0.0) && all(shadowUv.xyz < 1.0))
+	shadowUv.x = shadowUv.x * 0.5f + 0.5f;
+	shadowUv.y = -shadowUv.y * 0.5f + 0.5f;
+	if (all(shadowUv.xyz >= 0.0f) && all(shadowUv.xyz < 1.0f))
 	{
 		return smap.SampleCmpLevelZero(ssamHw, shadowUv.xy, shadowUv.z);
 	}

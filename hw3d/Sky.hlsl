@@ -10,8 +10,10 @@ SamplerState splr;
 #define FASTSKY_ENABLED 1
 #define RENDER_SUN_DISK 1
 #define SHADOWMAP_ENABLED 1 
+#define COLORED_TRANSMITTANCE_ENABLED 0
 
 #include "Constants.hlsli"
+#include "DeferredCommon.hlsli"
 #include "SkyAtmosphereCommon.hlsli"
 
 struct RayMarchPixelOutputStruct
@@ -22,7 +24,7 @@ struct RayMarchPixelOutputStruct
 #endif
 };
 
-RayMarchPixelOutputStruct main(float2 uv : Texcood)
+RayMarchPixelOutputStruct main(float2 uv : Texcoord)
 {
 	RayMarchPixelOutputStruct output = (RayMarchPixelOutputStruct) 0;
 #if COLORED_TRANSMITTANCE_ENABLED
@@ -51,6 +53,7 @@ RayMarchPixelOutputStruct main(float2 uv : Texcood)
 
 	float viewHeight = length(WorldPos);
 	float3 L = 0;
+	//DepthBufferValue = ConvertToLinearDepth(depth[pixPos].r);
 	DepthBufferValue = depth[pixPos].r;
 #if FASTSKY_ENABLED
 	if (viewHeight < Atmosphere.TopRadius && DepthBufferValue == 1.0f)

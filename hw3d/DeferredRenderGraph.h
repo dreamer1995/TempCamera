@@ -37,7 +37,7 @@ namespace Rgph
 		void RenderWaterWindow(Graphics& gfx);
 		void RenderAOWindow(Graphics& gfx);
 		void RenderBloomWindow(Graphics& gfx);
-		void RenderVolumeWindow(Graphics& gfx);
+		//void RenderVolumeWindow(Graphics& gfx);
 		void RenderSkyWindow(Graphics& gfx);
 		// private data
 		enum class KernelType
